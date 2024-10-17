@@ -36,7 +36,7 @@ public class TalkCalendarClientService {
                 .toEntity(EventListGetResponse.class);
             return response.getBody();
         } catch (RestClientException e) {
-            throw new ApiException("API 호출 중 오류 발생");
+            throw new ApiException("일정 목록 조회 중 에러 발생 : " + e.getMessage());
         }
     }
 
@@ -52,7 +52,7 @@ public class TalkCalendarClientService {
                 .toEntity(EventDetailGetResponse.class);
             return response.getBody();
         } catch (RestClientException e) {
-            throw new ApiException("API 호출 중 오류 발생");
+            throw new ApiException("일정 상세 조회 중 오류 발생 : " + e.getMessage());
         }
     }
 
@@ -70,7 +70,7 @@ public class TalkCalendarClientService {
                 .toEntity(Map.class);
             return response.getBody();
         } catch (RestClientException e) {
-            throw new ApiException("API 호출 중 오류 발생");
+            throw new ApiException("일정 생성 중 오류 발생 : " + e.getMessage());
         }
     }
 
