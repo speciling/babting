@@ -2,6 +2,7 @@ package org.cookieandkakao.babting.domain.calendar.dto.response;
 
 import com.fasterxml.jackson.databind.PropertyNamingStrategies;
 import com.fasterxml.jackson.databind.annotation.JsonNaming;
+import java.util.List;
 import org.cookieandkakao.babting.domain.calendar.entity.Event;
 import org.cookieandkakao.babting.domain.calendar.entity.PersonalCalendar;
 import org.cookieandkakao.babting.domain.calendar.entity.Reminder;
@@ -34,7 +35,7 @@ public record EventGetResponse(
 
     LocationGetResponse location,
 
-    Reminder reminders,
+    List<Integer> reminders,
 
     String color,
 
