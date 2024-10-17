@@ -2,9 +2,9 @@ package org.cookieandkakao.babting.domain.calendar.service;
 
 
 import java.net.URI;
-import java.util.Map;
 import org.cookieandkakao.babting.common.exception.customexception.ApiException;
 import org.cookieandkakao.babting.common.properties.KakaoProviderProperties;
+import org.cookieandkakao.babting.domain.calendar.dto.response.EventCreateResponse;
 import org.cookieandkakao.babting.domain.calendar.dto.response.EventDetailGetResponse;
 import org.cookieandkakao.babting.domain.calendar.dto.response.EventListGetResponse;
 import org.springframework.http.HttpHeaders;
@@ -56,18 +56,18 @@ public class TalkCalendarClientService {
         }
     }
 
-    public Map<String, Object> createEvent(String accessToken,
+    public EventCreateResponse createEvent(String accessToken,
         MultiValueMap<String, String> formData) {
         String url = kakaoProviderProperties.calendarCreateEventUri();
         URI uri = URI.create(url);
         try {
-            ResponseEntity<Map> response = restClient.post()
+            ResponseEntity<EventCreateResponse> response = restClient.post()
                 .uri(uri)
                 .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken)
                 .header(HttpHeaders.CONTENT_TYPE, "application/x-www-form-urlencoded")
                 .body(formData)
                 .retrieve()
-                .toEntity(Map.class);
+                .toEntity(EventCreateResponse.class);
             return response.getBody();
         } catch (RestClientException e) {
             throw new ApiException("일정 생성 중 오류 발생 : " + e.getMessage());
