@@ -13,6 +13,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestClient;
 import org.springframework.web.client.RestClientException;
+import org.springframework.web.util.UriComponentsBuilder;
 
 @Service
 public class TalkCalendarClientService {
@@ -74,12 +75,18 @@ public class TalkCalendarClientService {
     }
 
     private URI buildUri(String baseUrl, String from, String to) {
-        return URI.create(
-            String.format("%s?from=%s&to=%s&limit=100&time_zone=Asia/Seoul", baseUrl, from, to));
+        return UriComponentsBuilder.fromHttpUrl(baseUrl)
+            .queryParam("from",from)
+            .queryParam("to", to)
+            .queryParam("limit", 100)
+            .queryParam("time_zone", "Asia/Seoul")
+            .build().toUri();
     }
 
     private URI buildGetEventUri(String baseUrl, String eventId) {
-        return URI.create(String.format("%s?event_id=%s", baseUrl, eventId));
+        return UriComponentsBuilder.fromHttpUrl(baseUrl)
+            .queryParam("event_id", eventId)
+            .build().toUri();
     }
 
 }
