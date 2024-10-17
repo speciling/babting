@@ -4,7 +4,6 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import org.cookieandkakao.babting.common.exception.customexception.EventCreationException;
 import org.cookieandkakao.babting.common.exception.customexception.JsonConversionException;
 import org.cookieandkakao.babting.domain.calendar.dto.request.EventCreateRequest;
@@ -70,12 +69,9 @@ public class TalkCalendarService {
         String eventJson = convertToJSONString(eventCreateRequest);
         // event라는 key로 JSON 데이터를 추가
         formData.add("event", eventJson);
-        // 응답에서 event_id 추출
-        Map<String, Object> responseBody =talkCalendarClientService.createEvent(kakaoAccessToken, formData);
-        if (responseBody != null && responseBody.containsKey("event_id")) {
-            String eventId = responseBody.get("event_id").toString();
-            // EventCreateResponseDto로 응답 반환
-            return new EventCreateResponse(eventId);
+        EventCreateResponse responseBody =talkCalendarClientService.createEvent(kakaoAccessToken, formData);
+        if (responseBody != null) {
+            return responseBody;
         }
         throw new EventCreationException("Event 생성 중 오류 발생: 응답에서 event_id가 없습니다.");
     }
