@@ -18,19 +18,25 @@ import org.springframework.web.util.UriComponentsBuilder;
 @Service
 public class TalkCalendarClientService {
 
-    private final RestClient restClient = RestClient.builder().build();
+    private final RestClient restClient;
     private final KakaoProviderProperties kakaoProviderProperties;
 
-    public TalkCalendarClientService(KakaoProviderProperties kakaoProviderProperties) {
+    public TalkCalendarClientService(RestClient kakaoRestClient,
+        KakaoProviderProperties kakaoProviderProperties) {
+        this.restClient = kakaoRestClient;
         this.kakaoProviderProperties = kakaoProviderProperties;
     }
 
     public EventListGetResponse getEventList(String accessToken, String from, String to) {
-        String url = kakaoProviderProperties.calendarEventListUri();
-        URI uri = buildUri(url, from, to);
+        String relativeUrl = kakaoProviderProperties.calendarEventListUri();
         try {
             ResponseEntity<EventListGetResponse> response = restClient.get()
-                .uri(uri)
+                .uri(uriBuilder -> uriBuilder.path(relativeUrl)
+                    .queryParam("from",from)
+                    .queryParam("to", to)
+                    .queryParam("limit", 100)
+                    .queryParam("time_zone", "Asia/Seoul")
+                    .build())
                 .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken)
                 .retrieve()
                 .toEntity(EventListGetResponse.class);
@@ -41,12 +47,12 @@ public class TalkCalendarClientService {
     }
 
     public EventDetailGetResponse getEvent(String accessToken, String eventId) {
-        String url = kakaoProviderProperties.calendarEventDetailUri();
-        URI uri = buildGetEventUri(url, eventId);
-
+        String relativeUrl = kakaoProviderProperties.calendarEventDetailUri();
         try {
             ResponseEntity<EventDetailGetResponse> response = restClient.get()
-                .uri(uri)
+                .uri(uriBuilder -> uriBuilder.path(relativeUrl)
+                    .queryParam("event_id", eventId)
+                    .build())
                 .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken)
                 .retrieve()
                 .toEntity(EventDetailGetResponse.class);
@@ -58,11 +64,10 @@ public class TalkCalendarClientService {
 
     public EventCreateResponse createEvent(String accessToken,
         MultiValueMap<String, String> formData) {
-        String url = kakaoProviderProperties.calendarCreateEventUri();
-        URI uri = URI.create(url);
+        String relativeUrl = kakaoProviderProperties.calendarCreateEventUri();
         try {
             ResponseEntity<EventCreateResponse> response = restClient.post()
-                .uri(uri)
+                .uri(relativeUrl)
                 .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken)
                 .header(HttpHeaders.CONTENT_TYPE, "application/x-www-form-urlencoded")
                 .body(formData)
@@ -73,20 +78,4 @@ public class TalkCalendarClientService {
             throw new ApiException("일정 생성 중 오류 발생 : " + e.getMessage());
         }
     }
-
-    private URI buildUri(String baseUrl, String from, String to) {
-        return UriComponentsBuilder.fromHttpUrl(baseUrl)
-            .queryParam("from",from)
-            .queryParam("to", to)
-            .queryParam("limit", 100)
-            .queryParam("time_zone", "Asia/Seoul")
-            .build().toUri();
-    }
-
-    private URI buildGetEventUri(String baseUrl, String eventId) {
-        return UriComponentsBuilder.fromHttpUrl(baseUrl)
-            .queryParam("event_id", eventId)
-            .build().toUri();
-    }
-
 }
