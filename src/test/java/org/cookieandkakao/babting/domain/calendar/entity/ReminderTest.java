@@ -16,7 +16,7 @@ class ReminderTest {
         Event event = new Event(new PersonalCalendar(new Member(1L)),
             new Time(LocalDateTime.now(), LocalDateTime.now().plusHours(1), "Asia/Seoul", false),
             null, "12345", "Test Event", false, null, null, null, null, null);
-        Long remindTime = 60L;
+        Integer remindTime = 60;
 
         // When
         Reminder reminder = new Reminder(event, remindTime);
