@@ -1,5 +1,6 @@
 package org.cookieandkakao.babting.domain.calendar.service;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
@@ -10,7 +11,7 @@ import java.util.Optional;
 import org.cookieandkakao.babting.domain.calendar.entity.PersonalCalendar;
 import org.cookieandkakao.babting.domain.calendar.repository.PersonalCalendarRepository;
 import org.cookieandkakao.babting.domain.member.entity.Member;
-import org.cookieandkakao.babting.domain.member.repository.MemberRepository;
+import org.cookieandkakao.babting.domain.member.service.MemberService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
@@ -26,7 +27,7 @@ class PersonalCalendarServiceTest {
     private PersonalCalendarRepository personalCalendarRepository;
 
     @Mock
-    private MemberRepository memberRepository;
+    private MemberService memberService;
 
     // Mock 객체 초기화
     @BeforeEach
@@ -56,6 +57,7 @@ class PersonalCalendarServiceTest {
         verify(personalCalendarRepository, times(0)).save(any(PersonalCalendar.class));
         assertNotNull(personalCalendar);
         assertNotNull(personalCalendar.getMember());
+        assertEquals(member, personalCalendar.getMember());
     }
 
     @Test
@@ -68,7 +70,7 @@ class PersonalCalendarServiceTest {
         // Mocking
         given(personalCalendarRepository.findByMemberMemberId(memberId)).willReturn(
             Optional.empty());
-        given(memberRepository.findById(memberId)).willReturn(Optional.of(member));
+        given(memberService.findMember(memberId)).willReturn(member);
         given(personalCalendarRepository.save(any(PersonalCalendar.class))).willReturn(
             newPersonalCalendar);
 
@@ -78,10 +80,11 @@ class PersonalCalendarServiceTest {
 
         // Then
         verify(personalCalendarRepository).findByMemberMemberId(any(Long.class));
-        verify(memberRepository).findById(any(Long.class));
+        verify(memberService).findMember(any(Long.class));
         verify(personalCalendarRepository).save(any(PersonalCalendar.class));
         assertNotNull(personalCalendar);
         assertNotNull(personalCalendar.getMember());
+        assertEquals(member, personalCalendar.getMember());
     }
 
 }
