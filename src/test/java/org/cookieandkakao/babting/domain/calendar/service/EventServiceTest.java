@@ -1,6 +1,9 @@
 package org.cookieandkakao.babting.domain.calendar.service;
 
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.mock;
@@ -24,6 +27,8 @@ import org.cookieandkakao.babting.domain.meeting.entity.Location;
 import org.cookieandkakao.babting.domain.meeting.repository.LocationRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.ArgumentCaptor;
+import org.mockito.Captor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
@@ -50,6 +55,10 @@ class EventServiceTest {
 
     @Mock
     private PersonalCalendarService personalCalendarService;
+
+    // 메서드 인자 값 확인 위해 사용
+    @Captor
+    ArgumentCaptor<Event> eventCaptor;
 
     // Mock 객체 초기화
     @BeforeEach
@@ -90,6 +99,14 @@ class EventServiceTest {
         verify(locationRepository).save(any(Location.class));
         verify(eventRepository).save(any(Event.class));
         verify(reminderRepository, times(0)).save(any(Reminder.class));
+
+        // 객체 내용 검증
+        verify(eventRepository).save(eventCaptor.capture());
+        Event event = eventCaptor.getValue();
+        assertEquals("testTitle", event.getTitle());
+        assertEquals("testDescription", event.getDescription());
+        assertEquals("testId", event.getKakaoEventId());
+        assertNull(event.getScheduleRepeatCycle());
     }
 
     @Test
@@ -117,6 +134,13 @@ class EventServiceTest {
         verify(timeRepository).save(any(Time.class));
         verify(eventRepository).save(any(Event.class));
 
+        // 객체 내용 검증
+        verify(eventRepository).save(eventCaptor.capture());
+        Event event = eventCaptor.getValue();
+        assertEquals("testTitle", event.getTitle());
+        assertEquals("testDescription", event.getDescription());
+        assertEquals("testId", event.getKakaoEventId());
+        assertNull(event.getScheduleRepeatCycle());
     }
 
 }
