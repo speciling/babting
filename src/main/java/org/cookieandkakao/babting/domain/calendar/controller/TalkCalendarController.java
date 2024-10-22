@@ -47,7 +47,7 @@ public class TalkCalendarController {
         EventListGetResponse eventList = new EventListGetResponse(updatedEvents);
 
         if (updatedEvents.isEmpty()) {
-            return ApiResponseGenerator.success(HttpStatus.OK, "조회된 일정이 없습니다.", eventList);
+            return ApiResponseGenerator.success(HttpStatus.OK, "조회된 일정 목록이 없습니다.", eventList);
         }
 
         return ApiResponseGenerator.success(HttpStatus.OK, "일정 목록을 조회했습니다.", eventList);
@@ -66,7 +66,7 @@ public class TalkCalendarController {
                 eventDetailGetResponse);
         }
 
-        return ApiResponseGenerator.success(HttpStatus.OK, "일정 목록을 조회했습니다.",
+        return ApiResponseGenerator.success(HttpStatus.OK, "일정을 조회했습니다.",
             eventDetailGetResponse);
     }
 
