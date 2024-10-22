@@ -27,7 +27,8 @@ public class TalkCalendarService {
     private final EventService eventService;
     private final MemberService memberService;
 
-    public TalkCalendarService(EventService eventService, TalkCalendarClientService talkCalendarClientService,
+    public TalkCalendarService(EventService eventService,
+        TalkCalendarClientService talkCalendarClientService,
         MemberService memberService) {
         this.eventService = eventService;
         this.talkCalendarClientService = talkCalendarClientService;
@@ -38,7 +39,8 @@ public class TalkCalendarService {
     @Cacheable(value = "eventListCache", key = "#memberId")
     public List<EventGetResponse> getUpdatedEventList(String from, String to, Long memberId) {
         String kakaoAccessToken = getKakaoAccessToken(memberId);
-        EventListGetResponse eventList = talkCalendarClientService.getEventList(kakaoAccessToken, from, to);
+        EventListGetResponse eventList = talkCalendarClientService.getEventList(kakaoAccessToken,
+            from, to);
         List<EventGetResponse> updatedEvents = new ArrayList<>();
 
         for (EventGetResponse event : eventList.events()) {
@@ -69,7 +71,8 @@ public class TalkCalendarService {
         String eventJson = convertToJSONString(eventCreateRequest);
         // event라는 key로 JSON 데이터를 추가
         formData.add("event", eventJson);
-        EventCreateResponse responseBody =talkCalendarClientService.createEvent(kakaoAccessToken, formData);
+        EventCreateResponse responseBody = talkCalendarClientService.createEvent(kakaoAccessToken,
+            formData);
         if (responseBody != null) {
             return responseBody;
         }
@@ -84,6 +87,7 @@ public class TalkCalendarService {
             throw new JsonConversionException("JSON 변환 중 오류가 발생했습니다.");
         }
     }
+
     private String getKakaoAccessToken(Long memberId) {
         KakaoToken kakaoToken = memberService.getKakaoToken(memberId);
         String kakaoAccessToken = kakaoToken.getAccessToken();

@@ -1,7 +1,5 @@
 package org.cookieandkakao.babting.domain.calendar.service;
 
-
-import java.net.URI;
 import org.cookieandkakao.babting.common.exception.customexception.ApiException;
 import org.cookieandkakao.babting.common.properties.KakaoProviderProperties;
 import org.cookieandkakao.babting.domain.calendar.dto.response.EventCreateResponse;
@@ -13,7 +11,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestClient;
 import org.springframework.web.client.RestClientException;
-import org.springframework.web.util.UriComponentsBuilder;
 
 @Service
 public class TalkCalendarClientService {
@@ -32,7 +29,7 @@ public class TalkCalendarClientService {
         try {
             ResponseEntity<EventListGetResponse> response = restClient.get()
                 .uri(uriBuilder -> uriBuilder.path(relativeUrl)
-                    .queryParam("from",from)
+                    .queryParam("from", from)
                     .queryParam("to", to)
                     .queryParam("limit", 100)
                     .queryParam("time_zone", "Asia/Seoul")

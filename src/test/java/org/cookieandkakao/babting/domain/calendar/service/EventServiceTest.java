@@ -2,7 +2,6 @@ package org.cookieandkakao.babting.domain.calendar.service;
 
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
@@ -152,10 +151,12 @@ class EventServiceTest {
         EventGetResponse eventGetResponseMock = mock(EventGetResponse.class);
 
         // Mocking
-        given(personalCalendarService.findOrCreatePersonalCalendar(memberId)).willThrow(new IllegalArgumentException("개인 캘린더 찾을 수 없음"));
+        given(personalCalendarService.findOrCreatePersonalCalendar(memberId)).willThrow(
+            new IllegalArgumentException("개인 캘린더 찾을 수 없음"));
 
         // When
-        Exception e = assertThrows(IllegalArgumentException.class, () -> eventService.saveEvent(eventGetResponseMock, memberId));
+        Exception e = assertThrows(IllegalArgumentException.class,
+            () -> eventService.saveEvent(eventGetResponseMock, memberId));
 
         // Then
         assertEquals(e.getClass(), IllegalArgumentException.class);
@@ -172,10 +173,12 @@ class EventServiceTest {
         EventCreateRequest eventCreateRequestMock = mock(EventCreateRequest.class);
 
         // Mocking
-        given(personalCalendarService.findOrCreatePersonalCalendar(memberId)).willThrow(new IllegalArgumentException("개인 캘린더 찾을 수 없음"));
+        given(personalCalendarService.findOrCreatePersonalCalendar(memberId)).willThrow(
+            new IllegalArgumentException("개인 캘린더 찾을 수 없음"));
 
         // When
-        Exception e = assertThrows(IllegalArgumentException.class, () -> eventService.saveCreatedEvent(eventCreateRequestMock, eventId, memberId));
+        Exception e = assertThrows(IllegalArgumentException.class,
+            () -> eventService.saveCreatedEvent(eventCreateRequestMock, eventId, memberId));
 
         // Then
         assertEquals(e.getClass(), IllegalArgumentException.class);
@@ -191,17 +194,21 @@ class EventServiceTest {
         Long memberId = 1L;
         EventGetResponse eventGetResponseMock = mock(EventGetResponse.class);
         PersonalCalendar personalCalendar = new PersonalCalendar(null);
-        TimeGetResponse time = new TimeGetResponse("2024-10-01T00:00:00Z", "2024-10-01T03:00:00Z", "Asia/Seoul", false);
+        TimeGetResponse time = new TimeGetResponse("2024-10-01T00:00:00Z", "2024-10-01T03:00:00Z",
+            "Asia/Seoul", false);
         LocationGetResponse location = new LocationGetResponse(null, "test", "test", 30.0, 32.2);
 
         // Mocking
-        given(personalCalendarService.findOrCreatePersonalCalendar(memberId)).willReturn(personalCalendar);
+        given(personalCalendarService.findOrCreatePersonalCalendar(memberId)).willReturn(
+            personalCalendar);
         given(eventGetResponseMock.time()).willReturn(time);
         given(eventGetResponseMock.location()).willReturn(location);
-        given(locationRepository.save(any(Location.class))).willThrow(new IllegalArgumentException("위치 저장 실패"));
+        given(locationRepository.save(any(Location.class))).willThrow(
+            new IllegalArgumentException("위치 저장 실패"));
 
         // When
-        Exception e = assertThrows(IllegalArgumentException.class, () -> eventService.saveEvent(eventGetResponseMock, memberId));
+        Exception e = assertThrows(IllegalArgumentException.class,
+            () -> eventService.saveEvent(eventGetResponseMock, memberId));
 
         // Then
         assertEquals(e.getClass(), IllegalArgumentException.class);
@@ -218,17 +225,21 @@ class EventServiceTest {
         Long memberId = 1L;
         EventGetResponse eventGetResponseMock = mock(EventGetResponse.class);
         PersonalCalendar personalCalendar = new PersonalCalendar(null);
-        TimeGetResponse time = new TimeGetResponse("2024-10-01T00:00:00Z", "2024-10-01T03:00:00Z", "Asia/Seoul", false);
+        TimeGetResponse time = new TimeGetResponse("2024-10-01T00:00:00Z", "2024-10-01T03:00:00Z",
+            "Asia/Seoul", false);
         LocationGetResponse location = new LocationGetResponse(null, "test", "test", 30.0, 32.2);
 
         // Mocking
-        given(personalCalendarService.findOrCreatePersonalCalendar(memberId)).willReturn(personalCalendar);
+        given(personalCalendarService.findOrCreatePersonalCalendar(memberId)).willReturn(
+            personalCalendar);
         given(eventGetResponseMock.time()).willReturn(time);
         given(eventGetResponseMock.location()).willReturn(location);
-        given(eventRepository.save(any(Event.class))).willThrow(new IllegalArgumentException("일정 저장 실패"));
+        given(eventRepository.save(any(Event.class))).willThrow(
+            new IllegalArgumentException("일정 저장 실패"));
 
         // When
-        Exception e = assertThrows(IllegalArgumentException.class, () -> eventService.saveEvent(eventGetResponseMock, memberId));
+        Exception e = assertThrows(IllegalArgumentException.class,
+            () -> eventService.saveEvent(eventGetResponseMock, memberId));
 
         // Then
         assertEquals(e.getClass(), IllegalArgumentException.class);
@@ -253,10 +264,12 @@ class EventServiceTest {
         given(personalCalendarService.findOrCreatePersonalCalendar(memberId)).willReturn(
             personalCalendar);
         given(eventCreateRequestMock.time()).willReturn(time);
-        given(eventRepository.save(any(Event.class))).willThrow(new IllegalArgumentException("일정 저장 실패"));
+        given(eventRepository.save(any(Event.class))).willThrow(
+            new IllegalArgumentException("일정 저장 실패"));
 
         // When
-        Exception e = assertThrows(IllegalArgumentException.class, () -> eventService.saveCreatedEvent(eventCreateRequestMock, eventId, memberId));
+        Exception e = assertThrows(IllegalArgumentException.class,
+            () -> eventService.saveCreatedEvent(eventCreateRequestMock, eventId, memberId));
 
         // Then
         assertEquals(e.getClass(), IllegalArgumentException.class);
@@ -272,16 +285,20 @@ class EventServiceTest {
         Long memberId = 1L;
         EventGetResponse eventGetResponseMock = mock(EventGetResponse.class);
         PersonalCalendar personalCalendar = new PersonalCalendar(null);
-        TimeGetResponse time = new TimeGetResponse("2024-10-01T00:00:00Z", "2024-10-01T03:00:00Z", "Asia/Seoul", false);
+        TimeGetResponse time = new TimeGetResponse("2024-10-01T00:00:00Z", "2024-10-01T03:00:00Z",
+            "Asia/Seoul", false);
 
         // Mocking
-        given(personalCalendarService.findOrCreatePersonalCalendar(memberId)).willReturn(personalCalendar);
+        given(personalCalendarService.findOrCreatePersonalCalendar(memberId)).willReturn(
+            personalCalendar);
         given(eventGetResponseMock.time()).willReturn(time);
         given(eventGetResponseMock.reminders()).willReturn(List.of(5, 10));
-        given(reminderRepository.save(any(Reminder.class))).willThrow(new IllegalArgumentException("리마인더 저장 실패"));
+        given(reminderRepository.save(any(Reminder.class))).willThrow(
+            new IllegalArgumentException("리마인더 저장 실패"));
 
         // When
-        Exception e = assertThrows(IllegalArgumentException.class, () -> eventService.saveEvent(eventGetResponseMock, memberId));
+        Exception e = assertThrows(IllegalArgumentException.class,
+            () -> eventService.saveEvent(eventGetResponseMock, memberId));
 
         // Then
         assertEquals(e.getClass(), IllegalArgumentException.class);
@@ -299,15 +316,19 @@ class EventServiceTest {
         Long memberId = 1L;
         EventGetResponse eventGetResponseMock = mock(EventGetResponse.class);
         PersonalCalendar personalCalendar = new PersonalCalendar(null);
-        TimeGetResponse time = new TimeGetResponse("2024-10-01T00:00:00Z", "2024-10-01T03:00:00Z", "Asia/Seoul", false);
+        TimeGetResponse time = new TimeGetResponse("2024-10-01T00:00:00Z", "2024-10-01T03:00:00Z",
+            "Asia/Seoul", false);
 
         // Mocking
-        given(personalCalendarService.findOrCreatePersonalCalendar(memberId)).willReturn(personalCalendar);
+        given(personalCalendarService.findOrCreatePersonalCalendar(memberId)).willReturn(
+            personalCalendar);
         given(eventGetResponseMock.time()).willReturn(time);
-        given(timeRepository.save(any(Time.class))).willThrow(new IllegalArgumentException("시간 저장 실패"));
+        given(timeRepository.save(any(Time.class))).willThrow(
+            new IllegalArgumentException("시간 저장 실패"));
 
         // When
-        Exception e = assertThrows(IllegalArgumentException.class, () -> eventService.saveEvent(eventGetResponseMock, memberId));
+        Exception e = assertThrows(IllegalArgumentException.class,
+            () -> eventService.saveEvent(eventGetResponseMock, memberId));
 
         // Then
         assertEquals(e.getClass(), IllegalArgumentException.class);
@@ -324,15 +345,19 @@ class EventServiceTest {
         String eventId = "testId";
         EventCreateRequest eventCreateRequestMock = mock(EventCreateRequest.class);
         PersonalCalendar personalCalendar = new PersonalCalendar(null);
-        TimeCreateRequest time = new TimeCreateRequest("2024-10-01T00:00:00Z", "2024-10-01T03:00:00Z", "Asia/Seoul", false);
+        TimeCreateRequest time = new TimeCreateRequest("2024-10-01T00:00:00Z",
+            "2024-10-01T03:00:00Z", "Asia/Seoul", false);
 
         // Mocking
-        given(personalCalendarService.findOrCreatePersonalCalendar(memberId)).willReturn(personalCalendar);
+        given(personalCalendarService.findOrCreatePersonalCalendar(memberId)).willReturn(
+            personalCalendar);
         given(eventCreateRequestMock.time()).willReturn(time);
-        given(timeRepository.save(any(Time.class))).willThrow(new IllegalArgumentException("시간 저장 실패"));
+        given(timeRepository.save(any(Time.class))).willThrow(
+            new IllegalArgumentException("시간 저장 실패"));
 
         // When
-        Exception e = assertThrows(IllegalArgumentException.class, () -> eventService.saveCreatedEvent(eventCreateRequestMock, eventId,memberId));
+        Exception e = assertThrows(IllegalArgumentException.class,
+            () -> eventService.saveCreatedEvent(eventCreateRequestMock, eventId, memberId));
 
         // Then
         assertEquals(e.getClass(), IllegalArgumentException.class);

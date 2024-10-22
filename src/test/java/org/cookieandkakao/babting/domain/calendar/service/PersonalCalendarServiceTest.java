@@ -95,10 +95,12 @@ class PersonalCalendarServiceTest {
         Long memberId = 1L;
 
         // Mocking
-        given(memberService.findMember(memberId)).willThrow(new MemberNotFoundException("멤버 찾을 수 없음"));
+        given(memberService.findMember(memberId)).willThrow(
+            new MemberNotFoundException("멤버 찾을 수 없음"));
 
         // When
-        Exception e = assertThrows(MemberNotFoundException.class, () -> personalCalendarService.findOrCreatePersonalCalendar(memberId));
+        Exception e = assertThrows(MemberNotFoundException.class,
+            () -> personalCalendarService.findOrCreatePersonalCalendar(memberId));
 
         // Then
         assertEquals(e.getClass(), MemberNotFoundException.class);
@@ -118,10 +120,12 @@ class PersonalCalendarServiceTest {
         given(personalCalendarRepository.findByMemberMemberId(memberId)).willReturn(
             Optional.empty());
         given(memberService.findMember(memberId)).willReturn(member);
-        given(personalCalendarRepository.save(any(PersonalCalendar.class))).willThrow(new IllegalArgumentException("개인 캘린더 저장 실패"));
+        given(personalCalendarRepository.save(any(PersonalCalendar.class))).willThrow(
+            new IllegalArgumentException("개인 캘린더 저장 실패"));
 
         // When
-        Exception e = assertThrows(IllegalArgumentException.class, () -> personalCalendarService.findOrCreatePersonalCalendar(memberId));
+        Exception e = assertThrows(IllegalArgumentException.class,
+            () -> personalCalendarService.findOrCreatePersonalCalendar(memberId));
 
         // Then
         assertEquals(e.getClass(), IllegalArgumentException.class);
@@ -137,10 +141,12 @@ class PersonalCalendarServiceTest {
         Long memberId = 1L;
 
         // Mocking
-        given(personalCalendarRepository.findByMemberMemberId(memberId)).willThrow(new IllegalArgumentException("멤버 id로 찾을 수 없음"));
+        given(personalCalendarRepository.findByMemberMemberId(memberId)).willThrow(
+            new IllegalArgumentException("멤버 id로 찾을 수 없음"));
 
         // When
-        Exception e = assertThrows(IllegalArgumentException.class, () -> personalCalendarService.findOrCreatePersonalCalendar(memberId));
+        Exception e = assertThrows(IllegalArgumentException.class,
+            () -> personalCalendarService.findOrCreatePersonalCalendar(memberId));
 
         // Then
         assertEquals(e.getClass(), IllegalArgumentException.class);

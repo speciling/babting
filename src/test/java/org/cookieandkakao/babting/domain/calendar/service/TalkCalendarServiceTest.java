@@ -197,10 +197,12 @@ class TalkCalendarServiceTest {
         String to = "2024-10-31T23:59:59Z";
 
         // Mocking
-        given(memberService.getKakaoToken(memberId)).willThrow(new IllegalArgumentException("존재하지 않는 MemberID입니다."));
+        given(memberService.getKakaoToken(memberId)).willThrow(
+            new IllegalArgumentException("존재하지 않는 MemberID입니다."));
 
         // When
-        Exception e = assertThrows(IllegalArgumentException.class, () -> talkCalendarService.getUpdatedEventList(from, to, memberId));
+        Exception e = assertThrows(IllegalArgumentException.class,
+            () -> talkCalendarService.getUpdatedEventList(from, to, memberId));
 
         // Then
         assertEquals(e.getClass(), IllegalArgumentException.class);
@@ -278,10 +280,12 @@ class TalkCalendarServiceTest {
             new KakaoToken(accessToken, null, null, null));
         given(talkCalendarClientService.getEventList(accessToken, from, to)).willReturn(
             eventListGetResponse);
-        given(talkCalendarClientService.getEvent(accessToken, eventGetResponse.id())).willThrow(new IllegalArgumentException("존재하지 않는 EventID입니다."));
+        given(talkCalendarClientService.getEvent(accessToken, eventGetResponse.id())).willThrow(
+            new IllegalArgumentException("존재하지 않는 EventID입니다."));
 
         // When
-        Exception e = assertThrows(IllegalArgumentException.class, () -> talkCalendarService.getUpdatedEventList(from, to, memberId));
+        Exception e = assertThrows(IllegalArgumentException.class,
+            () -> talkCalendarService.getUpdatedEventList(from, to, memberId));
 
         // Then
         assertEquals(e.getClass(), IllegalArgumentException.class);
@@ -311,10 +315,11 @@ class TalkCalendarServiceTest {
             new EventCreationException("EventCreateRequest 에러"));
 
         // When
-        Exception e = assertThrows(EventCreationException.class, () -> talkCalendarService.createEvent(eventCreateRequest, memberId));
+        Exception e = assertThrows(EventCreationException.class,
+            () -> talkCalendarService.createEvent(eventCreateRequest, memberId));
 
         // Then
-        assertEquals(e.getClass(),EventCreationException.class);
+        assertEquals(e.getClass(), EventCreationException.class);
         assertEquals(e.getMessage(), "EventCreateRequest 에러");
         verify(memberService).getKakaoToken(memberId);
         verify(talkCalendarClientService).createEvent(accessToken, formData);
@@ -327,10 +332,12 @@ class TalkCalendarServiceTest {
         EventCreateRequest eventCreateRequestMcok = mock(EventCreateRequest.class);
 
         // Mocking
-        given(memberService.getKakaoToken(memberId)).willThrow(new IllegalArgumentException("존재하지 않는 MemberID입니다."));
+        given(memberService.getKakaoToken(memberId)).willThrow(
+            new IllegalArgumentException("존재하지 않는 MemberID입니다."));
 
         // When
-        Exception e = assertThrows(IllegalArgumentException.class, () -> talkCalendarService.createEvent(eventCreateRequestMcok, memberId));
+        Exception e = assertThrows(IllegalArgumentException.class,
+            () -> talkCalendarService.createEvent(eventCreateRequestMcok, memberId));
 
         // Then
         assertEquals(e.getClass(), IllegalArgumentException.class);
