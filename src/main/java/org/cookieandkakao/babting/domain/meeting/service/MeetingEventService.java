@@ -12,11 +12,8 @@ import org.cookieandkakao.babting.domain.calendar.service.TalkCalendarClientServ
 import org.cookieandkakao.babting.domain.meeting.dto.request.MeetingEventCreateRequest;
 import org.cookieandkakao.babting.domain.meeting.entity.Meeting;
 import org.cookieandkakao.babting.domain.meeting.entity.MemberMeeting;
-import org.cookieandkakao.babting.domain.meeting.repository.MeetingRepository;
-import org.cookieandkakao.babting.domain.meeting.repository.MemberMeetingRepository;
 import org.cookieandkakao.babting.domain.member.entity.KakaoToken;
 import org.cookieandkakao.babting.domain.member.entity.Member;
-import org.cookieandkakao.babting.domain.member.repository.MemberRepository;
 import org.cookieandkakao.babting.domain.member.service.MemberService;
 import org.springframework.stereotype.Service;
 import org.springframework.util.LinkedMultiValueMap;
