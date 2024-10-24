@@ -72,7 +72,6 @@ public class MeetingService {
             throw new IllegalStateException("이미 모임에 참가한 상태입니다.");
         }
 
-        // Todo 모임 참가시 모임 선호/비선호 음식 추가
         memberMeetingRepository.save(new MemberMeeting(member, meeting, false));
     }
 
