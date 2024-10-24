@@ -77,27 +77,6 @@ public class MeetingService {
         meetingRepository.save(meeting);
         memberMeetingRepository.save(new MemberMeeting(member, meeting, true));
     }
-    // 모임 확정(주최자)
-    public void decideMeeting(Long memberId, Long confirmFoodId, LocalDateTime confirmDateTime, Long meetingId){
-        Member member = memberService.findMember(memberId);
-        Meeting meeting = findMeeting(meetingId);
-
-        MemberMeeting memberMeeting = findMemberMeeting(member, meeting);
-
-        if (!memberMeeting.isHost()){
-            throw new IllegalStateException("권한이 없습니다.");
-        }
-
-        if (meeting.getConfirmDateTime() != null){
-            throw new IllegalStateException("이미 모임 시간이 확정되었습니다.");
-        }
-
-        if (confirmFoodId != null){
-            Food food = foodRepositoryService.findFoodById(confirmFoodId);
-            meeting.confirmFood(food);
-        }
-        meeting.confirmDateTime(confirmDateTime);
-    }
 
     // 모임 참가(초대받은사람)
     public void joinMeeting(Long memberId, Long meetingId){
