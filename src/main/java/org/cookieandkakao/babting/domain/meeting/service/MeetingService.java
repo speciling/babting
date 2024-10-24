@@ -70,31 +70,15 @@ public class MeetingService {
         Meeting meeting = findMeeting(meetingId);
         MemberMeeting memberMeeting = findMemberMeeting(member, meeting);
 
-        // 모임 확정 전
-        if (meeting.getConfirmDateTime() != null){
-            if (memberMeeting.isHost()){
-                // 해당 모임에 속하는 회원 모임 전부 삭제
-                memberMeetingRepository.deleteAllByMeeting(meeting);
-                // 모임 삭제
-                meetingRepository.delete(meeting);
-            } else {
-                // 해당 모임에 속하는 회원 모임 삭제
-                memberMeetingRepository.delete(memberMeeting);
-            }
-        // 모임 확정 후
-        } else{
-            //Todo 모임 삭제 시 해당 모임의 모임 일정도 전부 삭제해야함.
-            //만약 톡 캘린더에서 일정을 삭제했을 시 모임 일정이 없을 수도 있음.
-            if (memberMeeting.isHost()){
-                // 해당 모임의 모든 모임 일정 삭제
-                // 해당 모임에 속하는 회원 모임 전부 삭제
-                // 모임 삭제
-            } else {
-                // 해당 모임의 일정 삭제
-                // 해당 모임에 속하는 회원 모임 전부 삭제
-            }
+        if (memberMeeting.isHost()){
+            // 해당 모임에 속하는 회원 모임 전부 삭제
+            memberMeetingRepository.deleteAllByMeeting(meeting);
+            // 모임 삭제
+            meetingRepository.delete(meeting);
+        } else {
+            // 해당 모임에 속하는 회원 모임 삭제
+            memberMeetingRepository.delete(memberMeeting);
         }
-
     }
 
     // 내가 참여한 모임 목록 조회
