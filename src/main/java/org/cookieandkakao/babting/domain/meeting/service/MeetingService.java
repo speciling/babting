@@ -1,13 +1,10 @@
 package org.cookieandkakao.babting.domain.meeting.service;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.transaction.Transactional;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Optional;
 import java.util.stream.Collectors;
-import org.cookieandkakao.babting.domain.calendar.service.TalkCalendarClientService;
-import org.cookieandkakao.babting.domain.food.service.FoodRepositoryService;
 import org.cookieandkakao.babting.domain.meeting.dto.request.MeetingCreateRequest;
 import org.cookieandkakao.babting.domain.meeting.dto.response.MeetingGetResponse;
 import org.cookieandkakao.babting.domain.meeting.entity.Location;
@@ -19,7 +16,6 @@ import org.cookieandkakao.babting.domain.meeting.repository.MeetingEventReposito
 import org.cookieandkakao.babting.domain.meeting.repository.MeetingRepository;
 import org.cookieandkakao.babting.domain.meeting.repository.MemberMeetingRepository;
 import org.cookieandkakao.babting.domain.member.entity.Member;
-import org.cookieandkakao.babting.domain.member.repository.MemberRepository;
 import org.cookieandkakao.babting.domain.member.service.MemberService;
 import org.springframework.stereotype.Service;
 
