@@ -30,26 +30,19 @@ public class MeetingService {
     private final MeetingEventRepository meetingEventRepository;
     private final MemberMeetingRepository memberMeetingRepository;
     private final LocationRepository locationRepository;
-    private final FoodRepositoryService foodRepositoryService;
     private final MemberService memberService;
-    private final MemberRepository memberRepository;
-    private final TalkCalendarClientService talkCalendarClientService;
-    private final ObjectMapper objectMapper = new ObjectMapper();
+
 
     public MeetingService(MeetingRepository meetingRepository,
         MeetingEventRepository meetingEventRepository,
         MemberMeetingRepository memberMeetingRepository,
-        LocationRepository locationRepository, FoodRepositoryService foodRepositoryService,
-        MemberService memberService, MemberRepository memberRepository,
-        TalkCalendarClientService talkCalendarClientService) {
+        LocationRepository locationRepository,
+        MemberService memberService) {
         this.meetingRepository = meetingRepository;
         this.meetingEventRepository = meetingEventRepository;
         this.memberMeetingRepository = memberMeetingRepository;
         this.locationRepository = locationRepository;
-        this.foodRepositoryService = foodRepositoryService;
         this.memberService = memberService;
-        this.memberRepository = memberRepository;
-        this.talkCalendarClientService = talkCalendarClientService;
     }
 
     // 모임 생성(주최자)
