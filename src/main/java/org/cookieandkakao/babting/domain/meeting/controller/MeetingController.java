@@ -4,14 +4,10 @@ import java.util.List;
 import org.cookieandkakao.babting.common.annotaion.LoginMemberId;
 import org.cookieandkakao.babting.common.apiresponse.ApiResponseBody.SuccessBody;
 import org.cookieandkakao.babting.common.apiresponse.ApiResponseGenerator;
-import org.cookieandkakao.babting.domain.calendar.dto.response.EventCreateResponse;
-import org.cookieandkakao.babting.domain.food.service.FoodService;
-import org.cookieandkakao.babting.domain.meeting.dto.request.ConfirmMeetingGetRequest;
 import org.cookieandkakao.babting.domain.meeting.dto.request.MeetingCreateRequest;
 import org.cookieandkakao.babting.domain.meeting.dto.response.MeetingGetResponse;
-import org.cookieandkakao.babting.domain.meeting.entity.MemberMeeting;
+import org.cookieandkakao.babting.domain.meeting.service.MeetingEventService;
 import org.cookieandkakao.babting.domain.meeting.service.MeetingService;
-import org.cookieandkakao.babting.domain.member.entity.Member;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -26,11 +22,12 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/api/meeting")
 public class MeetingController {
     private final MeetingService meetingService;
-    private final FoodService foodService;
+    private final MeetingEventService meetingEventService;
 
-    public MeetingController(MeetingService meetingService, FoodService foodService) {
+    public MeetingController(MeetingService meetingService,
+        MeetingEventService meetingEventService) {
         this.meetingService = meetingService;
-        this.foodService = foodService;
+        this.meetingEventService = meetingEventService;
     }
 
     // 모임 생성(주최자)
@@ -71,7 +68,7 @@ public class MeetingController {
         @PathVariable("meetingId") Long meetingId,
         @LoginMemberId Long memberId
     ) {
-        meetingService.confirmMeeting(memberId, meetingId);
+        meetingEventService.confirmMeeting(memberId, meetingId);
         return ApiResponseGenerator.success(HttpStatus.OK, "모임 확정 성공");
     }
 

@@ -20,5 +20,5 @@ public interface MemberMeetingRepository extends JpaRepository<MemberMeeting, Lo
 
     @Query("SELECT mm.member FROM MemberMeeting mm WHERE mm.meeting.meetingId = :meetingId")
     List<Member> findMembersByMeetingId(@Param("meetingId") Long meetingId);
-    Optional<List<MemberMeeting>> findByMeeting(Meeting meeting);
+    List<MemberMeeting> findByMeeting(Meeting meeting);
 }
