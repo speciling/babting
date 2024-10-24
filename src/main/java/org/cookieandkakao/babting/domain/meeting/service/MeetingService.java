@@ -103,10 +103,4 @@ public class MeetingService {
     public List<MemberMeeting> findAllMemberMeeting(Meeting meeting){
         return memberMeetingRepository.findByMeeting(meeting);
     }
-
-    // MeetingEvent는 없을 수 있기 때문에 Optional로 반환
-    private Optional<MeetingEvent> findMeetingEvent(MemberMeeting memberMeeting){
-        return meetingEventRepository.findByMemberMeeting(memberMeeting);
-    }
-
 }
