@@ -128,6 +128,10 @@ public class MeetingService {
             .orElseThrow(() -> new NoSuchElementException("해당 모임에 회원이 존재하지 않습니다."));
     }
 
+    public List<MemberMeeting> findAllMemberMeeting(Meeting meeting){
+        return memberMeetingRepository.findByMeeting(meeting);
+    }
+
     // MeetingEvent는 없을 수 있기 때문에 Optional로 반환
     private Optional<MeetingEvent> findMeetingEvent(MemberMeeting memberMeeting){
         return meetingEventRepository.findByMemberMeeting(memberMeeting);

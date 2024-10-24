@@ -5,10 +5,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.transaction.Transactional;
 import java.util.List;
 import java.util.Map;
-import java.util.NoSuchElementException;
 import org.cookieandkakao.babting.common.exception.customexception.EventCreationException;
 import org.cookieandkakao.babting.common.exception.customexception.JsonConversionException;
-import org.cookieandkakao.babting.common.exception.customexception.MemberNotFoundException;
 import org.cookieandkakao.babting.domain.calendar.dto.response.EventCreateResponse;
 import org.cookieandkakao.babting.domain.calendar.service.TalkCalendarClientService;
 import org.cookieandkakao.babting.domain.meeting.dto.request.MeetingEventCreateRequest;
@@ -27,32 +25,24 @@ import org.springframework.util.MultiValueMap;
 @Transactional
 @Service
 public class MeetingEventService {
-    private final MemberRepository memberRepository;
     private final MemberService memberService;
     private final TalkCalendarClientService talkCalendarClientService;
     private final ObjectMapper objectMapper = new ObjectMapper();
-    private final MemberMeetingRepository memberMeetingRepository;
-    private final MeetingRepository meetingRepository;
     private final MeetingService meetingService;
 
-    public MeetingEventService(MemberRepository memberRepository, MemberService memberService,
+    public MeetingEventService(MemberService memberService,
         TalkCalendarClientService talkCalendarClientService,
-        MemberMeetingRepository memberMeetingRepository, MeetingRepository meetingRepository,
         MeetingService meetingService) {
-        this.memberRepository = memberRepository;
         this.memberService = memberService;
         this.talkCalendarClientService = talkCalendarClientService;
-        this.memberMeetingRepository = memberMeetingRepository;
-        this.meetingRepository = meetingRepository;
         this.meetingService = meetingService;
     }
 
     // 모임 확정되면 일정 생성
     public void confirmMeeting(Long memberId, Long meetingId){
-        Member member = memberRepository.findById(memberId).orElseThrow( () ->
-            new MemberNotFoundException("회원이 없습니다."));
-        Meeting meeting = findMeeting(meetingId);
-        MemberMeeting memberMeeting = findMemberMeeting(member, meeting);
+        Member member = memberService.findMember(memberId);
+        Meeting meeting = meetingService.findMeeting(meetingId);
+        MemberMeeting memberMeeting = meetingService.findMemberMeeting(member, meeting);
 
         if (!memberMeeting.isHost()){
             throw new IllegalStateException("권한이 없습니다.");
@@ -113,23 +103,11 @@ public class MeetingEventService {
     }
 
     public List<Long> getMemberIdInMeetingId(Long meetingId) {
-        Meeting meeting = meetingRepository.findById(meetingId)
-            .orElseThrow(() -> new IllegalArgumentException("해당 모임이 존재하지 않습니다."));
+        Meeting meeting = meetingService.findMeeting(meetingId);
+        List<MemberMeeting> memberMeetings = meetingService.findAllMemberMeeting(meeting);
 
-        List<MemberMeeting> memberMeetings = memberMeetingRepository.findByMeeting(meeting)
-            .orElseThrow(() -> new IllegalArgumentException("회원이 없습니다."));
         return memberMeetings.stream()
             .map(memberMeeting -> memberMeeting.getMember().getMemberId())
             .toList();
-    }
-
-    public Meeting findMeeting(Long meetingId){
-        return meetingRepository.findById(meetingId)
-            .orElseThrow(() -> new NoSuchElementException("해당 모임이 존재하지 않습니다."));
-    }
-
-    public MemberMeeting findMemberMeeting(Member member, Meeting meeting){
-        return memberMeetingRepository.findByMemberAndMeeting(member, meeting)
-            .orElseThrow(() -> new NoSuchElementException("해당 모임에 회원이 존재하지 않습니다."));
     }
 }
