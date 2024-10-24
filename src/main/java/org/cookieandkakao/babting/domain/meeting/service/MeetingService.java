@@ -1,24 +1,13 @@
 package org.cookieandkakao.babting.domain.meeting.service;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.transaction.Transactional;
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Optional;
 import java.util.stream.Collectors;
-import org.cookieandkakao.babting.domain.food.entity.Food;
-import org.cookieandkakao.babting.domain.food.service.FoodRepositoryService;
-import java.util.Map;
-import java.util.NoSuchElementException;
-import org.cookieandkakao.babting.common.exception.customexception.EventCreationException;
-import org.cookieandkakao.babting.common.exception.customexception.JsonConversionException;
-import org.cookieandkakao.babting.common.exception.customexception.MemberNotFoundException;
-import org.cookieandkakao.babting.domain.calendar.dto.response.EventCreateResponse;
 import org.cookieandkakao.babting.domain.calendar.service.TalkCalendarClientService;
-import org.cookieandkakao.babting.domain.meeting.dto.request.MeetingEventCreateRequest;
-import org.cookieandkakao.babting.domain.meeting.dto.request.MeetingTimeCreateRequest;
+import org.cookieandkakao.babting.domain.food.service.FoodRepositoryService;
 import org.cookieandkakao.babting.domain.meeting.dto.request.MeetingCreateRequest;
 import org.cookieandkakao.babting.domain.meeting.dto.response.MeetingGetResponse;
 import org.cookieandkakao.babting.domain.meeting.entity.Location;
@@ -29,15 +18,10 @@ import org.cookieandkakao.babting.domain.meeting.repository.LocationRepository;
 import org.cookieandkakao.babting.domain.meeting.repository.MeetingEventRepository;
 import org.cookieandkakao.babting.domain.meeting.repository.MeetingRepository;
 import org.cookieandkakao.babting.domain.meeting.repository.MemberMeetingRepository;
-import org.cookieandkakao.babting.domain.member.entity.KakaoToken;
 import org.cookieandkakao.babting.domain.member.entity.Member;
-
 import org.cookieandkakao.babting.domain.member.repository.MemberRepository;
-
 import org.cookieandkakao.babting.domain.member.service.MemberService;
 import org.springframework.stereotype.Service;
-import org.springframework.util.LinkedMultiValueMap;
-import org.springframework.util.MultiValueMap;
 
 @Service
 @Transactional
@@ -91,6 +75,7 @@ public class MeetingService {
         // Todo 모임 참가시 모임 선호/비선호 음식 추가
         memberMeetingRepository.save(new MemberMeeting(member, meeting, false));
     }
+
     // 모임 탈퇴(주최자, 초대받은 사람)
     public void exitMeeting(Long memberId, Long meetingId){
         Member member = memberService.findMember(memberId);
