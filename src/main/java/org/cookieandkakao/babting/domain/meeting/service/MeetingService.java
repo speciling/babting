@@ -124,7 +124,7 @@ public class MeetingService {
 
     }
 
-    // 모임 목록 조회
+    // 내가 참여한 모임 목록 조회
     public List<MeetingGetResponse> getAllMeetings(Long memberId){
         Member member = memberService.findMember(memberId);
         List<Meeting> meetingList = memberMeetingRepository.findMeetingsByMember(member);
