@@ -197,7 +197,48 @@ public class MeetingEventService {
 
     // 빈 시간대
     private List<TimeGetResponse> calculateAvailableTimes(List<TimeGetResponse> mergedTimes, String from, String to) {
+        List<TimeGetResponse> availableTimes = new ArrayList<>();
+        LocalDateTime searchStart = LocalDateTime.parse(from);
+        LocalDateTime searchEnd = LocalDateTime.parse(to);
 
+        // 첫 번째 시간대 이전의 빈 시간 확인
+        // => 검색 시작일 ~ mergedTime 첫번째 일정의 시작시간까지 빈 시간
+        if (searchStart.isBefore(LocalDateTime.parse(mergedTimes.getFirst().startAt()))) {
+            availableTimes.add(new TimeGetResponse(
+                from,
+                mergedTimes.getFirst().startAt(),
+                "UTC",
+                false
+            ));
+        }
+
+        // 두 시간대 사이의 빈 시간 계산
+        for (int i = 0; i < mergedTimes.size() - 1; i++) {
+            LocalDateTime endOfCurrent = LocalDateTime.parse(mergedTimes.get(i).endAt());
+            LocalDateTime startOfNext = LocalDateTime.parse(mergedTimes.get(i + 1).startAt());
+
+            // 첫 번째 time의 끝 시간 ~ 두 번째 time의 시작시간 => 빈 시간대
+            if (endOfCurrent.isBefore(startOfNext)) {
+                availableTimes.add(new TimeGetResponse(
+                    mergedTimes.get(i).endAt(),
+                    mergedTimes.get(i + 1).startAt(),
+                    "UTC",
+                    false
+                ));
+            }
+        }
+
+        // 마지막 시간대 이후의 빈 시간 확인
+        if (searchEnd.isAfter(LocalDateTime.parse(mergedTimes.getLast().endAt()))) {
+            availableTimes.add(new TimeGetResponse(
+                mergedTimes.getLast().endAt(),
+                to,
+                "UTC",
+                false
+            ));
+        }
+
+        return availableTimes;
     }
 
 
