@@ -155,7 +155,44 @@ public class MeetingEventService {
 
     // 겹치는 시간 병합
     private List<TimeGetResponse> mergeOverlappingTimes(List<TimeGetResponse> times) {
+        List<TimeGetResponse> mergedTimes = new ArrayList<>();
 
+        if (times.isEmpty())
+            return mergedTimes;
+
+        TimeGetResponse currentTime = times.getFirst();
+
+        for (int i = 1; i < times.size(); i++) {
+            TimeGetResponse next = times.get(i);
+            LocalDateTime currentEnd = LocalDateTime.parse(currentTime.endAt());
+            LocalDateTime nextStart = LocalDateTime.parse(next.startAt());
+
+            // 겹치는 시간대라면 병합
+            if (!nextStart.isAfter(currentEnd)) {
+                currentTime = new TimeGetResponse(
+                    currentTime.startAt(),
+                    maxEndTime(currentTime.endAt(), next.endAt()),
+                    currentTime.timeZone(),
+                    currentTime.allDay() || next.allDay()
+                );
+            } else {
+                mergedTimes.add(currentTime);
+                currentTime = next;
+            }
+        }
+
+        mergedTimes.add(currentTime); // 마지막 시간대 추가
+        return mergedTimes;
+    }
+
+    // 두 시간대 중 더 늦은 종료 시간을 반환
+    private String maxEndTime(String end1, String end2) {
+        LocalDateTime e1 = LocalDateTime.parse(end1);
+        LocalDateTime e2 = LocalDateTime.parse(end2);
+        if (e1.isAfter(e2)){
+            return end1;
+        }
+        return end2;
     }
 
     // 빈 시간대
