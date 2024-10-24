@@ -71,7 +71,7 @@ public class MeetingEventService {
     }
 
     // 일정 생성 후 캘린더에 일정 추가
-    public EventCreateResponse addMeetingEvent(Long memberId,Long meetingId, MeetingEventCreateRequest meetingEventCreateRequest) {
+    private EventCreateResponse addMeetingEvent(Long memberId,Long meetingId, MeetingEventCreateRequest meetingEventCreateRequest) {
         String kakaoAccessToken = getKakaoAccessToken(memberId);
         MultiValueMap<String, String> formData = new LinkedMultiValueMap<>();
         String eventJson = convertToJSONString(meetingEventCreateRequest);
@@ -99,7 +99,7 @@ public class MeetingEventService {
         }
     }
 
-    public List<Long> getMemberIdInMeetingId(Long meetingId) {
+    private List<Long> getMemberIdInMeetingId(Long meetingId) {
         Meeting meeting = meetingService.findMeeting(meetingId);
         List<MemberMeeting> memberMeetings = meetingService.findAllMemberMeeting(meeting);
 
@@ -107,4 +107,6 @@ public class MeetingEventService {
             .map(memberMeeting -> memberMeeting.getMember().getMemberId())
             .toList();
     }
+
+
 }
