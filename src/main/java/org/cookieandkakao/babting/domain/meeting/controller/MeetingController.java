@@ -26,11 +26,9 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/api/meeting")
 public class MeetingController {
     private final MeetingService meetingService;
-    private final FoodService foodService;
 
-    public MeetingController(MeetingService meetingService, FoodService foodService) {
+    public MeetingController(MeetingService meetingService) {
         this.meetingService = meetingService;
-        this.foodService = foodService;
     }
 
     // 모임 생성(주최자)
