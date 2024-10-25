@@ -38,7 +38,7 @@ public class FoodPreferenceController {
 
     // 선호/비선호 음식 조회
     @GetMapping("/{type}")
-    public ResponseEntity<SuccessBody<List<FoodPreferenceGetResponse>>> getFoodPreferences(
+    public ResponseEntity<?> getFoodPreferences(
             @PathVariable String type,
             @LoginMemberId Long memberId
     ) {
@@ -46,7 +46,7 @@ public class FoodPreferenceController {
         List<FoodPreferenceGetResponse> preferences = strategy.getAllPreferencesByMember(memberId);
 
         if (preferences.isEmpty()) {
-            return ApiResponseGenerator.success(HttpStatus.OK, "조회된 음식이 없습니다", null);
+            return ApiResponseGenerator.fail(HttpStatus.OK, "조회된 음식이 없습니다");
         }
 
         return ApiResponseGenerator.success(HttpStatus.OK, "음식 조회 성공", preferences);
