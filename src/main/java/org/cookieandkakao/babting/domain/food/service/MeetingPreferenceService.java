@@ -10,7 +10,6 @@ import org.cookieandkakao.babting.domain.food.repository.MeetingPreferenceFoodRe
 import org.cookieandkakao.babting.domain.food.repository.NonPreferenceFoodRepository;
 import org.cookieandkakao.babting.domain.meeting.entity.MemberMeeting;
 import org.cookieandkakao.babting.domain.meeting.repository.MemberMeetingRepository;
-import org.cookieandkakao.babting.domain.member.entity.Member;
 import org.springframework.stereotype.Service;
 
 import java.util.HashSet;
@@ -48,7 +47,6 @@ public class MeetingPreferenceService {
 
     private List<Food> getRecommendedFoodsForMeeting(Long meetingId) {
         List<MemberMeeting> memberMeetings = memberMeetingRepository.findMemberMeetingsByMeetingId(meetingId);
-        List<Member> members = memberMeetingRepository.findMembersByMeetingId(meetingId);
 
         // 모든 멤버의 모임별 선호 음식 ID를 Set으로 수집
         Set<Long> preferredFoodIds = new HashSet<>();
@@ -68,8 +66,8 @@ public class MeetingPreferenceService {
         }
 
         // 모든 멤버의 개인 비선호 음식 ID를 Set으로 수집하고 선호 음식 ID에서 제거
-        for (Member member : members) {
-            List<NonPreferenceFood> nonPreferenceFoods = nonPreferenceFoodRepository.findAllByMember(member);
+        for (MemberMeeting memberMeeting : memberMeetings) {
+            List<NonPreferenceFood> nonPreferenceFoods = nonPreferenceFoodRepository.findAllByMember(memberMeeting.getMember());
             for (NonPreferenceFood nonPreference : nonPreferenceFoods) {
                 preferredFoodIds.remove(nonPreference.getFood().getFoodId());
             }
