@@ -63,7 +63,7 @@ public class MemberMeetingFoodPreferenceController {
         List<FoodPreferenceGetResponse> preferences = strategy.getAllPreferencesByMeeting(meetingId, memberId);
 
         if (preferences.isEmpty()) {
-            return ApiResponseGenerator.success(HttpStatus.NO_CONTENT, "조회된 음식이 없습니다", null);
+            return ApiResponseGenerator.success(HttpStatus.OK, "조회된 음식이 없습니다", null);
         }
 
         return ApiResponseGenerator.success(HttpStatus.OK, "모임별 개인 선호/비선호 음식 조회 성공", preferences);
