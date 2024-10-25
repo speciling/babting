@@ -13,10 +13,10 @@ import org.cookieandkakao.babting.domain.member.service.MemberService;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -51,9 +51,9 @@ public class MeetingFoodPreferenceUpdater {
         meetingPreferenceFoodRepository.deleteAllByMemberMeeting(memberMeeting);
         meetingNonPreferenceFoodRepository.deleteAllByMemberMeeting(memberMeeting);
 
-        List<Long> allFoodIds = new ArrayList<>(preferences); //preferences 리스트의 모든 아이디 추가하기
-        allFoodIds.addAll(nonPreferences);//nonPreferences 리스트의 모든 아이디 추가하기
-        Map<Long, Food> foodsMap = foodRepositoryService.findFoodsByIds(new HashSet<>(allFoodIds))
+        Set<Long> allFoodIds = new HashSet<>(preferences);
+        allFoodIds.addAll(nonPreferences);
+        Map<Long, Food> foodsMap = foodRepositoryService.findFoodsByIds(allFoodIds)
                 .stream().collect(Collectors.toMap(Food::getFoodId, Function.identity()));
 
         // 선호음식 stream 생성
