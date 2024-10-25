@@ -57,7 +57,7 @@ public class MemberMeetingFoodPreferenceController {
     ) {
         MeetingFoodPreferenceStrategy strategy = strategies.get(type);
         if (strategy == null) {
-            throw new IllegalArgumentException("Invalid preference type");
+            return ApiResponseGenerator.success(HttpStatus.NOT_FOUND, "잘못된 선호 타입입니다", null);
         }
 
         List<FoodPreferenceGetResponse> preferences = strategy.getAllPreferencesByMeeting(meetingId, memberId);
