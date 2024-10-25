@@ -1,6 +1,8 @@
 package org.cookieandkakao.babting.domain.food.service;
 
+import org.cookieandkakao.babting.domain.food.entity.Food;
 import org.cookieandkakao.babting.domain.food.entity.MeetingNonPreferenceFood;
+import org.cookieandkakao.babting.domain.food.dto.FoodPreferenceGetResponse;
 import org.cookieandkakao.babting.domain.food.entity.MeetingPreferenceFood;
 import org.cookieandkakao.babting.domain.food.entity.NonPreferenceFood;
 import org.cookieandkakao.babting.domain.food.repository.MeetingNonPreferenceFoodRepository;
@@ -22,19 +24,33 @@ public class MeetingPreferenceService {
     private final MeetingPreferenceFoodRepository meetingPreferenceFoodRepository;
     private final MeetingNonPreferenceFoodRepository meetingNonPreferenceFoodRepository;
     private final NonPreferenceFoodRepository nonPreferenceFoodRepository;
+    private final FoodRepositoryService foodRepositoryService;
 
     public MeetingPreferenceService(MemberMeetingRepository memberMeetingRepository,
                                     MeetingPreferenceFoodRepository meetingPreferenceFoodRepository,
                                     MeetingNonPreferenceFoodRepository meetingNonPreferenceFoodRepository,
-                                    NonPreferenceFoodRepository nonPreferenceFoodRepository
+                                    NonPreferenceFoodRepository nonPreferenceFoodRepository,
+                                    FoodRepositoryService foodRepositoryService
     ) {
         this.memberMeetingRepository = memberMeetingRepository;
         this.meetingPreferenceFoodRepository = meetingPreferenceFoodRepository;
         this.meetingNonPreferenceFoodRepository = meetingNonPreferenceFoodRepository;
         this.nonPreferenceFoodRepository = nonPreferenceFoodRepository;
+        this.foodRepositoryService = foodRepositoryService;
     }
 
-    public Set<Long> getRecommendedFoodsForMeeting(Long meetingId) {
+    public List<FoodPreferenceGetResponse> getRecommendedFoodDetailsForMeeting(Long meetingId) {
+        Set<Long> recommendedFoodIds = getRecommendedFoodsForMeeting(meetingId);
+        List<Food> foods = foodRepositoryService.findFoodsByIds(recommendedFoodIds);
+        return foods.stream()
+            .map(food -> new FoodPreferenceGetResponse(
+                food.getFoodId(),
+                food.getFoodCategory().getName(),
+                food.getName()))
+            .collect(Collectors.toList());
+    }
+
+    private Set<Long> getRecommendedFoodsForMeeting(Long meetingId) {
         List<MemberMeeting> memberMeetings = memberMeetingRepository.findMemberMeetingsByMeetingId(meetingId);
         List<Member> members = memberMeetingRepository.findMembersByMeetingId(meetingId);
 

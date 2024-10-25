@@ -5,7 +5,6 @@ import org.cookieandkakao.babting.common.apiresponse.ApiResponseBody;
 import org.cookieandkakao.babting.common.apiresponse.ApiResponseGenerator;
 import org.cookieandkakao.babting.domain.food.dto.FoodPreferenceGetResponse;
 import org.cookieandkakao.babting.domain.food.dto.PersonalPreferenceUpdateRequest;
-import org.cookieandkakao.babting.domain.food.service.FoodRepositoryService;
 import org.cookieandkakao.babting.domain.food.service.MeetingFoodPreferenceStrategy;
 import org.cookieandkakao.babting.domain.food.service.MeetingFoodPreferenceUpdater;
 import org.cookieandkakao.babting.domain.food.service.MeetingNonPreferenceFoodService;
@@ -22,83 +21,71 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
-import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/meeting")
 public class MemberMeetingFoodPreferenceController {
-    private final Map<String, MeetingFoodPreferenceStrategy> strategies;
-    private final MeetingFoodPreferenceUpdater meetingFoodPreferenceUpdater;
-    private final MeetingPreferenceService meetingPreferenceService;
-    private final FoodRepositoryService foodRepositoryService;
+  private final Map<String, MeetingFoodPreferenceStrategy> strategies;
+  private final MeetingFoodPreferenceUpdater meetingFoodPreferenceUpdater;
+  private final MeetingPreferenceService meetingPreferenceService;
 
-    public MemberMeetingFoodPreferenceController(
-            MeetingPreferenceFoodService meetingPreferenceFoodService,
-            MeetingNonPreferenceFoodService meetingNonPreferenceFoodService,
-            MeetingFoodPreferenceUpdater meetingFoodPreferenceUpdater,
-            MeetingPreferenceService meetingPreferenceService,
-            FoodRepositoryService foodRepositoryService
-    ) {
-        this.meetingFoodPreferenceUpdater = meetingFoodPreferenceUpdater;
-        this.meetingPreferenceService = meetingPreferenceService;
-        this.foodRepositoryService = foodRepositoryService;
-        strategies = Map.of(
-                "preferences", meetingPreferenceFoodService,
-                "non-preferences", meetingNonPreferenceFoodService
-        );
+  public MemberMeetingFoodPreferenceController(
+      MeetingPreferenceFoodService meetingPreferenceFoodService,
+      MeetingNonPreferenceFoodService meetingNonPreferenceFoodService,
+      MeetingFoodPreferenceUpdater meetingFoodPreferenceUpdater,
+      MeetingPreferenceService meetingPreferenceService
+      ) {
+    this.meetingFoodPreferenceUpdater = meetingFoodPreferenceUpdater;
+    this.meetingPreferenceService = meetingPreferenceService;
+    strategies = Map.of(
+        "preferences", meetingPreferenceFoodService,
+        "non-preferences", meetingNonPreferenceFoodService
+    );
+  }
+
+  @GetMapping("/{meeting_id}/{type}")
+  public ResponseEntity<ApiResponseBody.SuccessBody<List<FoodPreferenceGetResponse>>> getFoodPreferences(
+      @PathVariable String type,
+      @LoginMemberId Long memberId,
+      @PathVariable("meeting_id") Long meetingId
+  ) {
+    MeetingFoodPreferenceStrategy strategy = strategies.get(type);
+    if (strategy == null) {
+      return ApiResponseGenerator.success(HttpStatus.NOT_FOUND, "잘못된 선호 타입입니다", null);
     }
 
-    @GetMapping("/{meeting_id}/{type}")
-    public ResponseEntity<ApiResponseBody.SuccessBody<List<FoodPreferenceGetResponse>>> getFoodPreferences(
-            @PathVariable String type,
-            @LoginMemberId Long memberId,
-            @PathVariable("meeting_id") Long meetingId
-    ) {
-        MeetingFoodPreferenceStrategy strategy = strategies.get(type);
-        if (strategy == null) {
-            return ApiResponseGenerator.success(HttpStatus.NOT_FOUND, "잘못된 선호 타입입니다", null);
-        }
+    List<FoodPreferenceGetResponse> preferences = strategy.getAllPreferencesByMeeting(meetingId, memberId);
 
-        List<FoodPreferenceGetResponse> preferences = strategy.getAllPreferencesByMeeting(meetingId, memberId);
-
-        if (preferences.isEmpty()) {
-            return ApiResponseGenerator.success(HttpStatus.OK, "조회된 음식이 없습니다", null);
-        }
-
-        return ApiResponseGenerator.success(HttpStatus.OK, "모임별 개인 선호/비선호 음식 조회 성공", preferences);
+    if (preferences.isEmpty()) {
+      return ApiResponseGenerator.success(HttpStatus.OK, "조회된 음식이 없습니다", null);
     }
 
-    @PutMapping("/{meeting_id}/personal")
-    public ResponseEntity<ApiResponseBody.SuccessBody<PersonalPreferenceUpdateRequest>> updatePreferences(
-            @LoginMemberId Long memberId,
-            @PathVariable("meeting_id") Long meetingId,
-            @RequestBody PersonalPreferenceUpdateRequest PersonalPreferenceRequestDto
-    ) {
-        meetingFoodPreferenceUpdater.updatePreferences(
-                meetingId,
-                memberId,
-                PersonalPreferenceRequestDto.preferences(),
-                PersonalPreferenceRequestDto.nonPreferences()
-        );
+    return ApiResponseGenerator.success(HttpStatus.OK, "모임별 개인 선호/비선호 음식 조회 성공", preferences);
+  }
 
-        return ApiResponseGenerator.success(HttpStatus.OK, "모임별 개인 정보 수정 성공", PersonalPreferenceRequestDto);
-    }
+  @PutMapping("/{meeting_id}/personal")
+  public ResponseEntity<ApiResponseBody.SuccessBody<PersonalPreferenceUpdateRequest>> updatePreferences(
+      @LoginMemberId Long memberId,
+      @PathVariable("meeting_id") Long meetingId,
+      @RequestBody PersonalPreferenceUpdateRequest PersonalPreferenceRequestDto
+  ) {
+    meetingFoodPreferenceUpdater.updatePreferences(
+        meetingId,
+        memberId,
+        PersonalPreferenceRequestDto.preferences(),
+        PersonalPreferenceRequestDto.nonPreferences()
+    );
 
-    @GetMapping("/{meetingId}/recommend")
-    public ResponseEntity<ApiResponseBody.SuccessBody<List<FoodPreferenceGetResponse>>> getRecommendedFoodsForMeeting(
-            @PathVariable Long meetingId
-    ) {
+    return ApiResponseGenerator.success(HttpStatus.OK, "모임별 개인 정보 수정 성공", PersonalPreferenceRequestDto);
+  }
 
-        Set<Long> recommendedFoodIds = meetingPreferenceService.getRecommendedFoodsForMeeting(meetingId);
+  @GetMapping("/{meetingId}/recommend")
+  public ResponseEntity<ApiResponseBody.SuccessBody<List<FoodPreferenceGetResponse>>> getRecommendedFoodsForMeeting(
+      @PathVariable Long meetingId
+  ) {
 
-        List<FoodPreferenceGetResponse> recommendedFoods = foodRepositoryService.findFoodsByIds(recommendedFoodIds).stream()
-            .map(food -> new FoodPreferenceGetResponse(
-                food.getFoodId(),
-                food.getFoodCategory().getName(),
-                food.getName()))
-            .collect(Collectors.toList());
+    List<FoodPreferenceGetResponse> recommendedFoods = meetingPreferenceService.getRecommendedFoodDetailsForMeeting(meetingId);
 
-        return ApiResponseGenerator.success(HttpStatus.OK, "모임 추천 음식 조회 성공", recommendedFoods);
-    }
+    return ApiResponseGenerator.success(HttpStatus.OK, "모임 추천 음식 조회 성공", recommendedFoods);
+  }
 }
