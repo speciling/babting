@@ -31,7 +31,7 @@ public class Member {
     @Column
     private String profileImageUrl;
 
-    @OneToOne(cascade = CascadeType.ALL)
+    @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "kako_token_id")
     private KakaoToken kakaoToken;
 
