@@ -92,13 +92,12 @@ public class MemberMeetingFoodPreferenceController {
 
         Set<Long> recommendedFoodIds = meetingPreferenceService.getRecommendedFoodsForMeeting(meetingId);
 
-        List<FoodPreferenceGetResponse> recommendedFoods = recommendedFoodIds.stream()
-                .map(foodRepositoryService::findFoodById) // Food 엔티티 조회
-                .map(food -> new FoodPreferenceGetResponse(
-                        food.getFoodId(),
-                        food.getFoodCategory().getName(),
-                        food.getName()))
-                .collect(Collectors.toList());
+        List<FoodPreferenceGetResponse> recommendedFoods = foodRepositoryService.findFoodsByIds(recommendedFoodIds).stream()
+            .map(food -> new FoodPreferenceGetResponse(
+                food.getFoodId(),
+                food.getFoodCategory().getName(),
+                food.getName()))
+            .collect(Collectors.toList());
 
         return ApiResponseGenerator.success(HttpStatus.OK, "모임 추천 음식 조회 성공", recommendedFoods);
     }

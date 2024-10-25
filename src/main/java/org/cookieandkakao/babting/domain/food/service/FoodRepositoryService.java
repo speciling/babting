@@ -7,6 +7,9 @@ import org.cookieandkakao.babting.domain.food.repository.PreferenceFoodRepositor
 import org.cookieandkakao.babting.domain.member.entity.Member;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+import java.util.Set;
+
 @Service
 public class FoodRepositoryService {
 
@@ -37,5 +40,9 @@ public class FoodRepositoryService {
         if (preferenceFoodRepository.existsByFoodAndMember(food, member)) {
             throw new RuntimeException("해당 음식은 이미 선호 음식으로 등록되어 있습니다.");
         }
+    }
+
+    public List<Food> findFoodsByIds(Set<Long> foodIds) {
+        return foodRepository.findAllById(foodIds);
     }
 }
