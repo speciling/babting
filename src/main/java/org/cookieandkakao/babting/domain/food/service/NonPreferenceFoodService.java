@@ -34,11 +34,8 @@ public class NonPreferenceFoodService implements FoodPreferenceStrategy {
         Member member = memberService.findMember(memberId);
 
         return nonPreferenceFoodRepository.findAllByMember(member).stream()
-                .map(nonPreferenceFood -> new FoodPreferenceGetResponse(
-                        nonPreferenceFood.getFood().getFoodId(),
-                        nonPreferenceFood.getFood().getFoodCategory().getName(),
-                        nonPreferenceFood.getFood().getName()))
-                .collect(Collectors.toList());
+            .map(FoodPreferenceGetResponse::fromNonPreferenceFood)
+            .collect(Collectors.toList());
     }
 
     @Override

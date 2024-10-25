@@ -34,11 +34,8 @@ public class PreferenceFoodService implements FoodPreferenceStrategy {
         Member member = memberService.findMember(memberId);
 
         return preferenceFoodRepository.findAllByMember(member).stream()
-                .map(preferenceFood -> new FoodPreferenceGetResponse(
-                        preferenceFood.getFood().getFoodId(),
-                        preferenceFood.getFood().getFoodCategory().getName(),
-                        preferenceFood.getFood().getName()))
-                .collect(Collectors.toList());
+            .map(FoodPreferenceGetResponse::fromPreferenceFood)
+            .collect(Collectors.toList());
     }
 
     @Override
