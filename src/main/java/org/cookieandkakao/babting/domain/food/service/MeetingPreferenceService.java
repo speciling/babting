@@ -1,8 +1,8 @@
 package org.cookieandkakao.babting.domain.food.service;
 
+import org.cookieandkakao.babting.domain.food.dto.FoodPreferenceGetResponse;
 import org.cookieandkakao.babting.domain.food.entity.Food;
 import org.cookieandkakao.babting.domain.food.entity.MeetingNonPreferenceFood;
-import org.cookieandkakao.babting.domain.food.dto.FoodPreferenceGetResponse;
 import org.cookieandkakao.babting.domain.food.entity.MeetingPreferenceFood;
 import org.cookieandkakao.babting.domain.food.entity.NonPreferenceFood;
 import org.cookieandkakao.babting.domain.food.repository.MeetingNonPreferenceFoodRepository;
@@ -43,11 +43,11 @@ public class MeetingPreferenceService {
         Set<Long> recommendedFoodIds = getRecommendedFoodsForMeeting(meetingId);
         List<Food> foods = foodRepositoryService.findFoodsByIds(recommendedFoodIds);
         return foods.stream()
-            .map(food -> new FoodPreferenceGetResponse(
-                food.getFoodId(),
-                food.getFoodCategory().getName(),
-                food.getName()))
-            .collect(Collectors.toList());
+                .map(food -> new FoodPreferenceGetResponse(
+                        food.getFoodId(),
+                        food.getFoodCategory().getName(),
+                        food.getName()))
+                .collect(Collectors.toList());
     }
 
     private Set<Long> getRecommendedFoodsForMeeting(Long meetingId) {
@@ -59,8 +59,8 @@ public class MeetingPreferenceService {
         for (MemberMeeting memberMeeting : memberMeetings) {
             List<MeetingPreferenceFood> preferenceFoods = meetingPreferenceFoodRepository.findAllByMemberMeeting(memberMeeting);
             preferredFoodIds.addAll(preferenceFoods.stream()
-                .map(preference -> preference.getFood().getFoodId())
-                .collect(Collectors.toSet()));
+                    .map(preference -> preference.getFood().getFoodId())
+                    .collect(Collectors.toSet()));
         }
 
         // 모든 멤버의 모임별 비선호 음식 ID를 Set으로 수집하고 선호 음식 ID에서 제거

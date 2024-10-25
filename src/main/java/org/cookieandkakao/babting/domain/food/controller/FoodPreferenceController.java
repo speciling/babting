@@ -3,6 +3,7 @@ package org.cookieandkakao.babting.domain.food.controller;
 import org.cookieandkakao.babting.common.annotaion.LoginMemberId;
 import org.cookieandkakao.babting.common.apiresponse.ApiResponseBody.SuccessBody;
 import org.cookieandkakao.babting.common.apiresponse.ApiResponseGenerator;
+import org.cookieandkakao.babting.common.exception.customexception.InvalidFoodPreferenceTypeException;
 import org.cookieandkakao.babting.domain.food.dto.FoodPreferenceCreateRequest;
 import org.cookieandkakao.babting.domain.food.dto.FoodPreferenceGetResponse;
 import org.cookieandkakao.babting.domain.food.service.FoodPreferenceStrategy;
@@ -41,10 +42,7 @@ public class FoodPreferenceController {
             @PathVariable String type,
             @LoginMemberId Long memberId
     ) {
-        FoodPreferenceStrategy strategy = strategies.get(type);
-        if (strategy == null) {
-            return ApiResponseGenerator.success(HttpStatus.NOT_FOUND, "잘못된 선호 타입입니다", null);
-        }
+        FoodPreferenceStrategy strategy = getStrategy(type);
         List<FoodPreferenceGetResponse> preferences = strategy.getAllPreferencesByMember(memberId);
 
         if (preferences.isEmpty()) {
@@ -61,10 +59,7 @@ public class FoodPreferenceController {
             @RequestBody FoodPreferenceCreateRequest request,
             @LoginMemberId Long memberId
     ) {
-        FoodPreferenceStrategy strategy = strategies.get(type);
-        if (strategy == null) {
-            return ApiResponseGenerator.success(HttpStatus.NOT_FOUND, "잘못된 선호 타입입니다", null);
-        }
+        FoodPreferenceStrategy strategy = getStrategy(type);
 
         FoodPreferenceGetResponse response = strategy.addPreference(request, memberId);
         return ApiResponseGenerator.success(HttpStatus.OK, "음식 추가 성공", response);
@@ -77,12 +72,17 @@ public class FoodPreferenceController {
             @RequestBody FoodPreferenceCreateRequest request,
             @LoginMemberId Long memberId
     ) {
-        FoodPreferenceStrategy strategy = strategies.get(type);
-        if (strategy == null) {
-            return ApiResponseGenerator.success(HttpStatus.NOT_FOUND, "잘못된 선호 타입입니다", null);
-        }
+        FoodPreferenceStrategy strategy = getStrategy(type);
 
         strategy.deletePreference(request.foodId(), memberId);
         return ApiResponseGenerator.success(HttpStatus.OK, "음식 삭제 성공");
+    }
+
+    private FoodPreferenceStrategy getStrategy(String type) {
+        FoodPreferenceStrategy strategy = strategies.get(type);
+        if (strategy == null) {
+            throw new InvalidFoodPreferenceTypeException("잘못된 선호 타입입니다");
+        }
+        return strategy;
     }
 }

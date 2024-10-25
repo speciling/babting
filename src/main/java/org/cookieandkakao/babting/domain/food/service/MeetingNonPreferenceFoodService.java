@@ -36,7 +36,7 @@ public class MeetingNonPreferenceFoodService implements MeetingFoodPreferenceStr
         MemberMeeting memberMeeting = meetingService.findMemberMeeting(member, meeting);
 
         return meetingNonPreferenceFoodRepository.findAllByMemberMeeting(memberMeeting).stream()
-            .map(FoodPreferenceGetResponse::fromMeetingNonPreferenceFood)
-            .collect(Collectors.toList());
+                .map(FoodPreferenceGetResponse::fromMeetingNonPreferenceFood)
+                .collect(Collectors.toList());
     }
 }

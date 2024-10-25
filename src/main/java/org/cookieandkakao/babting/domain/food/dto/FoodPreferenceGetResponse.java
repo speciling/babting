@@ -1,6 +1,5 @@
 package org.cookieandkakao.babting.domain.food.dto;
 
-import org.cookieandkakao.babting.domain.food.entity.Food;
 import org.cookieandkakao.babting.domain.food.entity.MeetingNonPreferenceFood;
 import org.cookieandkakao.babting.domain.food.entity.MeetingPreferenceFood;
 import org.cookieandkakao.babting.domain.food.entity.NonPreferenceFood;

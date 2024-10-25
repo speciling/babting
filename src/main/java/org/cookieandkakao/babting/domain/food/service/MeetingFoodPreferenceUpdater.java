@@ -54,17 +54,17 @@ public class MeetingFoodPreferenceUpdater {
         List<Long> allFoodIds = new ArrayList<>(preferences); //preferences 리스트의 모든 아이디 추가하기
         allFoodIds.addAll(nonPreferences);//nonPreferences 리스트의 모든 아이디 추가하기
         Map<Long, Food> foodsMap = foodRepositoryService.findFoodsByIds(new HashSet<>(allFoodIds))
-            .stream().collect(Collectors.toMap(Food::getFoodId, Function.identity()));
+                .stream().collect(Collectors.toMap(Food::getFoodId, Function.identity()));
 
         // 선호음식 stream 생성
         List<MeetingPreferenceFood> newPreferenceFoods = preferences.stream()
-            .map(foodId -> new MeetingPreferenceFood(foodsMap.get(foodId), memberMeeting))
-            .collect(Collectors.toList());
+                .map(foodId -> new MeetingPreferenceFood(foodsMap.get(foodId), memberMeeting))
+                .collect(Collectors.toList());
 
         // 비선호음식 stream 생성
         List<MeetingNonPreferenceFood> newNonPreferenceFoods = nonPreferences.stream()
-            .map(foodId -> new MeetingNonPreferenceFood(foodsMap.get(foodId), memberMeeting))
-            .collect(Collectors.toList());
+                .map(foodId -> new MeetingNonPreferenceFood(foodsMap.get(foodId), memberMeeting))
+                .collect(Collectors.toList());
 
         meetingPreferenceFoodRepository.saveAll(newPreferenceFoods);
         meetingNonPreferenceFoodRepository.saveAll(newNonPreferenceFoods);
