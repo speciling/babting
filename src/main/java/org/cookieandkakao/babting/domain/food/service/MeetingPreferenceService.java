@@ -42,10 +42,7 @@ public class MeetingPreferenceService {
     public List<FoodPreferenceGetResponse> getRecommendedFoodDetailsForMeeting(Long meetingId) {
         List<Food> recommendedFoods = getRecommendedFoodsForMeeting(meetingId);
         return recommendedFoods.stream()
-                .map(food -> new FoodPreferenceGetResponse(
-                        food.getFoodId(),
-                        food.getFoodCategory().getName(),
-                        food.getName()))
+                .map(FoodPreferenceGetResponse::fromFood)
                 .collect(Collectors.toList());
     }
 

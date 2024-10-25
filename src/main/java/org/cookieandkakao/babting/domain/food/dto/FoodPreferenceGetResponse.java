@@ -1,5 +1,6 @@
 package org.cookieandkakao.babting.domain.food.dto;
 
+import org.cookieandkakao.babting.domain.food.entity.Food;
 import org.cookieandkakao.babting.domain.food.entity.MeetingNonPreferenceFood;
 import org.cookieandkakao.babting.domain.food.entity.MeetingPreferenceFood;
 import org.cookieandkakao.babting.domain.food.entity.NonPreferenceFood;
@@ -36,5 +37,12 @@ public record FoodPreferenceGetResponse(
         nonPreferenceFood.getFood().getFoodId(),
         nonPreferenceFood.getFood().getFoodCategory().getName(),
         nonPreferenceFood.getFood().getName());
+  }
+
+  public static FoodPreferenceGetResponse fromFood(Food food) {
+    return new FoodPreferenceGetResponse(
+            food.getFoodId(),
+            food.getFoodCategory().getName(),
+            food.getName());
   }
 }
