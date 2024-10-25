@@ -42,17 +42,17 @@ public class GlobalExceptionHandler {
         return ApiResponseGenerator.fail(HttpStatus.BAD_REQUEST, ex.getMessage());
     }
 
-    @ExceptionHandler(JsonConversionException.class)
+    @ExceptionHandler(FoodNotFoundException.class)
     public ResponseEntity<FailureBody> handleFoodNotFoundException(FoodNotFoundException ex) {
         return ApiResponseGenerator.fail(HttpStatus.NOT_FOUND, ex.getMessage());
     }
 
-    @ExceptionHandler(JsonConversionException.class)
+    @ExceptionHandler(PreferenceConflictException.class)
     public ResponseEntity<FailureBody> handlePreferenceConflictException(PreferenceConflictException ex) {
         return ApiResponseGenerator.fail(HttpStatus.BAD_REQUEST, ex.getMessage());
     }
 
-    @ExceptionHandler(JsonConversionException.class)
+    @ExceptionHandler(InvalidFoodPreferenceTypeException.class)
     public ResponseEntity<FailureBody> handleInvalidFoodPreferenceTypeException(InvalidFoodPreferenceTypeException ex) {
         return ApiResponseGenerator.fail(HttpStatus.NOT_FOUND, ex.getMessage());
     }
