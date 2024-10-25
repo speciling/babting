@@ -40,9 +40,8 @@ public class MeetingPreferenceService {
     }
 
     public List<FoodPreferenceGetResponse> getRecommendedFoodDetailsForMeeting(Long meetingId) {
-        Set<Long> recommendedFoodIds = getRecommendedFoodsForMeeting(meetingId);
-        List<Food> foods = foodRepositoryService.findFoodsByIds(recommendedFoodIds);
-        return foods.stream()
+        List<Food> recommendedFoods = getRecommendedFoodsForMeeting(meetingId);
+        return recommendedFoods.stream()
                 .map(food -> new FoodPreferenceGetResponse(
                         food.getFoodId(),
                         food.getFoodCategory().getName(),
@@ -50,7 +49,7 @@ public class MeetingPreferenceService {
                 .collect(Collectors.toList());
     }
 
-    private Set<Long> getRecommendedFoodsForMeeting(Long meetingId) {
+    private List<Food> getRecommendedFoodsForMeeting(Long meetingId) {
         List<MemberMeeting> memberMeetings = memberMeetingRepository.findMemberMeetingsByMeetingId(meetingId);
         List<Member> members = memberMeetingRepository.findMembersByMeetingId(meetingId);
 
@@ -79,6 +78,6 @@ public class MeetingPreferenceService {
             }
         }
 
-        return preferredFoodIds;
+        return foodRepositoryService.findFoodsByIds(preferredFoodIds);
     }
 }
