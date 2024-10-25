@@ -1,9 +1,12 @@
 package org.cookieandkakao.babting.domain.food.service;
 
+import org.cookieandkakao.babting.domain.food.entity.MeetingNonPreferenceFood;
+import org.cookieandkakao.babting.domain.food.entity.MeetingPreferenceFood;
 import org.cookieandkakao.babting.domain.food.entity.NonPreferenceFood;
-import org.cookieandkakao.babting.domain.food.entity.PreferenceFood;
+import org.cookieandkakao.babting.domain.food.repository.MeetingNonPreferenceFoodRepository;
+import org.cookieandkakao.babting.domain.food.repository.MeetingPreferenceFoodRepository;
 import org.cookieandkakao.babting.domain.food.repository.NonPreferenceFoodRepository;
-import org.cookieandkakao.babting.domain.food.repository.PreferenceFoodRepository;
+import org.cookieandkakao.babting.domain.meeting.entity.MemberMeeting;
 import org.cookieandkakao.babting.domain.meeting.repository.MemberMeetingRepository;
 import org.cookieandkakao.babting.domain.member.entity.Member;
 import org.springframework.stereotype.Service;
@@ -16,31 +19,43 @@ import java.util.stream.Collectors;
 @Service
 public class MeetingPreferenceService {
     private final MemberMeetingRepository memberMeetingRepository;
-    private final PreferenceFoodRepository preferenceFoodRepository;
+    private final MeetingPreferenceFoodRepository meetingPreferenceFoodRepository;
+    private final MeetingNonPreferenceFoodRepository meetingNonPreferenceFoodRepository;
     private final NonPreferenceFoodRepository nonPreferenceFoodRepository;
 
     public MeetingPreferenceService(MemberMeetingRepository memberMeetingRepository,
-                                    PreferenceFoodRepository preferenceFoodRepository,
-                                    NonPreferenceFoodRepository nonPreferenceFoodRepository) {
+                                    MeetingPreferenceFoodRepository meetingPreferenceFoodRepository,
+                                    MeetingNonPreferenceFoodRepository meetingNonPreferenceFoodRepository,
+                                    NonPreferenceFoodRepository nonPreferenceFoodRepository
+    ) {
         this.memberMeetingRepository = memberMeetingRepository;
-        this.preferenceFoodRepository = preferenceFoodRepository;
+        this.meetingPreferenceFoodRepository = meetingPreferenceFoodRepository;
+        this.meetingNonPreferenceFoodRepository = meetingNonPreferenceFoodRepository;
         this.nonPreferenceFoodRepository = nonPreferenceFoodRepository;
     }
 
     public Set<Long> getRecommendedFoodsForMeeting(Long meetingId) {
-        // 특정 모임의 모든 멤버 조회
+        List<MemberMeeting> memberMeetings = memberMeetingRepository.findMemberMeetingsByMeetingId(meetingId);
         List<Member> members = memberMeetingRepository.findMembersByMeetingId(meetingId);
 
-        // 모든 멤버의 선호 음식 ID를 Set으로 수집
+        // 모든 멤버의 모임별 선호 음식 ID를 Set으로 수집
         Set<Long> preferredFoodIds = new HashSet<>();
-        for (Member member : members) {
-            List<PreferenceFood> preferenceFoods = preferenceFoodRepository.findAllByMember(member);
+        for (MemberMeeting memberMeeting : memberMeetings) {
+            List<MeetingPreferenceFood> preferenceFoods = meetingPreferenceFoodRepository.findAllByMemberMeeting(memberMeeting);
             preferredFoodIds.addAll(preferenceFoods.stream()
-                    .map(preference -> preference.getFood().getFoodId())
-                    .collect(Collectors.toSet()));
+                .map(preference -> preference.getFood().getFoodId())
+                .collect(Collectors.toSet()));
         }
 
-        // 모든 멤버의 비선호 음식 ID를 Set으로 수집하고 선호 음식 ID에서 제거
+        // 모든 멤버의 모임별 비선호 음식 ID를 Set으로 수집하고 선호 음식 ID에서 제거
+        for (MemberMeeting memberMeeting : memberMeetings) {
+            List<MeetingNonPreferenceFood> nonPreferenceFoods = meetingNonPreferenceFoodRepository.findAllByMemberMeeting(memberMeeting);
+            for (MeetingNonPreferenceFood nonPreference : nonPreferenceFoods) {
+                preferredFoodIds.remove(nonPreference.getFood().getFoodId());
+            }
+        }
+
+        // 모든 멤버의 개인 비선호 음식 ID를 Set으로 수집하고 선호 음식 ID에서 제거
         for (Member member : members) {
             List<NonPreferenceFood> nonPreferenceFoods = nonPreferenceFoodRepository.findAllByMember(member);
             for (NonPreferenceFood nonPreference : nonPreferenceFoods) {
