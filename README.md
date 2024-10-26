@@ -1,21 +1,11 @@
 # Team16_BE
 16조 백엔드
 
-# 3주차 코드리뷰
-![Babting erd](https://github.com/user-attachments/assets/e6bad03c-5919-4405-a5e6-d8bd73a36280)
-위와 같이 erd 설계 후 이에 맞게 entity만 만든 상태입니다.
-
-erd를 보면 선호/비선호 음식을 따로 테이블을 분리해놓았습니다.  
-서로 food_id와 member_id/member_meeting_id 가 중복되어 각 테이블을 하나로 합치고 is_preference 와 같이
-하나의 컬럼으로도 구분할 수 있을 것 같은데 어떤 방법이 더 좋을까요?
-
-하나의 테이블로 했을 때와 비교해서
-1. 저희가 생각했을 때 테이블을 분리했을 때 장점은 각 선호/비선호 음식을 조회할 때 where 문이 추가로 필요하지 않다.
-2. 테이블이 덜 무거워진다.
-3. 가독성이 떨어질 수 있다.  
-
-
-인데 저희도 각각의 장단점이 쉽게 확 와닿지 않아서 일단 테이블을 분리해놓았는데 멘토님의 생각도 궁금해서 여쭤봅니다!  
-
-또 저희 서비스에서 각 모임에 참가한 사람의 선호음식과 비선호음식을 모은 다음 전체 선호음식들의 집합에서 전체 비선호 음식의 차집합을 구할 일이
-있는데 어떤 설계가 더 좋을까요?
+# 7,8주차 코드리뷰
+1. 프론트 요청이랑 관계 없이 톡캘린더 api 요청 날릴 땐 한 달 단위로 가져다 놓고 거기서 프론트에서 요청한 부분만 골라서 사용하는 것에 대해 어떻게 생각하시는지 궁금합니다.
+2. 어노테이션을 사용하면 편리하고 redisTemplate로 작성하면 자세하게 사용 가능합니다. 일정 조회할 때 memberId, from, to를 사용하여 캐시에 저장하고 일정 생성할 때도 똑같이 memberId, from, to를 사용하여 캐시를 삭제해야 하는데, 일정을 삭제하는 경우에는 from과 to가 불필요하다 생각했습니다.    
+어노테이션에서는 와일드문자인 '*'을 사용할 수 없어 memberId 뒤에 을 붙이지 못해 일정 생성 때도 from과 to가 있어야 일정 조회 때 사용하는 캐시를 삭제할 수 있습니다. 하지만 redisTemplate를 사용하면 와일드 문자인 ''이 사용 가능하여 memberId 뒤에 from과 to가 없어도 memberId 별로 삭제가 가능합니다. 그래서 redisTemplate로 변경해서 사용해는데 괜찮은지 궁금합니다!
+3. RedisConfig에서 RedisTemplate<String, Object>로 사용했는데
+   TalkCalendarService의 getUpdatedEventList 메서드의 List<EventGetResponse> cachedEvents = (List<EventGetResponse>) redisTemplate.opsForValue()
+   .get(cacheKey); 부분에서
+   Unchecked cast: 'java.lang.Object' to 'java.util.List<org.cookieandkakao.babting.domain.calendar.dto.response.EventGetResponse>'. Reason: 'redisTemplate.opsForValue()' has raw type, so result of get is erased 이러한 경고창이 나옵니다. raw type을 사용하고 있어서 경고가 나온다는 것 같아 RedisTemplate의 Object 부분에 dto를 넣었더니 에러가 발생했습니다. 이 부분을 어떻게 해결하면 좋을지 궁금합니다!

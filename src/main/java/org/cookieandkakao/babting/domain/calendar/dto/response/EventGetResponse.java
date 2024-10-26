@@ -2,10 +2,11 @@ package org.cookieandkakao.babting.domain.calendar.dto.response;
 
 import com.fasterxml.jackson.databind.PropertyNamingStrategies;
 import com.fasterxml.jackson.databind.annotation.JsonNaming;
+import java.util.List;
 import org.cookieandkakao.babting.domain.calendar.entity.Event;
 import org.cookieandkakao.babting.domain.calendar.entity.PersonalCalendar;
-import org.cookieandkakao.babting.domain.calendar.entity.Reminder;
 import org.cookieandkakao.babting.domain.calendar.entity.Time;
+import org.cookieandkakao.babting.domain.meeting.dto.response.LocationGetResponse;
 import org.cookieandkakao.babting.domain.meeting.entity.Location;
 
 @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
@@ -31,9 +32,9 @@ public record EventGetResponse(
 
     String description,
 
-    Location location,
+    LocationGetResponse location,
 
-    Reminder reminders,
+    List<Integer> reminders,
 
     String color,
 
@@ -42,10 +43,11 @@ public record EventGetResponse(
 
     public Event toEntity(PersonalCalendar personalCalendar) {
         Time timeEntity = this.time.toEntity();
+        Location locationEntity = this.location.toEntity();
         return new Event(
             personalCalendar,
             timeEntity,
-            this.location,
+            locationEntity,
             this.id,
             this.title,
             this.isRecurEvent,

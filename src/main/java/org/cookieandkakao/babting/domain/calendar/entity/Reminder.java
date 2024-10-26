@@ -22,22 +22,22 @@ public class Reminder {
     private Event event;
 
     @Column
-    private Long remindTime;
+    private Integer remindTime;
 
     protected Reminder() {
     }
 
-    public Reminder(Event event, Long remindTime) {
+    public Reminder(Event event, Integer remindTime) {
         this.event = event;
         this.remindTime = remindTime;
     }
 
-    public Long getReminderId() {
-        return reminderId;
+    public Integer getRemindTime() {
+        return remindTime;
     }
 
-    public Long getRemindTime() {
-        return remindTime;
+    public Event getEvent() {
+        return event;
     }
 
 }
