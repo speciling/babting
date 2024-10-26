@@ -17,6 +17,7 @@ import org.cookieandkakao.babting.common.exception.customexception.JsonConversio
 import org.cookieandkakao.babting.common.exception.customexception.MemberNotFoundException;
 import org.cookieandkakao.babting.domain.calendar.dto.response.EventCreateResponse;
 import org.cookieandkakao.babting.domain.calendar.service.TalkCalendarClientService;
+import org.cookieandkakao.babting.domain.meeting.dto.request.ConfirmMeetingGetRequest;
 import org.cookieandkakao.babting.domain.meeting.dto.request.MeetingEventCreateRequest;
 import org.cookieandkakao.babting.domain.meeting.dto.request.MeetingTimeCreateRequest;
 import org.cookieandkakao.babting.domain.meeting.dto.request.MeetingCreateRequest;
@@ -170,9 +171,8 @@ public class MeetingService {
     }
 
     // 모임 확정되면 일정 생성
-    public void confirmMeeting(Long memberId, Long meetingId){
-        Member member = memberRepository.findById(memberId).orElseThrow( () ->
-            new MemberNotFoundException("회원이 없습니다."));
+    public void confirmMeeting(Long memberId, Long meetingId, ConfirmMeetingGetRequest confirmMeetingGetRequest){
+        Member member = memberService.findMember(memberId);
         Meeting meeting = findMeeting(meetingId);
         MemberMeeting memberMeeting = findMemberMeeting(member, meeting);
 
@@ -183,39 +183,41 @@ public class MeetingService {
         if (meeting.getConfirmDateTime() != null){
             throw new IllegalStateException("이미 모임 시간이 확정되었습니다.");
         }
-        /*String startAt = "2024-10-11T06:00:00Z";
-        String endAt = "2024-10-11T09:00:00Z";
+
+        meeting.confirmDateTime(confirmMeetingGetRequest.confirmDateTime());
+
+        String startAt = meeting.getConfirmDateTime()
+            .minusHours(9)
+            .toString();
+        String endAt = meeting.getConfirmDateTime().minusHours(9).plusMinutes(meeting.getDurationTime()).toString();
         String timeZone = "Asia/Seoul";
         boolean allDay = false;
 
-        MeetingTimeCreateRequest meetingTimeCreateRequest = new MeetingTimeCreateRequest(startAt, endAt, timeZone, allDay);
+        MeetingTimeCreateRequest meetingTimeCreateRequest =
+            new MeetingTimeCreateRequest(startAt, endAt, timeZone, allDay);
 
-        */
         MeetingEventCreateRequest meetingEventCreateRequest
             = new MeetingEventCreateRequest(
-                // conflict 해결하느라 null 값 입력
-                meeting.getTitle(), null
-            /*meetingTimeCreateRequest*/
+                meeting.getTitle(), meetingTimeCreateRequest,
+            List.of(15,30)
         );
 
         List<Long> memberIds = getMemberIdInMeetingId(meetingId);
 
         for (Long currentMemberId : memberIds){
-            addMeetingEvent(currentMemberId, meetingId, meetingEventCreateRequest);
+            addMeetingEvent(currentMemberId, meetingEventCreateRequest);
         }
     }
 
     // 일정 생성 후 캘린더에 일정 추가
-    public EventCreateResponse addMeetingEvent(Long memberId,Long meetingId, MeetingEventCreateRequest meetingEventCreateRequest) {
+    public EventCreateResponse addMeetingEvent(Long memberId, MeetingEventCreateRequest meetingEventCreateRequest) {
         String kakaoAccessToken = getKakaoAccessToken(memberId);
         MultiValueMap<String, String> formData = new LinkedMultiValueMap<>();
         String eventJson = convertToJSONString(meetingEventCreateRequest);
         formData.add("event", eventJson);
-        Map<String, Object> responseBody = talkCalendarClientService.createEvent(kakaoAccessToken, formData);
-        if (responseBody != null && responseBody.containsKey("event_id")) {
-            String eventId = responseBody.get("event_id").toString();
-            // EventCreateResponseDto로 응답 반환
-            return new EventCreateResponse(eventId);
+        EventCreateResponse responseBody = talkCalendarClientService.createEvent(kakaoAccessToken, formData);
+        if (responseBody != null) {
+            return responseBody;
         }
         throw new EventCreationException("Event 생성 중 오류 발생: 응답에서 event_id가 없습니다.");
     }

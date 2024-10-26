@@ -69,9 +69,10 @@ public class MeetingController {
     @PostMapping("/{meetingId}/confirm")
     public ResponseEntity<SuccessBody<Void>> confirmMeeting(
         @PathVariable("meetingId") Long meetingId,
+        @RequestBody ConfirmMeetingGetRequest confirmMeetingGetRequest,
         @LoginMemberId Long memberId
     ) {
-        meetingService.confirmMeeting(memberId, meetingId);
+        meetingService.confirmMeeting(memberId, meetingId, confirmMeetingGetRequest);
         return ApiResponseGenerator.success(HttpStatus.OK, "모임 확정 성공");
     }
 
