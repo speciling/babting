@@ -35,6 +35,7 @@ public class MeetingEventService {
     private final TalkCalendarClientService talkCalendarClientService;
     private final ObjectMapper objectMapper = new ObjectMapper();
     private final MeetingService meetingService;
+    private static final String TIME_ZONE = "Asia/Seoul";
 
     public MeetingEventService(MemberService memberService,
         TalkCalendarClientService talkCalendarClientService,
@@ -207,7 +208,7 @@ public class MeetingEventService {
             availableTimes.add(new TimeGetResponse(
                 from,
                 mergedTimes.getFirst().startAt(),
-                "UTC",
+                TIME_ZONE,
                 false
             ));
         }
@@ -222,7 +223,7 @@ public class MeetingEventService {
                 availableTimes.add(new TimeGetResponse(
                     mergedTimes.get(i).endAt(),
                     mergedTimes.get(i + 1).startAt(),
-                    "UTC",
+                    TIME_ZONE,
                     false
                 ));
             }
@@ -233,7 +234,7 @@ public class MeetingEventService {
             availableTimes.add(new TimeGetResponse(
                 mergedTimes.getLast().endAt(),
                 to,
-                "UTC",
+                TIME_ZONE,
                 false
             ));
         }
