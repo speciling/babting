@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import java.time.Duration;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 import org.cookieandkakao.babting.common.exception.customexception.EventCreationException;
 import org.cookieandkakao.babting.common.exception.customexception.JsonConversionException;
@@ -81,13 +82,11 @@ public class TalkCalendarService {
         String eventJson = convertToJSONString(eventCreateRequest);
         // event라는 key로 JSON 데이터를 추가
         formData.add("event", eventJson);
-        EventCreateResponse responseBody = talkCalendarClientService.createEvent(kakaoAccessToken,
-            formData);
-        if (responseBody != null) {
-            evictMemberCache(memberId);
-            return responseBody;
-        }
-        throw new EventCreationException("Event 생성 중 오류 발생: 응답에서 event_id가 없습니다.");
+        EventCreateResponse responseBody = Optional.ofNullable(
+            talkCalendarClientService.createEvent(kakaoAccessToken, formData)).orElseThrow(
+            () -> new EventCreationException("Event 생성 중 오류 발생: 응답에서 event_id가 없습니다."));
+        evictMemberCache(memberId);
+        return responseBody;
     }
 
     // EventCreateRequestDto를 JSON 문자열로 변환하는 메서드
