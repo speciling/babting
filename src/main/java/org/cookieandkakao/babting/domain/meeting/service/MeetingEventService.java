@@ -4,6 +4,8 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.transaction.Transactional;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
@@ -34,7 +36,7 @@ public class MeetingEventService {
     private final ObjectMapper objectMapper = new ObjectMapper();
     private final MeetingService meetingService;
     private static final String TIME_ZONE = "Asia/Seoul";
-    private static final List<Integer> DEFAULT_REMINDER_TIMES = List.of(15,30);
+    private static final List<Integer> DEFAULT_REMINDER_TIMES = List.of(15, 30);
 
     public MeetingEventService(MemberService memberService,
         TalkCalendarClientService talkCalendarClientService,
@@ -79,11 +81,11 @@ public class MeetingEventService {
     }
 
     private MeetingTimeCreateRequest createMeetingTimeRequest(Meeting meeting) {
-        String startAt = meeting.getConfirmDateTime().minusHours(9).toString();
-        String endAt = meeting.getConfirmDateTime().minusHours(9)
-            .plusMinutes(meeting.getDurationTime()).toString();
+        ZonedDateTime startDateTime = meeting.getConfirmDateTime().atZone(ZoneId.of(TIME_ZONE));
+        ZonedDateTime endDateTime = startDateTime.plusMinutes(meeting.getDurationTime());
         boolean allDay = false;
-        return new MeetingTimeCreateRequest(startAt, endAt, TIME_ZONE, allDay);
+        return new MeetingTimeCreateRequest(startDateTime.toString(), endDateTime.toString(),
+            TIME_ZONE, allDay);
     }
 
     private MeetingEventCreateRequest createMeetingEventRequest(Meeting meeting,
