@@ -9,12 +9,13 @@ import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
-import org.cookieandkakao.babting.common.exception.customexception.EventCreationException;
 import org.cookieandkakao.babting.common.exception.customexception.JsonConversionException;
+import org.cookieandkakao.babting.domain.calendar.dto.request.EventCreateRequest;
 import org.cookieandkakao.babting.domain.calendar.dto.response.EventCreateResponse;
 import org.cookieandkakao.babting.domain.calendar.dto.response.EventGetResponse;
 import org.cookieandkakao.babting.domain.calendar.dto.response.TimeGetResponse;
 import org.cookieandkakao.babting.domain.calendar.service.TalkCalendarClientService;
+import org.cookieandkakao.babting.domain.calendar.service.TalkCalendarService;
 import org.cookieandkakao.babting.domain.meeting.dto.request.ConfirmMeetingGetRequest;
 import org.cookieandkakao.babting.domain.meeting.dto.request.MeetingEventCreateRequest;
 import org.cookieandkakao.babting.domain.meeting.dto.request.MeetingTimeCreateRequest;
@@ -24,8 +25,6 @@ import org.cookieandkakao.babting.domain.member.entity.KakaoToken;
 import org.cookieandkakao.babting.domain.member.entity.Member;
 import org.cookieandkakao.babting.domain.member.service.MemberService;
 import org.springframework.stereotype.Service;
-import org.springframework.util.LinkedMultiValueMap;
-import org.springframework.util.MultiValueMap;
 
 @Transactional
 @Service
@@ -33,6 +32,7 @@ public class MeetingEventService {
 
     private final MemberService memberService;
     private final TalkCalendarClientService talkCalendarClientService;
+    private final TalkCalendarService talkCalendarService;
     private final ObjectMapper objectMapper = new ObjectMapper();
     private final MeetingService meetingService;
     private static final String TIME_ZONE = "Asia/Seoul";
@@ -40,9 +40,11 @@ public class MeetingEventService {
 
     public MeetingEventService(MemberService memberService,
         TalkCalendarClientService talkCalendarClientService,
+        TalkCalendarService talkCalendarService,
         MeetingService meetingService) {
         this.memberService = memberService;
         this.talkCalendarClientService = talkCalendarClientService;
+        this.talkCalendarService = talkCalendarService;
         this.meetingService = meetingService;
     }
 
@@ -97,16 +99,17 @@ public class MeetingEventService {
     // 일정 생성 후 캘린더에 일정 추가
     public EventCreateResponse addMeetingEvent(Long memberId,
         MeetingEventCreateRequest meetingEventCreateRequest) {
-        String kakaoAccessToken = getKakaoAccessToken(memberId);
-        MultiValueMap<String, String> formData = new LinkedMultiValueMap<>();
-        String eventJson = convertToJSONString(meetingEventCreateRequest);
-        formData.add("event", eventJson);
-        EventCreateResponse responseBody = talkCalendarClientService.createEvent(kakaoAccessToken,
-            formData);
-        if (responseBody != null) {
-            return responseBody;
-        }
-        throw new EventCreationException("Event 생성 중 오류 발생: 응답에서 event_id가 없습니다.");
+        EventCreateRequest eventCreateRequest = convertToEventCreateRequest(
+            meetingEventCreateRequest);
+        return talkCalendarService.createEvent(eventCreateRequest, memberId);
+    }
+
+    private EventCreateRequest convertToEventCreateRequest(
+        MeetingEventCreateRequest meetingEventCreateRequest) {
+        return new EventCreateRequest(
+            meetingEventCreateRequest.title(),
+            meetingEventCreateRequest.time().toTimeCreateRequest(), null,
+            meetingEventCreateRequest.reminders(), null);
     }
 
     private String getKakaoAccessToken(Long memberId) {
