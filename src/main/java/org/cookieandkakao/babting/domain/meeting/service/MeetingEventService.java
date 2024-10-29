@@ -34,6 +34,7 @@ public class MeetingEventService {
     private final ObjectMapper objectMapper = new ObjectMapper();
     private final MeetingService meetingService;
     private static final String TIME_ZONE = "Asia/Seoul";
+    private static final List<Integer> DEFAULT_REMINDER_TIMES = List.of(15,30);
 
     public MeetingEventService(MemberService memberService,
         TalkCalendarClientService talkCalendarClientService,
@@ -88,7 +89,7 @@ public class MeetingEventService {
     private MeetingEventCreateRequest createMeetingEventRequest(Meeting meeting,
         MeetingTimeCreateRequest meetingTimeCreateRequest) {
         return new MeetingEventCreateRequest(meeting.getTitle(), meetingTimeCreateRequest,
-            List.of(15, 30));
+            DEFAULT_REMINDER_TIMES);
     }
 
     // 일정 생성 후 캘린더에 일정 추가
