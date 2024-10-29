@@ -28,6 +28,7 @@ import org.springframework.util.MultiValueMap;
 @Transactional
 @Service
 public class MeetingEventService {
+
     private final MemberService memberService;
     private final TalkCalendarClientService talkCalendarClientService;
     private final ObjectMapper objectMapper = new ObjectMapper();
@@ -43,50 +44,62 @@ public class MeetingEventService {
     }
 
     // 모임 확정되면 일정 생성
-    public void confirmMeeting(Long memberId, Long meetingId, ConfirmMeetingGetRequest confirmMeetingGetRequest){
+    public void confirmMeeting(Long memberId, Long meetingId,
+        ConfirmMeetingGetRequest confirmMeetingGetRequest) {
         Member member = memberService.findMember(memberId);
         Meeting meeting = meetingService.findMeeting(meetingId);
-        MemberMeeting memberMeeting = meetingService.findMemberMeeting(member, meeting);
-
-        if (!memberMeeting.isHost()){
-            throw new IllegalStateException("권한이 없습니다.");
-        }
-
-        if (meeting.getConfirmDateTime() != null){
-            throw new IllegalStateException("이미 모임 시간이 확정되었습니다.");
-        }
+        validateHostPermission(member, meeting);
+        validateMeetingConfirmation(meeting);
 
         meeting.confirmDateTime(confirmMeetingGetRequest.confirmDateTime());
 
-        String startAt = meeting.getConfirmDateTime()
-            .minusHours(9)
-            .toString();
-        String endAt = meeting.getConfirmDateTime().minusHours(9).plusMinutes(meeting.getDurationTime()).toString();
-        boolean allDay = false;
-
-        MeetingTimeCreateRequest meetingTimeCreateRequest =
-            new MeetingTimeCreateRequest(startAt, endAt, TIME_ZONE, allDay);
-
-        MeetingEventCreateRequest meetingEventCreateRequest
-            = new MeetingEventCreateRequest(
-            meeting.getTitle(), meetingTimeCreateRequest,
-            List.of(15,30)
-        );
+        MeetingTimeCreateRequest meetingTimeCreateRequest = createMeetingTimeRequest(meeting);
+        MeetingEventCreateRequest meetingEventCreateRequest = createMeetingEventRequest(meeting,
+            meetingTimeCreateRequest);
 
         List<Long> memberIds = getMemberIdInMeetingId(meetingId);
 
-        for (Long currentMemberId : memberIds){
+        for (Long currentMemberId : memberIds) {
             addMeetingEvent(currentMemberId, meetingEventCreateRequest);
         }
     }
 
+    private void validateHostPermission(Member member, Meeting meeting) {
+        MemberMeeting memberMeeting = meetingService.findMemberMeeting(member, meeting);
+        if (!memberMeeting.isHost()) {
+            throw new IllegalStateException("권한이 없습니다.");
+        }
+    }
+
+    private void validateMeetingConfirmation(Meeting meeting) {
+        if (meeting.getConfirmDateTime() != null) {
+            throw new IllegalStateException("이미 모임 시간이 확정되었습니다.");
+        }
+    }
+
+    private MeetingTimeCreateRequest createMeetingTimeRequest(Meeting meeting) {
+        String startAt = meeting.getConfirmDateTime().minusHours(9).toString();
+        String endAt = meeting.getConfirmDateTime().minusHours(9)
+            .plusMinutes(meeting.getDurationTime()).toString();
+        boolean allDay = false;
+        return new MeetingTimeCreateRequest(startAt, endAt, TIME_ZONE, allDay);
+    }
+
+    private MeetingEventCreateRequest createMeetingEventRequest(Meeting meeting,
+        MeetingTimeCreateRequest meetingTimeCreateRequest) {
+        return new MeetingEventCreateRequest(meeting.getTitle(), meetingTimeCreateRequest,
+            List.of(15, 30));
+    }
+
     // 일정 생성 후 캘린더에 일정 추가
-    public EventCreateResponse addMeetingEvent(Long memberId, MeetingEventCreateRequest meetingEventCreateRequest) {
+    public EventCreateResponse addMeetingEvent(Long memberId,
+        MeetingEventCreateRequest meetingEventCreateRequest) {
         String kakaoAccessToken = getKakaoAccessToken(memberId);
         MultiValueMap<String, String> formData = new LinkedMultiValueMap<>();
         String eventJson = convertToJSONString(meetingEventCreateRequest);
         formData.add("event", eventJson);
-        EventCreateResponse responseBody = talkCalendarClientService.createEvent(kakaoAccessToken, formData);
+        EventCreateResponse responseBody = talkCalendarClientService.createEvent(kakaoAccessToken,
+            formData);
         if (responseBody != null) {
             return responseBody;
         }
@@ -114,16 +127,15 @@ public class MeetingEventService {
             .map(memberMeeting -> memberMeeting.getMember().getMemberId())
             .toList();
     }
-    /** 빈 시간대 조회 로직 설명
-     *
-     * 1. 모임의 모든 참여자들의 일정 중 Time을 allTimes에 추출
-     * 2. allTimes의 시간을 시작 시간을 기준으로 오름차순 정렬한 값들을 sortedTimes에 저장
-     * 3. sortedTimes에 겹치는 시간이 있다면 모든 시간들을 (2024-10-24T15:00 ~ 2024-10-24T16:00)
-     *  ex) 1. 2024-10-24T12:00 ~ 2024-10-24T15:00
-     *      2. 2024-10-24T14:00 ~ 2024-10-24T16:00
-     *      1의 시간을 1의 시작 시간 ~ 2의 끝 시간으로 병합 (2024-10-24T12:00 ~ 2024-10-24T16:00)
-     * 4. 이제 mergedTime에는 겹치지 않는 시간대만 존재
-     * 5. mergedTime에 있는 시간들을 순회하면서 i번째 끝 시간 ~ i+1번째 시작 시간으로 시간 생성
+
+    /**
+     * 빈 시간대 조회 로직 설명
+     * <p>
+     * 1. 모임의 모든 참여자들의 일정 중 Time을 allTimes에 추출 2. allTimes의 시간을 시작 시간을 기준으로 오름차순 정렬한 값들을
+     * sortedTimes에 저장 3. sortedTimes에 겹치는 시간이 있다면 모든 시간들을 (2024-10-24T15:00 ~ 2024-10-24T16:00) ex)
+     * 1. 2024-10-24T12:00 ~ 2024-10-24T15:00 2. 2024-10-24T14:00 ~ 2024-10-24T16:00 1의 시간을 1의 시작 시간
+     * ~ 2의 끝 시간으로 병합 (2024-10-24T12:00 ~ 2024-10-24T16:00) 4. 이제 mergedTime에는 겹치지 않는 시간대만 존재 5.
+     * mergedTime에 있는 시간들을 순회하면서 i번째 끝 시간 ~ i+1번째 시작 시간으로 시간 생성
      */
     public List<TimeGetResponse> findAvailableTime(Long meetingId, String from, String to) {
         List<Long> joinedMemberIds = getMemberIdInMeetingId(meetingId);
@@ -155,8 +167,9 @@ public class MeetingEventService {
     private List<TimeGetResponse> mergeOverlappingTimes(List<TimeGetResponse> times) {
         List<TimeGetResponse> mergedTimes = new ArrayList<>();
 
-        if (times.isEmpty())
+        if (times.isEmpty()) {
             return mergedTimes;
+        }
 
         TimeGetResponse currentTime = times.getFirst();
 
@@ -187,14 +200,15 @@ public class MeetingEventService {
     private String maxEndTime(String end1, String end2) {
         LocalDateTime e1 = LocalDateTime.parse(end1);
         LocalDateTime e2 = LocalDateTime.parse(end2);
-        if (e1.isAfter(e2)){
+        if (e1.isAfter(e2)) {
             return end1;
         }
         return end2;
     }
 
     // 빈 시간대
-    private List<TimeGetResponse> calculateAvailableTimes(List<TimeGetResponse> mergedTimes, String from, String to) {
+    private List<TimeGetResponse> calculateAvailableTimes(List<TimeGetResponse> mergedTimes,
+        String from, String to) {
         List<TimeGetResponse> availableTimes = new ArrayList<>();
         LocalDateTime searchStart = LocalDateTime.parse(from);
         LocalDateTime searchEnd = LocalDateTime.parse(to);
@@ -238,7 +252,6 @@ public class MeetingEventService {
 
         return availableTimes;
     }
-
 
 
 }
