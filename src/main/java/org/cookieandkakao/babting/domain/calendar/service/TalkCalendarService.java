@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
+import org.cookieandkakao.babting.common.cache.CacheKeyGenerator;
 import org.cookieandkakao.babting.common.exception.customexception.EventCreationException;
 import org.cookieandkakao.babting.common.exception.customexception.JsonConversionException;
 import org.cookieandkakao.babting.domain.calendar.dto.request.EventCreateRequest;
@@ -42,7 +43,7 @@ public class TalkCalendarService {
     }
 
     public List<EventGetResponse> getUpdatedEventList(String from, String to, Long memberId) {
-        String cacheKey = "eventListCache::" + memberId + "_" + from + "_" + to;
+        String cacheKey = CacheKeyGenerator.generateEventListKey(memberId, from, to);
         String cachedJson = redisTemplate.opsForValue().get(cacheKey);
         if (cachedJson != null) {
             try {
@@ -73,7 +74,7 @@ public class TalkCalendarService {
     }
 
     public EventDetailGetResponse getEvent(Long memberId, String eventId) {
-        String cacheKey = "eventDetailCache::" + eventId;
+        String cacheKey = CacheKeyGenerator.generateEventDetailKey(eventId);
         String cachedJson = redisTemplate.opsForValue().get(cacheKey);
 
         if (cachedJson != null) {
@@ -135,7 +136,7 @@ public class TalkCalendarService {
 
     // 키 값에서 memberId가 포함되어 있는 것 삭제
     private void evictMemberCache(Long memberId) {
-        String pattern = "eventListCache::" + memberId + "*";
+        String pattern = CacheKeyGenerator.generateEventListPattern(memberId);
         Set<String> keys = redisTemplate.keys(pattern);
         if (keys != null && !keys.isEmpty()) {
             redisTemplate.delete(keys);
