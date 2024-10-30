@@ -17,7 +17,6 @@ import org.cookieandkakao.babting.domain.calendar.dto.response.EventGetResponse;
 import org.cookieandkakao.babting.domain.calendar.dto.response.EventListGetResponse;
 import org.cookieandkakao.babting.domain.member.entity.KakaoToken;
 import org.cookieandkakao.babting.domain.member.service.MemberService;
-import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.util.LinkedMultiValueMap;
@@ -48,6 +47,7 @@ public class TalkCalendarService {
         if (cachedJson != null) {
             try {
                 // JSON 문자열을 List<EventGetResponse> 로 변환
+                // 리스트이므로 TypeReference 사용
                 return objectMapper.readValue(cachedJson, new TypeReference<List<EventGetResponse>>() {});
             } catch (JsonProcessingException e) {
                 throw new RuntimeException("캐시된 JSON 변환 오류", e);
@@ -67,13 +67,7 @@ public class TalkCalendarService {
                 updatedEvents.add(event);
             }
         }
-
-        // JSON 변환 후 Redis에 저장
-        try {
-            redisTemplate.opsForValue().set(cacheKey, objectMapper.writeValueAsString(updatedEvents), Duration.ofMinutes(5));
-        } catch (JsonProcessingException e) {
-            throw new RuntimeException("JSON 변환 오류", e);
-        }
+        cacheData(cacheKey, updatedEvents);
 
         return updatedEvents;
     }
@@ -84,6 +78,8 @@ public class TalkCalendarService {
 
         if (cachedJson != null) {
             try {
+                // JSON 문자열을 EventDetailGetResponse 로 변환
+                // 단일 객체이므로 .class 사용
                 return objectMapper.readValue(cachedJson, EventDetailGetResponse.class);
             } catch (JsonProcessingException e) {
                 throw new RuntimeException("캐시된 JSON 변환 오류", e);
@@ -93,12 +89,17 @@ public class TalkCalendarService {
         String kakaoAccessToken = getKakaoAccessToken(memberId);
         EventDetailGetResponse eventDetailGetResponse = talkCalendarClientService.getEvent(kakaoAccessToken, eventId);
 
+        cacheData(cacheKey, eventDetailGetResponse);
+        return eventDetailGetResponse;
+    }
+
+    // JSON 변환 후 Redis에 저장
+    private void cacheData(String cacheKey, Object data) {
         try {
-            redisTemplate.opsForValue().set(cacheKey, objectMapper.writeValueAsString(eventDetailGetResponse), Duration.ofMinutes(5));
+            redisTemplate.opsForValue().set(cacheKey, objectMapper.writeValueAsString(data), Duration.ofMinutes(5));
         } catch (JsonProcessingException e) {
             throw new RuntimeException("JSON 변환 오류", e);
         }
-        return eventDetailGetResponse;
     }
 
     public EventCreateResponse createEvent(
