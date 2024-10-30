@@ -3,6 +3,7 @@ package org.cookieandkakao.babting.domain.calendar.service;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import java.io.IOException;
 import java.time.Duration;
 import java.util.ArrayList;
 import java.util.List;
@@ -18,7 +19,9 @@ import org.cookieandkakao.babting.domain.calendar.dto.response.EventGetResponse;
 import org.cookieandkakao.babting.domain.calendar.dto.response.EventListGetResponse;
 import org.cookieandkakao.babting.domain.member.entity.KakaoToken;
 import org.cookieandkakao.babting.domain.member.service.MemberService;
+import org.springframework.data.redis.core.Cursor;
 import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.data.redis.core.ScanOptions;
 import org.springframework.stereotype.Service;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
@@ -137,9 +140,20 @@ public class TalkCalendarService {
     // 키 값에서 memberId가 포함되어 있는 것 삭제
     private void evictMemberCache(Long memberId) {
         String pattern = CacheKeyGenerator.generateEventListPattern(memberId);
-        Set<String> keys = redisTemplate.keys(pattern);
-        if (keys != null && !keys.isEmpty()) {
-            redisTemplate.delete(keys);
+        // 패턴과 카운트 설정
+        ScanOptions scanOptions = ScanOptions.scanOptions().match(pattern).count(10).build();
+        // 스캔 시작
+        Cursor<byte[]> cursor = redisTemplate.executeWithStickyConnection(connection -> connection.scan(scanOptions));
+
+        while(cursor != null && cursor.hasNext()) {
+            String key = new String(cursor.next());
+            redisTemplate.delete(key);
+        }
+
+        if (cursor != null) {
+            // 리소스 해제
+            // Cursor 사용 후 반드시 닫아주어야 함
+            cursor.close();
         }
     }
 }
