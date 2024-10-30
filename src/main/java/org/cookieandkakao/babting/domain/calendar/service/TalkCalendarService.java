@@ -1,6 +1,7 @@
 package org.cookieandkakao.babting.domain.calendar.service;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.time.Duration;
 import java.util.ArrayList;
@@ -16,7 +17,6 @@ import org.cookieandkakao.babting.domain.calendar.dto.response.EventGetResponse;
 import org.cookieandkakao.babting.domain.calendar.dto.response.EventListGetResponse;
 import org.cookieandkakao.babting.domain.member.entity.KakaoToken;
 import org.cookieandkakao.babting.domain.member.service.MemberService;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
@@ -30,12 +30,12 @@ public class TalkCalendarService {
     private final ObjectMapper objectMapper = new ObjectMapper();
     private final EventService eventService;
     private final MemberService memberService;
-    private final RedisTemplate redisTemplate;
+    private final RedisTemplate<String, String> redisTemplate;
 
     public TalkCalendarService(EventService eventService,
         TalkCalendarClientService talkCalendarClientService,
         MemberService memberService,
-        @Qualifier("redisTemplate") RedisTemplate redisTemplate) {
+        RedisTemplate<String, String> redisTemplate) {
         this.eventService = eventService;
         this.talkCalendarClientService = talkCalendarClientService;
         this.memberService = memberService;
@@ -44,11 +44,16 @@ public class TalkCalendarService {
 
     public List<EventGetResponse> getUpdatedEventList(String from, String to, Long memberId) {
         String cacheKey = "eventListCache::" + memberId + "_" + from + "_" + to;
-        List<EventGetResponse> cachedEvents = (List<EventGetResponse>) redisTemplate.opsForValue()
-            .get(cacheKey);
-        if (cachedEvents != null) {
-            return cachedEvents;
+        String cachedJson = redisTemplate.opsForValue().get(cacheKey);
+        if (cachedJson != null) {
+            try {
+                // JSON 문자열을 List<EventGetResponse> 로 변환
+                return objectMapper.readValue(cachedJson, new TypeReference<List<EventGetResponse>>() {});
+            } catch (JsonProcessingException e) {
+                throw new RuntimeException("캐시된 JSON 변환 오류", e);
+            }
         }
+
         String kakaoAccessToken = getKakaoAccessToken(memberId);
         EventListGetResponse eventList = talkCalendarClientService.getEventList(kakaoAccessToken,
             from, to);
@@ -62,15 +67,38 @@ public class TalkCalendarService {
                 updatedEvents.add(event);
             }
         }
-        // RedisTemplate을 사용하여 캐시에 새로 저장
-        redisTemplate.opsForValue().set(cacheKey, updatedEvents, Duration.ofMinutes(5));
+
+        // JSON 변환 후 Redis에 저장
+        try {
+            redisTemplate.opsForValue().set(cacheKey, objectMapper.writeValueAsString(updatedEvents), Duration.ofMinutes(5));
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException("JSON 변환 오류", e);
+        }
+
         return updatedEvents;
     }
 
-    @Cacheable(value = "eventDetailCache", key = "#eventId")
     public EventDetailGetResponse getEvent(Long memberId, String eventId) {
+        String cacheKey = "eventDetailCache::" + eventId;
+        String cachedJson = redisTemplate.opsForValue().get(cacheKey);
+
+        if (cachedJson != null) {
+            try {
+                return objectMapper.readValue(cachedJson, EventDetailGetResponse.class);
+            } catch (JsonProcessingException e) {
+                throw new RuntimeException("캐시된 JSON 변환 오류", e);
+            }
+        }
+
         String kakaoAccessToken = getKakaoAccessToken(memberId);
-        return talkCalendarClientService.getEvent(kakaoAccessToken, eventId);
+        EventDetailGetResponse eventDetailGetResponse = talkCalendarClientService.getEvent(kakaoAccessToken, eventId);
+
+        try {
+            redisTemplate.opsForValue().set(cacheKey, objectMapper.writeValueAsString(eventDetailGetResponse), Duration.ofMinutes(5));
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException("JSON 변환 오류", e);
+        }
+        return eventDetailGetResponse;
     }
 
     public EventCreateResponse createEvent(
