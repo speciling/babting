@@ -73,6 +73,10 @@ public class Event {
         this.memo = memo;
     }
 
+    public Event(Time time) {
+        this.time = time;
+    }
+
     public Time getTime() {
         return time;
     }
