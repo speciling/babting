@@ -90,4 +90,12 @@ public class Meeting {
     public Integer getDurationTime() {
         return durationTime;
     }
+
+    public LocalDate getStartDate() {
+        return startDate;
+    }
+
+    public LocalDate getEndDate() {
+        return endDate;
+    }
 }

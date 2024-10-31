@@ -4,9 +4,11 @@ import java.util.List;
 import org.cookieandkakao.babting.common.annotaion.LoginMemberId;
 import org.cookieandkakao.babting.common.apiresponse.ApiResponseBody.SuccessBody;
 import org.cookieandkakao.babting.common.apiresponse.ApiResponseGenerator;
+import org.cookieandkakao.babting.domain.calendar.dto.response.TimeGetResponse;
 import org.cookieandkakao.babting.domain.meeting.dto.request.ConfirmMeetingGetRequest;
 import org.cookieandkakao.babting.domain.meeting.dto.request.MeetingCreateRequest;
 import org.cookieandkakao.babting.domain.meeting.dto.response.MeetingGetResponse;
+import org.cookieandkakao.babting.domain.meeting.dto.response.TimeAvailableGetResponse;
 import org.cookieandkakao.babting.domain.meeting.service.MeetingEventService;
 import org.cookieandkakao.babting.domain.meeting.service.MeetingService;
 import org.springframework.http.HttpStatus;
@@ -83,7 +85,13 @@ public class MeetingController {
     // 모임 id로 이름, 모임 시작과 끝 날짜 조회
 
     // 모임 공통 시간표 조회
-
+    @GetMapping("/{meetingId}/calendar")
+    public ResponseEntity<SuccessBody<TimeAvailableGetResponse>> getAvailableTime(
+        @PathVariable("meetingId") Long meetingId
+    ){
+        TimeAvailableGetResponse timeAvailableGetResponse = meetingEventService.findAvailableTime(meetingId);
+        return ApiResponseGenerator.success(HttpStatus.OK, "모임 공통 시간표 조회 성공", timeAvailableGetResponse);
+    }
     // 모임 참여자 목록 조회
 
     // 모임 정보 수정
