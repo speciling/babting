@@ -84,6 +84,10 @@ public class MeetingController {
 
     // 모임 id로 이름, 모임 시작과 끝 날짜 조회
 
+    // 모임 주최자 확인
+
+    // 모임 확정 날짜, 확정 음식 확인
+
     // 모임 공통 시간표 조회
     @GetMapping("/{meetingId}/calendar")
     public ResponseEntity<SuccessBody<TimeAvailableGetResponse>> getAvailableTime(
