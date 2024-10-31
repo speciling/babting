@@ -79,4 +79,12 @@ public class MeetingController {
         List<MeetingGetResponse> meetings = meetingService.getAllMeetings(memberId);
         return ApiResponseGenerator.success(HttpStatus.OK, "참여 모임 목록 조회 성공", meetings);
     }
+
+    // 모임 id로 이름, 모임 시작과 끝 날짜 조회
+
+    // 모임 공통 시간표 조회
+
+    // 모임 참여자 목록 조회
+
+    // 모임 정보 수정
 }
