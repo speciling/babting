@@ -6,11 +6,11 @@ import java.util.NoSuchElementException;
 import java.util.stream.Collectors;
 import org.cookieandkakao.babting.domain.meeting.dto.request.MeetingCreateRequest;
 import org.cookieandkakao.babting.domain.meeting.dto.response.MeetingGetResponse;
+import org.cookieandkakao.babting.domain.meeting.dto.response.MeetingInfoGetResponse;
 import org.cookieandkakao.babting.domain.meeting.entity.Location;
 import org.cookieandkakao.babting.domain.meeting.entity.Meeting;
 import org.cookieandkakao.babting.domain.meeting.entity.MemberMeeting;
 import org.cookieandkakao.babting.domain.meeting.repository.LocationRepository;
-import org.cookieandkakao.babting.domain.meeting.repository.MeetingEventRepository;
 import org.cookieandkakao.babting.domain.meeting.repository.MeetingRepository;
 import org.cookieandkakao.babting.domain.meeting.repository.MemberMeetingRepository;
 import org.cookieandkakao.babting.domain.member.entity.Member;
@@ -83,6 +83,12 @@ public class MeetingService {
         return meetingList.stream()
             .map(MeetingGetResponse::from)
             .collect(Collectors.toList());
+    }
+
+    // 모임 이름 조회, 시작과 끝 날짜 조회
+    public MeetingInfoGetResponse getMeetingInfo(Long meetingId){
+        Meeting meeting = findMeeting(meetingId);
+        return MeetingInfoGetResponse.from(meeting);
     }
   
     public Meeting findMeeting(Long meetingId){

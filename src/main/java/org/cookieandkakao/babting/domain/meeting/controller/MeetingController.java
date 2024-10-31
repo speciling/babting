@@ -8,6 +8,7 @@ import org.cookieandkakao.babting.domain.calendar.dto.response.TimeGetResponse;
 import org.cookieandkakao.babting.domain.meeting.dto.request.ConfirmMeetingGetRequest;
 import org.cookieandkakao.babting.domain.meeting.dto.request.MeetingCreateRequest;
 import org.cookieandkakao.babting.domain.meeting.dto.response.MeetingGetResponse;
+import org.cookieandkakao.babting.domain.meeting.dto.response.MeetingInfoGetResponse;
 import org.cookieandkakao.babting.domain.meeting.dto.response.TimeAvailableGetResponse;
 import org.cookieandkakao.babting.domain.meeting.service.MeetingEventService;
 import org.cookieandkakao.babting.domain.meeting.service.MeetingService;
@@ -83,7 +84,13 @@ public class MeetingController {
     }
 
     // 모임 id로 이름, 모임 시작과 끝 날짜 조회
-
+    @GetMapping("/{meetingId}")
+    public ResponseEntity<SuccessBody<MeetingInfoGetResponse>> getMeetingInfo(
+        @PathVariable("meetingId") Long meetingId
+    ){
+        MeetingInfoGetResponse meetingInfo = meetingService.getMeetingInfo(meetingId);
+        return ApiResponseGenerator.success(HttpStatus.OK, "모임 정보 조회 성공", meetingInfo);
+    }
     // 모임 주최자 확인
 
     // 모임 확정 날짜, 확정 음식 확인

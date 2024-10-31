@@ -1,6 +1,5 @@
 package org.cookieandkakao.babting.domain.meeting.entity;
 
-import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -97,5 +96,13 @@ public class Meeting {
 
     public LocalDate getEndDate() {
         return endDate;
+    }
+
+    public LocalTime getStartTime() {
+        return startTime;
+    }
+
+    public LocalTime getEndTime() {
+        return endTime;
     }
 }
