@@ -2,6 +2,7 @@ package org.cookieandkakao.babting.domain.meeting.controller;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import java.util.List;
 import org.cookieandkakao.babting.common.annotaion.LoginMemberId;
 import org.cookieandkakao.babting.common.apiresponse.ApiResponseBody.SuccessBody;
@@ -26,6 +27,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/api/meeting")
+@Tag(name = "모임 관련 api", description = "모임 관련한 api입니다.")
 public class MeetingController {
     private final MeetingService meetingService;
     private final MeetingEventService meetingEventService;
