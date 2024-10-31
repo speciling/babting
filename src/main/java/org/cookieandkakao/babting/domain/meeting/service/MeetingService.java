@@ -6,6 +6,7 @@ import java.util.NoSuchElementException;
 import java.util.stream.Collectors;
 import org.cookieandkakao.babting.domain.meeting.dto.request.MeetingCreateRequest;
 import org.cookieandkakao.babting.domain.meeting.dto.response.MeetingGetResponse;
+import org.cookieandkakao.babting.domain.meeting.dto.response.MeetingHostCheckResponse;
 import org.cookieandkakao.babting.domain.meeting.dto.response.MeetingInfoGetResponse;
 import org.cookieandkakao.babting.domain.meeting.entity.Location;
 import org.cookieandkakao.babting.domain.meeting.entity.Meeting;
@@ -90,7 +91,14 @@ public class MeetingService {
         Meeting meeting = findMeeting(meetingId);
         return MeetingInfoGetResponse.from(meeting);
     }
-  
+
+    // 주최자 확인
+    public MeetingHostCheckResponse checkHost(Long memberId, Long meetingId){
+        Member member = memberService.findMember(memberId);
+        Meeting meeting = findMeeting(meetingId);
+        MemberMeeting memberMeeting = findMemberMeeting(member, meeting);
+        return new MeetingHostCheckResponse(memberMeeting.isHost());
+    }
     public Meeting findMeeting(Long meetingId){
         return meetingRepository.findById(meetingId)
             .orElseThrow(() -> new NoSuchElementException("해당 모임이 존재하지 않습니다."));
