@@ -71,7 +71,7 @@ public class MeetingController {
         return ApiResponseGenerator.success(HttpStatus.OK, "모임 탈퇴 성공");
     }
 
-    // 참여 모임 목록 조회
+    // 내가 참여 모임 목록 조회
     @GetMapping
     public ResponseEntity<SuccessBody<List<MeetingGetResponse>>> getAllMeeting(
         @LoginMemberId Long memberId
