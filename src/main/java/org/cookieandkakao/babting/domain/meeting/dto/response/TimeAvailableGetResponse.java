@@ -5,7 +5,9 @@ import org.cookieandkakao.babting.domain.calendar.dto.response.TimeGetResponse;
 
 public record TimeAvailableGetResponse(
     String startDate,
+
     String endDate,
+
     List<TimeGetResponse> availableTime
 ) {
 }
