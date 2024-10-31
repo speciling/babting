@@ -58,7 +58,7 @@ class TalkCalendarServiceTest {
         String from = "2024-10-01T00:00:00Z";
         String to = "2024-10-31T23:59:59Z";
         EventGetResponse eventGetResponse = new EventGetResponse("testId", "Test Title",
-            "USER", "calendarId", null, false, false, null, null,
+            "USER", null, false, false, null, null,
             "Test Description", null, null, "TestColor", null);
         EventListGetResponse eventListGetResponse = new EventListGetResponse(
             new ArrayList<>(List.of((eventGetResponse))));
@@ -93,7 +93,7 @@ class TalkCalendarServiceTest {
         String eventId = "testId";
         String accessToken = "testAccessToken";
         EventGetResponse eventGetResponse = new EventGetResponse("testId", "Test Title",
-            "USER", "calendarId", null, false, false, null, null,
+            "USER", null, false, false, null, null,
             "Test Description", null, null, "TestColor", null);
         EventDetailGetResponse eventDetailGetResponseMock = new EventDetailGetResponse(
             eventGetResponse);
@@ -267,7 +267,7 @@ class TalkCalendarServiceTest {
         String from = "2024-10-01T00:00:00Z";
         String to = "2024-10-31T23:59:59Z";
         EventGetResponse eventGetResponse = new EventGetResponse("testId", "Test Title",
-            "USER", "calendarId", null, false, false, null, null,
+            "USER", null, false, false, null, null,
             "Test Description", null, null, "TestColor", null);
         EventListGetResponse eventListGetResponse = new EventListGetResponse(
             new ArrayList<>(List.of((eventGetResponse))));
