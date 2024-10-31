@@ -13,6 +13,7 @@ import org.cookieandkakao.babting.domain.calendar.dto.response.EventCreateRespon
 import org.cookieandkakao.babting.domain.calendar.dto.response.EventGetResponse;
 import org.cookieandkakao.babting.domain.calendar.dto.response.TimeGetResponse;
 import org.cookieandkakao.babting.domain.calendar.service.TalkCalendarClientService;
+import org.cookieandkakao.babting.domain.calendar.service.TalkCalendarService;
 import org.cookieandkakao.babting.domain.meeting.dto.request.ConfirmMeetingGetRequest;
 import org.cookieandkakao.babting.domain.meeting.dto.request.MeetingEventCreateRequest;
 import org.cookieandkakao.babting.domain.meeting.dto.request.MeetingTimeCreateRequest;
@@ -30,15 +31,18 @@ import org.springframework.util.MultiValueMap;
 public class MeetingEventService {
     private final MemberService memberService;
     private final TalkCalendarClientService talkCalendarClientService;
+    private final TalkCalendarService talkCalendarService;
     private final ObjectMapper objectMapper = new ObjectMapper();
     private final MeetingService meetingService;
     private static final String TIME_ZONE = "Asia/Seoul";
 
     public MeetingEventService(MemberService memberService,
         TalkCalendarClientService talkCalendarClientService,
+        TalkCalendarService talkCalendarService,
         MeetingService meetingService) {
         this.memberService = memberService;
         this.talkCalendarClientService = talkCalendarClientService;
+        this.talkCalendarService = talkCalendarService;
         this.meetingService = meetingService;
     }
 
@@ -131,9 +135,8 @@ public class MeetingEventService {
         // 참여자별 일정에서 필요한 시간 정보만 추출하여 리스트로 수집
         List<TimeGetResponse> allTimes = joinedMemberIds.stream()
             .flatMap(memberId ->
-                talkCalendarClientService
-                    .getEventList(getKakaoAccessToken(memberId), from, to)
-                    .events()
+                talkCalendarService
+                    .getUpdatedEventList(from, to, memberId)
                     .stream()
                     .map(EventGetResponse::time)
             )
