@@ -92,7 +92,5 @@ public class MeetingController {
         TimeAvailableGetResponse timeAvailableGetResponse = meetingEventService.findAvailableTime(meetingId);
         return ApiResponseGenerator.success(HttpStatus.OK, "모임 공통 시간표 조회 성공", timeAvailableGetResponse);
     }
-    // 모임 참여자 목록 조회
-
     // 모임 정보 수정
 }
