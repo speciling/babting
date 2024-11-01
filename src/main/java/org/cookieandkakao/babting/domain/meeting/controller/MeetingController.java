@@ -41,7 +41,7 @@ public class MeetingController {
     // 모임 생성(주최자)
     @PostMapping
     @Operation(summary = "모임 생성", description = "새 모임을 생성합니다")
-    @ApiResponse(responseCode = "200", description = "모임 생성 성공")
+    @ApiResponse(responseCode = "201", description = "모임 생성 성공")
     public ResponseEntity<SuccessBody<Void>> createMeeting(
         @LoginMemberId Long memberId,
         @RequestBody MeetingCreateRequest meetingCreateRequest){
@@ -64,26 +64,26 @@ public class MeetingController {
     // 모임 확정(주최자)
     @PostMapping("/{meetingId}/confirm")
     @Operation(summary = "모임 확정", description = "모임을 확정합니다.")
-    @ApiResponse(responseCode = "200", description = "모임 확정 성공")
+    @ApiResponse(responseCode = "202", description = "모임 확정 성공")
     public ResponseEntity<SuccessBody<Void>> confirmMeeting(
         @PathVariable("meetingId") Long meetingId,
         @RequestBody ConfirmMeetingGetRequest confirmMeetingGetRequest,
         @LoginMemberId Long memberId
     ) {
         meetingEventService.confirmMeeting(memberId, meetingId, confirmMeetingGetRequest);
-        return ApiResponseGenerator.success(HttpStatus.OK, "모임 확정 성공");
+        return ApiResponseGenerator.success(HttpStatus.ACCEPTED, "모임 확정 성공");
     }
 
     // 모임 탈퇴(주최자, 초대받은 사람)
     @DeleteMapping("/{meetingId}")
     @Operation(summary = "모임 탈퇴", description = "모임을 탈퇴합니다.")
-    @ApiResponse(responseCode = "200", description = "모임 탈퇴 성공")
+    @ApiResponse(responseCode = "202", description = "모임 탈퇴 성공")
     public ResponseEntity<SuccessBody<Void>> exitMeeting(
         @PathVariable("meetingId") Long meetingId,
         @LoginMemberId Long memberId
     ){
         meetingService.exitMeeting(memberId, meetingId);
-        return ApiResponseGenerator.success(HttpStatus.OK, "모임 탈퇴 성공");
+        return ApiResponseGenerator.success(HttpStatus.ACCEPTED, "모임 탈퇴 성공");
     }
 
     // 내가 참여한 모임 목록 조회
