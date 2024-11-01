@@ -28,16 +28,14 @@ public class AuthService {
     private final KakaoProviderProperties kakaoProviderProperties;
     private final RestClient restClient = RestClient.builder().build();
     private final MemberRepository memberRepository;
-    private final KakaoTokenRepository kakaoTokenRepository;
     private final JwtUtil jwtUtil;
 
     public AuthService(KakaoClientProperties kakaoClientProperties,
         KakaoProviderProperties kakaoProviderProperties, MemberRepository memberRepository,
-        KakaoTokenRepository kakaoTokenRepository, JwtUtil jwtUtil) {
+        JwtUtil jwtUtil) {
         this.kakaoClientProperties = kakaoClientProperties;
         this.kakaoProviderProperties = kakaoProviderProperties;
         this.memberRepository = memberRepository;
-        this.kakaoTokenRepository = kakaoTokenRepository;
         this.jwtUtil = jwtUtil;
     }
 
@@ -126,31 +124,6 @@ public class AuthService {
         memberRepository.save(member);
 
         KakaoToken kakaoToken = kakaoTokenGetResponse.toEntity();
-
-        member.updateKakaoToken(kakaoToken);
-    }
-
-    @Transactional
-    public void saveMemberInfo(KakaoMemberInfoGetResponse kakaoMemberInfoGetResponse) {
-
-        Long kakaoMemberId = kakaoMemberInfoGetResponse.id();
-
-        Member member = memberRepository.findByKakaoMemberId(kakaoMemberId)
-            .orElse(new Member(kakaoMemberId));
-        member.updateProfile(kakaoMemberInfoGetResponse.properties());
-
-        memberRepository.save(member);
-    }
-
-    @Transactional
-    public void saveKakaoToken(Long kakaoMemberId,
-        KakaoTokenGetResponse kakaoTokenGetResponse) {
-
-        Member member = memberRepository.findByKakaoMemberId(kakaoMemberId)
-            .orElseThrow(IllegalArgumentException::new);
-        KakaoToken kakaoToken = kakaoTokenGetResponse.toEntity();
-
-        kakaoTokenRepository.save(kakaoToken);
 
         member.updateKakaoToken(kakaoToken);
     }
