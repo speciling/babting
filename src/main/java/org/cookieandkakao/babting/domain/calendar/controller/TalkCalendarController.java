@@ -55,7 +55,7 @@ public class TalkCalendarController {
     public ResponseEntity<SuccessBody<EventListGetResponse>> getEventList(
         @Parameter(description = "조회 시작 날짜 (yyyy-MM-dd'T'HH:mm:ss'Z' 형식)", required = true) @RequestParam String from,
         @Parameter(description = "조회 종료 날짜 (yyyy-MM-dd'T'HH:mm:ss'Z' 형식)", required = true) @RequestParam String to,
-        @Parameter(hidden = true) @LoginMemberId Long memberId
+        @LoginMemberId Long memberId
     ) {
 
         List<EventGetResponse> updatedEvents = talkCalendarService.getUpdatedEventList(from, to,
@@ -79,7 +79,7 @@ public class TalkCalendarController {
     })
     public ResponseEntity<SuccessBody<EventDetailGetResponse>> getEvent(
         @Parameter(description = "조회할 일정 ID", required = true) @PathVariable("event_id") String eventId,
-        @Parameter(hidden = true) @LoginMemberId Long memberId
+        @LoginMemberId Long memberId
     ) {
         EventDetailGetResponse eventDetailGetResponse = talkCalendarService.getEvent(memberId,
             eventId);
@@ -103,7 +103,7 @@ public class TalkCalendarController {
     })
     public ResponseEntity<SuccessBody<EventCreateResponse>> createEvent(
         @Parameter(description = "생성할 일정 데이터", required = true) @Valid @RequestBody EventCreateRequest eventRequestDto,
-        @Parameter(hidden = true) @LoginMemberId Long memberId
+        @LoginMemberId Long memberId
     ) {
         // 카카오 api로 일정 생성
         EventCreateResponse eventCreateResponse = talkCalendarService.createEvent(eventRequestDto,
