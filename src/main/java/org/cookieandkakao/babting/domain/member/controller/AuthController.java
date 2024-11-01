@@ -8,6 +8,7 @@ import org.cookieandkakao.babting.domain.member.dto.KakaoMemberInfoGetResponse;
 import org.cookieandkakao.babting.domain.member.dto.KakaoTokenGetResponse;
 import org.cookieandkakao.babting.domain.member.dto.TokenIssueResponse;
 import org.cookieandkakao.babting.domain.member.service.AuthService;
+import org.cookieandkakao.babting.domain.member.service.MemberService;
 import org.cookieandkakao.babting.domain.member.util.JwtUtil;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -27,10 +28,12 @@ public class AuthController {
 
     private final AuthService authService;
     private final JwtUtil jwtUtil;
+    private final MemberService memberService;
 
-    public AuthController(AuthService authService, JwtUtil jwtUtil) {
+    public AuthController(AuthService authService, JwtUtil jwtUtil, MemberService memberService) {
         this.authService = authService;
         this.jwtUtil = jwtUtil;
+        this.memberService = memberService;
     }
 
     @GetMapping("/login")
@@ -52,7 +55,7 @@ public class AuthController {
             return "redirect:/login/fail";  // 프론트 페이지 구현 후 수정 예정
         }
 
-        Long memberId = authService.saveMemberInfoAndKakaoToken(kakaoMemberInfoDto, kakaoTokenDto);
+        Long memberId = memberService.saveMemberInfoAndKakaoToken(kakaoMemberInfoDto, kakaoTokenDto);
         TokenIssueResponse tokenDto = authService.issueToken(memberId);
 
         response.addCookie(createRefreshTokenCookie(tokenDto));

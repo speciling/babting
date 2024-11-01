@@ -74,26 +74,6 @@ public class AuthService {
         kakaoAuthClient.callUnlinkApi(accessToken);
     }
 
-    @Transactional
-    public Long saveMemberInfoAndKakaoToken(
-        KakaoMemberInfoGetResponse kakaoMemberInfoGetResponse,
-        KakaoTokenGetResponse kakaoTokenGetResponse) {
-
-        Long kakaoMemberId = kakaoMemberInfoGetResponse.id();
-
-        Member member = memberRepository.findByKakaoMemberId(kakaoMemberId)
-            .orElse(new Member(kakaoMemberId));
-        member.updateProfile(kakaoMemberInfoGetResponse.properties());
-
-        member = memberRepository.save(member);
-
-        KakaoToken kakaoToken = kakaoTokenGetResponse.toEntity();
-
-        member.updateKakaoToken(kakaoToken);
-
-        return member.getMemberId();
-    }
-
     public TokenIssueResponse issueToken(Long memberId) {
         Member member = memberRepository.findById(memberId)
             .orElseThrow(IllegalArgumentException::new);

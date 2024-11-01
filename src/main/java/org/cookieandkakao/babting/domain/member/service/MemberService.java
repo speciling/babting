@@ -2,6 +2,7 @@ package org.cookieandkakao.babting.domain.member.service;
 
 import jakarta.transaction.Transactional;
 import java.time.LocalDateTime;
+import org.cookieandkakao.babting.domain.member.dto.KakaoMemberInfoGetResponse;
 import org.cookieandkakao.babting.domain.member.dto.KakaoTokenGetResponse;
 import org.cookieandkakao.babting.domain.member.dto.MemberProfileGetResponse;
 import org.cookieandkakao.babting.domain.member.entity.KakaoToken;
@@ -34,12 +35,34 @@ public class MemberService {
     }
 
     @Transactional
+    public Long saveMemberInfoAndKakaoToken(
+        KakaoMemberInfoGetResponse kakaoMemberInfoGetResponse,
+        KakaoTokenGetResponse kakaoTokenGetResponse) {
+
+        Long kakaoMemberId = kakaoMemberInfoGetResponse.id();
+
+        Member member = memberRepository.findByKakaoMemberId(kakaoMemberId)
+            .orElse(new Member(kakaoMemberId));
+        member.updateProfile(kakaoMemberInfoGetResponse.properties());
+
+        member = memberRepository.save(member);
+
+        KakaoToken kakaoToken = kakaoTokenGetResponse.toEntity();
+
+        member.updateKakaoToken(kakaoToken);
+
+        return member.getMemberId();
+    }
+
+    @Transactional
     public void deleteMember(Long memberId) {
         String accessToken = getKakaoToken(memberId).getAccessToken();
-        authService.unlinkMember(accessToken);
 
         memberRepository.deleteById(memberId);
         // Todo: 해당 멤버와 관련된 entity들 삭제 로직 추가
+
+        authService.unlinkMember(accessToken);
+
     }
 
     @Deprecated
