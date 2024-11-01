@@ -44,6 +44,7 @@ public class TalkCalendarController {
         this.eventService = eventService;
     }
 
+    @GetMapping("/events")
     @Operation(summary = "캘린더 일정 목록 조회", description = "특정 기간의 캘린더 일정 목록을 조회합니다.", security = { @SecurityRequirement(name = "BearerAuth")})
     @ApiResponses(value = {
         @ApiResponse(responseCode = "200", description = "일정 목록을 조회했습니다.",
@@ -51,7 +52,6 @@ public class TalkCalendarController {
         @ApiResponse(responseCode = "200", description = "조회된 일정 목록이 없습니다.",
             content = @Content(schema = @Schema(implementation = EventListGetResponse.class)))
     })
-    @GetMapping("/events")
     public ResponseEntity<SuccessBody<EventListGetResponse>> getEventList(
         @Parameter(description = "조회 시작 날짜 (yyyy-MM-dd'T'HH:mm:ss'Z' 형식)", required = true) @RequestParam String from,
         @Parameter(description = "조회 종료 날짜 (yyyy-MM-dd'T'HH:mm:ss'Z' 형식)", required = true) @RequestParam String to,
@@ -69,6 +69,7 @@ public class TalkCalendarController {
         return ApiResponseGenerator.success("일정 목록을 조회했습니다.", eventList);
     }
 
+    @GetMapping("/events/{event_id}")
     @Operation(summary = "캘린더 일정 상세 조회", description = "특정 캘린더 일정의 세부 정보를 조회합니다.", security = { @SecurityRequirement(name = "BearerAuth")})
     @ApiResponses(value = {
         @ApiResponse(responseCode = "200", description = "일정을 조회했습니다.",
@@ -76,7 +77,6 @@ public class TalkCalendarController {
         @ApiResponse(responseCode = "200", description = "조회된 일정이 없습니다.",
             content = @Content(schema = @Schema(implementation = EventDetailGetResponse.class)))
     })
-    @GetMapping("/events/{event_id}")
     public ResponseEntity<SuccessBody<EventDetailGetResponse>> getEvent(
         @Parameter(description = "조회할 일정 ID", required = true) @PathVariable("event_id") String eventId,
         @Parameter(hidden = true) @LoginMemberId Long memberId
@@ -93,6 +93,7 @@ public class TalkCalendarController {
             eventDetailGetResponse);
     }
 
+    @PostMapping("/events")
     @Operation(summary = "일정 생성", description = "새로운 일정을 생성합니다.", security = { @SecurityRequirement(name = "BearerAuth")})
     @ApiResponses(value = {
         @ApiResponse(responseCode = "201", description = "일정이 성공적으로 생성되었습니다.",
@@ -100,7 +101,6 @@ public class TalkCalendarController {
         @ApiResponse(responseCode = "400", description = "잘못된 요청 데이터입니다.",
             content = @Content(schema = @Schema(hidden = true)))
     })
-    @PostMapping("/events")
     public ResponseEntity<SuccessBody<EventCreateResponse>> createEvent(
         @Parameter(description = "생성할 일정 데이터", required = true) @Valid @RequestBody EventCreateRequest eventRequestDto,
         @Parameter(hidden = true) @LoginMemberId Long memberId
