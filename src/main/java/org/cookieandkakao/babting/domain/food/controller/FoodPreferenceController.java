@@ -43,7 +43,7 @@ public class FoodPreferenceController {
     @GetMapping("/{type}")
     @Operation(summary = "선호/비선호 음식 조회", description = "내 선호/비선호 음식을 가져옵니다.")
     @ApiResponse(responseCode = "200", description = "선호/비선호 음식 조회 성공")
-    public ResponseEntity<ApiResponseBody.SuccessBody<List<FoodPreferenceGetResponse>>> getFoodPreferences(
+    public ResponseEntity<SuccessBody<List<FoodPreferenceGetResponse>>> getFoodPreferences(
             @PathVariable String type,
             @LoginMemberId Long memberId
     ) {
