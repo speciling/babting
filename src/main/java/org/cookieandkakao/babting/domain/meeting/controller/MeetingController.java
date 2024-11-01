@@ -9,6 +9,8 @@ import org.cookieandkakao.babting.common.apiresponse.ApiResponseBody.SuccessBody
 import org.cookieandkakao.babting.common.apiresponse.ApiResponseGenerator;
 import org.cookieandkakao.babting.domain.meeting.dto.request.ConfirmMeetingGetRequest;
 import org.cookieandkakao.babting.domain.meeting.dto.request.MeetingCreateRequest;
+import org.cookieandkakao.babting.domain.meeting.dto.request.MeetingJoinCreateRequest;
+import org.cookieandkakao.babting.domain.meeting.dto.request.MeetingTimeCreateRequest;
 import org.cookieandkakao.babting.domain.meeting.dto.response.MeetingGetResponse;
 import org.cookieandkakao.babting.domain.meeting.dto.response.MeetingHostCheckResponse;
 import org.cookieandkakao.babting.domain.meeting.dto.response.MeetingInfoGetResponse;
@@ -55,9 +57,11 @@ public class MeetingController {
     @ApiResponse(responseCode = "200", description = "모임 참가 성공")
     public ResponseEntity<SuccessBody<Void>> joinMeeting(
         @PathVariable("meetingId") Long meetingId,
-        @LoginMemberId Long memberId
+        @LoginMemberId Long memberId,
+        @RequestBody MeetingJoinCreateRequest meetingJoinCreateRequest
     ){
         meetingService.joinMeeting(memberId, meetingId);
+        meetingEventService.saveMeetingAvoidTime(memberId, meetingId, meetingJoinCreateRequest.times());
         return ApiResponseGenerator.success(HttpStatus.OK, "모임 참가 성공");
     }
 
