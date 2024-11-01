@@ -52,7 +52,7 @@ public class MemberMeetingFoodPreferenceController {
     @ApiResponse(responseCode = "200", description = "모임별 선호/비선호 음식 조회 성공")
     public ResponseEntity<ApiResponseBody.SuccessBody<List<FoodPreferenceGetResponse>>> getFoodPreferences(
             @PathVariable String type,
-            @Parameter(hidden = true) @LoginMemberId Long memberId,
+            @LoginMemberId Long memberId,
             @PathVariable("meeting_id") Long meetingId
     ) {
         MeetingFoodPreferenceStrategy strategy = strategies.get(type);
@@ -73,7 +73,7 @@ public class MemberMeetingFoodPreferenceController {
     @Operation(summary = "모임별 선호/비선호 음식 수정", description = "모임별 내 선호/비선호 음식을 수정합니다.")
     @ApiResponse(responseCode = "200", description = "모임별 선호/비선호 음식 수정 성공")
     public ResponseEntity<ApiResponseBody.SuccessBody<PersonalPreferenceUpdateRequest>> updatePreferences(
-            @Parameter(hidden = true) @LoginMemberId Long memberId,
+            @LoginMemberId Long memberId,
             @PathVariable("meeting_id") Long meetingId,
             @RequestBody PersonalPreferenceUpdateRequest PersonalPreferenceRequestDto
     ) {
