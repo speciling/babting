@@ -77,6 +77,7 @@ public class AuthController {
     @ResponseBody
     @GetMapping("access-token")
     @Operation(summary = "접근 토큰 재발급", description = "접근 토큰을 Authorization 헤더로 재발급합니다.")
+    @ApiResponse(responseCode = "200", description = "접근 토큰 발급 성공")
     public ResponseEntity<ApiResponseBody.SuccessBody<Void>> reissueToken(
         @Parameter(hidden = true) @CookieValue(required = false) String refreshToken,
         HttpServletResponse response) {
