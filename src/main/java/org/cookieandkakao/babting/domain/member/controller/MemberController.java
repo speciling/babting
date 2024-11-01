@@ -2,7 +2,6 @@ package org.cookieandkakao.babting.domain.member.controller;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
-import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.cookieandkakao.babting.common.annotaion.LoginMemberId;
@@ -32,7 +31,7 @@ public class MemberController {
     @Operation(summary = "회원 프로필 조회", description = "현재 로그인된 회원 본인의 프로필을 조회합니다.")
     @ApiResponse(responseCode = "200", description = "로그인된 회원 본인의 프로필 정보")
     public ResponseEntity<ApiResponseBody.SuccessBody<MemberProfileGetResponse>> getMemberProfile(
-        @Parameter(hidden = true) @LoginMemberId Long memberId) {
+        @LoginMemberId Long memberId) {
         MemberProfileGetResponse memberProfile = memberService.getMemberProfile(memberId);
         return ApiResponseGenerator.success(HttpStatus.OK, "프로필 조회 성공", memberProfile);
     }
@@ -41,7 +40,7 @@ public class MemberController {
     @Operation(summary = "회원 탈퇴", description = "회원 탈퇴합니다.")
     @ApiResponse(responseCode = "200", description = "회원 탈퇴 성공 메세지")
     public ResponseEntity<ApiResponseBody.SuccessBody<Void>> deleteMember(
-        @Parameter(hidden = true) @LoginMemberId Long memberId) {
+        @LoginMemberId Long memberId) {
         memberService.deleteMember(memberId);
         return ApiResponseGenerator.success(HttpStatus.OK, "회원 탈퇴 성공");
     }
