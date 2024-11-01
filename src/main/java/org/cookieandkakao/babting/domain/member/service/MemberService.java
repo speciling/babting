@@ -56,7 +56,7 @@ public class MemberService {
 
     @Transactional
     public void deleteMember(Long memberId) {
-        String accessToken = getKakaoToken(memberId).getAccessToken();
+        String accessToken = getKakaoAccessToken(memberId);
 
         memberRepository.deleteById(memberId);
         // Todo: 해당 멤버와 관련된 entity들 삭제 로직 추가
