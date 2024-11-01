@@ -9,7 +9,6 @@ import org.cookieandkakao.babting.domain.member.dto.KakaoTokenGetResponse;
 import org.cookieandkakao.babting.domain.member.dto.TokenIssueResponse;
 import org.cookieandkakao.babting.domain.member.entity.KakaoToken;
 import org.cookieandkakao.babting.domain.member.entity.Member;
-import org.cookieandkakao.babting.domain.member.repository.KakaoTokenRepository;
 import org.cookieandkakao.babting.domain.member.repository.MemberRepository;
 import org.cookieandkakao.babting.domain.member.util.AuthorizationUriBuilder;
 import org.cookieandkakao.babting.domain.member.util.JwtUtil;
@@ -26,15 +25,16 @@ public class AuthService {
 
     private final KakaoClientProperties kakaoClientProperties;
     private final KakaoProviderProperties kakaoProviderProperties;
-    private final RestClient restClient = RestClient.builder().build();
+    private final RestClient restClient;
     private final MemberRepository memberRepository;
     private final JwtUtil jwtUtil;
 
     public AuthService(KakaoClientProperties kakaoClientProperties,
-        KakaoProviderProperties kakaoProviderProperties, MemberRepository memberRepository,
-        JwtUtil jwtUtil) {
+        KakaoProviderProperties kakaoProviderProperties, RestClient restClient,
+        MemberRepository memberRepository, JwtUtil jwtUtil) {
         this.kakaoClientProperties = kakaoClientProperties;
         this.kakaoProviderProperties = kakaoProviderProperties;
+        this.restClient = restClient;
         this.memberRepository = memberRepository;
         this.jwtUtil = jwtUtil;
     }
