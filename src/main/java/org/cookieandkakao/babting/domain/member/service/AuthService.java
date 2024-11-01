@@ -48,8 +48,6 @@ public class AuthService {
 
     public KakaoTokenGetResponse requestKakaoToken(String authorizeCode) {
 
-        String tokenUri = kakaoProviderProperties.tokenUri();
-
         MultiValueMap<String, String> body = new LinkedMultiValueMap<>();
         body.add("grant_type", "authorization_code");
         body.add("code", authorizeCode);
@@ -57,20 +55,17 @@ public class AuthService {
         body.add("client_id", kakaoClientProperties.clientId());
         body.add("client_secret", kakaoClientProperties.clientSecret());
 
-        ResponseEntity<KakaoTokenGetResponse> entity = restClient.post()
-            .uri(tokenUri)
-            .contentType(APPLICATION_FORM_URLENCODED)
-            .body(body)
-            .retrieve()
-            .onStatus(HttpStatusCode::is4xxClientError, (request, response) -> {
-                throw new IllegalArgumentException("카카오 토큰 발급 실패");
-            })
-            .onStatus(HttpStatusCode::is5xxServerError, (request, response) -> {
-                throw new RuntimeException("카카오 인증 서버 에러");
-            })
-            .toEntity(KakaoTokenGetResponse.class);
+        return callTokenApi(body);
+    }
 
-        return entity.getBody();
+    public KakaoTokenGetResponse refreshKakaoToken(String refreshToekn) {
+        
+        MultiValueMap<String, String> body = new LinkedMultiValueMap<>();
+        body.add("grant_type", "refresh_token");
+        body.add("client_id", kakaoClientProperties.clientId());
+        body.add("refresh_token", refreshToekn);
+
+        return callTokenApi(body);
     }
 
     public KakaoMemberInfoGetResponse requestKakaoMemberInfo(
@@ -135,5 +130,24 @@ public class AuthService {
             .orElseThrow(IllegalArgumentException::new);
 
         return jwtUtil.issueToken(member.getMemberId());
+    }
+
+    private KakaoTokenGetResponse callTokenApi(MultiValueMap<String, String> body) {
+
+        String tokenUri = kakaoProviderProperties.tokenUri();
+
+        return restClient.post()
+            .uri(tokenUri)
+            .contentType(APPLICATION_FORM_URLENCODED)
+            .body(body)
+            .retrieve()
+            .onStatus(HttpStatusCode::is4xxClientError, (request, response) -> {
+                throw new IllegalArgumentException("카카오 토큰 발급 실패");
+            })
+            .onStatus(HttpStatusCode::is5xxServerError, (request, response) -> {
+                throw new RuntimeException("카카오 인증 서버 에러");
+            })
+            .toEntity(KakaoTokenGetResponse.class)
+            .getBody();
     }
 }
