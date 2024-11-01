@@ -32,6 +32,7 @@ public class TalkCalendarService {
     private final EventService eventService;
     private final MemberService memberService;
     private final RedisTemplate<String, String> redisTemplate;
+    private static final Duration CACHE_DURATION = Duration.ofMinutes(5);
 
     public TalkCalendarService(EventService eventService,
         TalkCalendarClientService talkCalendarClientService,
@@ -98,7 +99,7 @@ public class TalkCalendarService {
     // JSON 변환 후 Redis에 저장
     private void cacheData(String cacheKey, Object data) {
         try {
-            redisTemplate.opsForValue().set(cacheKey, objectMapper.writeValueAsString(data), Duration.ofMinutes(5));
+            redisTemplate.opsForValue().set(cacheKey, objectMapper.writeValueAsString(data), CACHE_DURATION);
         } catch (JsonProcessingException e) {
             throw new RuntimeException("JSON 변환 오류", e);
         }
