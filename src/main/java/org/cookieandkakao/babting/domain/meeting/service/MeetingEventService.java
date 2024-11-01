@@ -22,6 +22,7 @@ import org.cookieandkakao.babting.domain.calendar.service.TalkCalendarService;
 import org.cookieandkakao.babting.domain.meeting.dto.request.ConfirmMeetingGetRequest;
 import org.cookieandkakao.babting.domain.meeting.dto.request.MeetingEventCreateRequest;
 import org.cookieandkakao.babting.domain.meeting.dto.request.MeetingTimeCreateRequest;
+import org.cookieandkakao.babting.domain.meeting.dto.response.TimeAvailableGetResponse;
 import org.cookieandkakao.babting.domain.meeting.entity.Meeting;
 import org.cookieandkakao.babting.domain.meeting.entity.MeetingEvent;
 import org.cookieandkakao.babting.domain.meeting.entity.MemberMeeting;
@@ -155,15 +156,17 @@ public class MeetingEventService {
      * 4. 이제 mergedTime에는 겹치지 않는 시간대만 존재
      * 5. mergedTime에 있는 시간들을 순회하면서 i번째 끝 시간 ~ i+1번째 시작 시간으로 시간 생성
      */
-    public List<TimeGetResponse> findAvailableTime(Long meetingId, String from, String to) {
+    public TimeAvailableGetResponse findAvailableTime(Long meetingId) {
         List<Long> joinedMemberIds = getMemberIdInMeetingId(meetingId);
+        Meeting meeting = meetingService.findMeeting(meetingId);
+        String from = meeting.getStartDate().toString();
+        String to = meeting.getEndDate().toString();
 
         // 참여자별 일정에서 필요한 시간 정보만 추출하여 리스트로 수집
         List<TimeGetResponse> allTimes = joinedMemberIds.stream()
             .flatMap(memberId ->
-                talkCalendarClientService
-                    .getEventList(getKakaoAccessToken(memberId), from, to)
-                    .events()
+                talkCalendarService
+                    .getUpdatedEventList(from, to, memberId)
                     .stream()
                     .map(EventGetResponse::time)
             )
@@ -178,7 +181,9 @@ public class MeetingEventService {
         List<TimeGetResponse> mergedTimes = mergeOverlappingTimes(sortedTimes);
 
         // 빈 시간대 계산
-        return calculateAvailableTimes(mergedTimes, from, to);
+        List<TimeGetResponse> availableTime = calculateAvailableTimes(mergedTimes, from, to);
+
+        return new TimeAvailableGetResponse(meeting.getStartDate().toString(), meeting.getEndDate().toString(), availableTime);
     }
 
     // 겹치는 시간 병합
