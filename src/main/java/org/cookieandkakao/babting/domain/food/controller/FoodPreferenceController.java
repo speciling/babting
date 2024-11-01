@@ -1,6 +1,7 @@
 package org.cookieandkakao.babting.domain.food.controller;
 
 import org.cookieandkakao.babting.common.annotaion.LoginMemberId;
+import org.cookieandkakao.babting.common.apiresponse.ApiResponseBody;
 import org.cookieandkakao.babting.common.apiresponse.ApiResponseBody.SuccessBody;
 import org.cookieandkakao.babting.common.apiresponse.ApiResponseGenerator;
 import org.cookieandkakao.babting.common.exception.customexception.InvalidFoodPreferenceTypeException;
@@ -38,7 +39,7 @@ public class FoodPreferenceController {
 
     // 선호/비선호 음식 조회
     @GetMapping("/{type}")
-    public ResponseEntity<?> getFoodPreferences(
+    public ResponseEntity<ApiResponseBody.SuccessBody<List<FoodPreferenceGetResponse>>> getFoodPreferences(
             @PathVariable String type,
             @LoginMemberId Long memberId
     ) {
@@ -46,7 +47,7 @@ public class FoodPreferenceController {
         List<FoodPreferenceGetResponse> preferences = strategy.getAllPreferencesByMember(memberId);
 
         if (preferences.isEmpty()) {
-            return ApiResponseGenerator.fail(HttpStatus.OK, "조회된 음식이 없습니다");
+            return ApiResponseGenerator.success(HttpStatus.OK, "조회된 음식이 없습니다", null);
         }
 
         return ApiResponseGenerator.success(HttpStatus.OK, "음식 조회 성공", preferences);
