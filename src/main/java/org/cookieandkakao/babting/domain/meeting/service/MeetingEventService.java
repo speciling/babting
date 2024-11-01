@@ -144,14 +144,16 @@ public class MeetingEventService {
             .toList();
     }
 
-    /**
-     * 빈 시간대 조회 로직 설명
-     * <p>
-     * 1. 모임의 모든 참여자들의 일정 중 Time을 allTimes에 추출 2. allTimes의 시간을 시작 시간을 기준으로 오름차순 정렬한 값들을
-     * sortedTimes에 저장 3. sortedTimes에 겹치는 시간이 있다면 모든 시간들을 (2024-10-24T15:00 ~ 2024-10-24T16:00) ex)
-     * 1. 2024-10-24T12:00 ~ 2024-10-24T15:00 2. 2024-10-24T14:00 ~ 2024-10-24T16:00 1의 시간을 1의 시작 시간
-     * ~ 2의 끝 시간으로 병합 (2024-10-24T12:00 ~ 2024-10-24T16:00) 4. 이제 mergedTime에는 겹치지 않는 시간대만 존재 5.
-     * mergedTime에 있는 시간들을 순회하면서 i번째 끝 시간 ~ i+1번째 시작 시간으로 시간 생성
+    /** 빈 시간대 조회 로직 설명
+     *
+     * 1. 모임의 모든 참여자들의 일정 중 Time을 allTimes에 추출
+     * 2. allTimes의 시간을 시작 시간을 기준으로 오름차순 정렬한 값들을 sortedTimes에 저장
+     * 3. sortedTimes에 겹치는 시간이 있다면 모든 시간들을 (2024-10-24T15:00 ~ 2024-10-24T16:00)
+     *  ex) 1. 2024-10-24T12:00 ~ 2024-10-24T15:00
+     *      2. 2024-10-24T14:00 ~ 2024-10-24T16:00
+     *      1의 시간을 1의 시작 시간 ~ 2의 끝 시간으로 병합 (2024-10-24T12:00 ~ 2024-10-24T16:00)
+     * 4. 이제 mergedTime에는 겹치지 않는 시간대만 존재
+     * 5. mergedTime에 있는 시간들을 순회하면서 i번째 끝 시간 ~ i+1번째 시작 시간으로 시간 생성
      */
     public List<TimeGetResponse> findAvailableTime(Long meetingId, String from, String to) {
         List<Long> joinedMemberIds = getMemberIdInMeetingId(meetingId);
