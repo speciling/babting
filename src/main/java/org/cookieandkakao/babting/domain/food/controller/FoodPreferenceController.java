@@ -1,5 +1,7 @@
 package org.cookieandkakao.babting.domain.food.controller;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import org.cookieandkakao.babting.common.annotaion.LoginMemberId;
 import org.cookieandkakao.babting.common.apiresponse.ApiResponseBody;
 import org.cookieandkakao.babting.common.apiresponse.ApiResponseBody.SuccessBody;
@@ -39,6 +41,8 @@ public class FoodPreferenceController {
 
     // 선호/비선호 음식 조회
     @GetMapping("/{type}")
+    @Operation(summary = "선호/비선호 음식 조회", description = "내 선호/비선호 음식을 가져옵니다.")
+    @ApiResponse(responseCode = "200", description = "선호/비선호 음식 조회 성공")
     public ResponseEntity<ApiResponseBody.SuccessBody<List<FoodPreferenceGetResponse>>> getFoodPreferences(
             @PathVariable String type,
             @LoginMemberId Long memberId
@@ -55,6 +59,8 @@ public class FoodPreferenceController {
 
     // 선호/비선호 음식 추가
     @PostMapping("/{type}")
+    @Operation(summary = "선호/비선호 음식 추가", description = "내 선호/비선호 음식을 추가합니다.")
+    @ApiResponse(responseCode = "200", description = "선호/비선호 음식 추가 성공")
     public ResponseEntity<SuccessBody<FoodPreferenceGetResponse>> addFoodPreference(
             @PathVariable String type,
             @RequestBody FoodPreferenceCreateRequest request,
@@ -68,6 +74,8 @@ public class FoodPreferenceController {
 
     // 선호/비선호 음식 삭제
     @DeleteMapping("/{type}")
+    @Operation(summary = "선호/비선호 음식 삭제", description = "내 선호/비선호 음식을 삭제합니다.")
+    @ApiResponse(responseCode = "200", description = "선호/비선호 음식 삭제 성공")
     public ResponseEntity<SuccessBody<Void>> deleteFoodPreference(
             @PathVariable String type,
             @RequestBody FoodPreferenceCreateRequest request,
