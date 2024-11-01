@@ -111,7 +111,7 @@ public class AuthService {
     }
 
     @Transactional
-    public void saveMemberInfoAndKakaoToken(
+    public Long saveMemberInfoAndKakaoToken(
         KakaoMemberInfoGetResponse kakaoMemberInfoGetResponse,
         KakaoTokenGetResponse kakaoTokenGetResponse) {
 
@@ -121,15 +121,17 @@ public class AuthService {
             .orElse(new Member(kakaoMemberId));
         member.updateProfile(kakaoMemberInfoGetResponse.properties());
 
-        memberRepository.save(member);
+        member = memberRepository.save(member);
 
         KakaoToken kakaoToken = kakaoTokenGetResponse.toEntity();
 
         member.updateKakaoToken(kakaoToken);
+
+        return member.getMemberId();
     }
 
-    public TokenIssueResponse issueToken(Long kakaoMemberId) {
-        Member member = memberRepository.findByKakaoMemberId(kakaoMemberId)
+    public TokenIssueResponse issueToken(Long memberId) {
+        Member member = memberRepository.findById(memberId)
             .orElseThrow(IllegalArgumentException::new);
 
         return jwtUtil.issueToken(member.getMemberId());
