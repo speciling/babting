@@ -10,8 +10,7 @@ import java.util.List;
 import org.cookieandkakao.babting.domain.calendar.dto.response.EventGetResponse;
 import org.cookieandkakao.babting.domain.calendar.dto.response.TimeGetResponse;
 import org.cookieandkakao.babting.domain.calendar.service.TalkCalendarService;
-import org.cookieandkakao.babting.domain.food.repository.FoodRepository;
-import org.cookieandkakao.babting.domain.food.service.FoodService;
+import org.cookieandkakao.babting.domain.food.service.FoodRepositoryService;
 import org.cookieandkakao.babting.domain.meeting.dto.request.ConfirmMeetingGetRequest;
 import org.cookieandkakao.babting.domain.meeting.dto.request.MeetingEventCreateRequest;
 import org.cookieandkakao.babting.domain.meeting.dto.request.MeetingTimeCreateRequest;
@@ -30,12 +29,13 @@ public class MeetingEventService {
     private final MemberService memberService;
     private final TalkCalendarService talkCalendarService;
     private final MeetingService meetingService;
-    private static final String TIME_ZONE = "Asia/Seoul";
-    private static final List<Integer> DEFAULT_REMINDER_TIMES = List.of(15, 30);
     private final MeetingValidationService meetingValidationService;
     private final MeetingEventCreateService meetingEventCreateService;
     private final MeetingEventRepository meetingEventRepository;
-    private final FoodService foodService;
+    private final FoodRepositoryService foodRepositoryService;
+
+    private static final String TIME_ZONE = "Asia/Seoul";
+    private static final List<Integer> DEFAULT_REMINDER_TIMES = List.of(15, 30);
 
     public MeetingEventService(MemberService memberService,
         TalkCalendarService talkCalendarService,
@@ -43,14 +43,14 @@ public class MeetingEventService {
         MeetingValidationService meetingValidationService,
         MeetingEventCreateService meetingEventCreateService,
         MeetingEventRepository meetingEventRepository,
-        FoodService foodService) {
+        FoodRepositoryService foodRepositoryService) {
         this.memberService = memberService;
         this.talkCalendarService = talkCalendarService;
         this.meetingService = meetingService;
         this.meetingValidationService = meetingValidationService;
         this.meetingEventCreateService = meetingEventCreateService;
         this.meetingEventRepository = meetingEventRepository;
-        this.foodService = foodService;
+        this.foodRepositoryService = foodRepositoryService;
     }
 
     // 모임 확정
@@ -64,7 +64,7 @@ public class MeetingEventService {
         meetingValidationService.validateMeetingConfirmation(meeting);
 
         meeting.confirmDateTime(confirmMeetingGetRequest.confirmDateTime());
-        meeting.confirmFood(foodService.findByFoodId(foodId));
+        meeting.confirmFood(foodRepositoryService.findFoodById(foodId));
 
         MeetingTimeCreateRequest meetingTimeCreateRequest = createMeetingTimeRequest(meeting);
         MeetingEventCreateRequest meetingEventCreateRequest = createMeetingEventRequest(meeting,
