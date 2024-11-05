@@ -3,14 +3,69 @@ package org.cookieandkakao.babting.domain.meeting.service;
 import jakarta.transaction.Transactional;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
+import org.cookieandkakao.babting.domain.calendar.dto.response.EventGetResponse;
 import org.cookieandkakao.babting.domain.calendar.dto.response.TimeGetResponse;
+import org.cookieandkakao.babting.domain.calendar.service.TalkCalendarService;
+import org.cookieandkakao.babting.domain.meeting.dto.response.TimeAvailableGetResponse;
+import org.cookieandkakao.babting.domain.meeting.entity.Meeting;
 import org.cookieandkakao.babting.domain.meeting.entity.TimeZone;
 import org.springframework.stereotype.Service;
 
 @Service
 @Transactional
 public class MeetingTimeCalculationService {
+    private final MeetingService meetingService;
+    private final TalkCalendarService talkCalendarService;
+
+    public MeetingTimeCalculationService(MeetingService meetingService,
+        TalkCalendarService talkCalendarService) {
+        this.meetingService = meetingService;
+        this.talkCalendarService = talkCalendarService;
+    }
+
+    /** 빈 시간대 조회 로직 설명
+     *
+     * 1. 모임의 모든 참여자들의 일정 중 Time을 allTimes에 추출
+     * 2. allTimes의 시간을 시작 시간을 기준으로 오름차순 정렬한 값들을 sortedTimes에 저장
+     * 3. sortedTimes에 겹치는 시간이 있다면 모든 시간들을 (2024-10-24T15:00 ~ 2024-10-24T16:00)
+     *  ex) 1. 2024-10-24T12:00 ~ 2024-10-24T15:00
+     *      2. 2024-10-24T14:00 ~ 2024-10-24T16:00
+     *      1의 시간을 1의 시작 시간 ~ 2의 끝 시간으로 병합 (2024-10-24T12:00 ~ 2024-10-24T16:00)
+     * 4. 이제 mergedTime에는 겹치지 않는 시간대만 존재
+     * 5. mergedTime에 있는 시간들을 순회하면서 i번째 끝 시간 ~ i+1번째 시작 시간으로 시간 생성
+     */
+    public TimeAvailableGetResponse findAvailableTime(Long meetingId) {
+        List<Long> joinedMemberIds = meetingService.getMemberIdInMeetingId(meetingId);
+        Meeting meeting = meetingService.findMeeting(meetingId);
+        String from = meeting.getStartDate().toString();
+        String to = meeting.getEndDate().toString();
+
+        // 참여자별 일정에서 필요한 시간 정보만 추출하여 리스트로 수집
+        List<TimeGetResponse> allTimes = joinedMemberIds.stream()
+            .flatMap(memberId ->
+                talkCalendarService
+                    .getUpdatedEventList(from, to, memberId)
+                    .stream()
+                    .map(EventGetResponse::time)
+            )
+            .toList();
+
+        // 시간대 정렬 (시작 시간을 기준으로 오름차순 정렬)
+        List<TimeGetResponse> sortedTimes = allTimes.stream()
+            .sorted(Comparator.comparing(time -> LocalDateTime.parse(time.startAt())))
+            .toList();
+
+        // 겹치는 시간 병합
+        List<TimeGetResponse> mergedTimes = mergeOverlappingTimes(sortedTimes);
+
+        // 빈 시간대 계산
+        List<TimeGetResponse> availableTime = calculateAvailableTimes(mergedTimes, from, to);
+
+        return TimeAvailableGetResponse.of(meeting, availableTime);
+    }
+
     // 겹치는 시간 병합
     public List<TimeGetResponse> mergeOverlappingTimes(List<TimeGetResponse> times) {
         List<TimeGetResponse> mergedTimes = new ArrayList<>();
