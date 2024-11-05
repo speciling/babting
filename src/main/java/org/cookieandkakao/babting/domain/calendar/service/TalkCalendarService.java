@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import org.cookieandkakao.babting.common.cache.CacheKeyGenerator;
+import org.cookieandkakao.babting.common.exception.customexception.CacheEvictionException;
 import org.cookieandkakao.babting.common.exception.customexception.EventCreationException;
 import org.cookieandkakao.babting.common.exception.customexception.JsonConversionException;
 import org.cookieandkakao.babting.domain.calendar.dto.request.EventCreateRequest;
@@ -16,6 +17,7 @@ import org.cookieandkakao.babting.domain.calendar.dto.response.EventDetailGetRes
 import org.cookieandkakao.babting.domain.calendar.dto.response.EventGetResponse;
 import org.cookieandkakao.babting.domain.calendar.dto.response.EventListGetResponse;
 import org.cookieandkakao.babting.domain.member.service.MemberService;
+import org.springframework.dao.DataAccessException;
 import org.springframework.data.redis.core.Cursor;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.ScanOptions;
@@ -52,7 +54,7 @@ public class TalkCalendarService {
                     new TypeReference<List<EventGetResponse>>() {
                     });
             } catch (JsonProcessingException e) {
-                throw new RuntimeException("캐시된 JSON 변환 오류", e);
+                throw new JsonConversionException("캐시된 JSON 변환 오류");
             }
         }
 
@@ -84,7 +86,7 @@ public class TalkCalendarService {
                 // 단일 객체이므로 .class 사용
                 return objectMapper.readValue(cachedJson, EventDetailGetResponse.class);
             } catch (JsonProcessingException e) {
-                throw new RuntimeException("캐시된 JSON 변환 오류", e);
+                throw new JsonConversionException("캐시된 JSON 변환 오류");
             }
         }
 
@@ -102,7 +104,7 @@ public class TalkCalendarService {
             redisTemplate.opsForValue()
                 .set(cacheKey, objectMapper.writeValueAsString(data), CACHE_DURATION);
         } catch (JsonProcessingException e) {
-            throw new RuntimeException("JSON 변환 오류", e);
+            throw new JsonConversionException("JSON 변환 오류");
         }
     }
 
@@ -153,8 +155,10 @@ public class TalkCalendarService {
             // 리소스 해제
             // Cursor 사용 후 반드시 닫아주어야 함
             cursor.close();
+        } catch (DataAccessException e) {
+            throw new CacheEvictionException("Redis 데이터 접근 중 문제가 발생했습니다.");
         } catch (Exception e) {
-            throw new RuntimeException();
+            throw new CacheEvictionException("Cursor 리소스를 해제하는 중 문제가 발생했습니다.");
         }
     }
 }
