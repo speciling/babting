@@ -39,7 +39,6 @@ public class MeetingEventService {
 
     private final MemberService memberService;
     private final TalkCalendarService talkCalendarService;
-    private final ObjectMapper objectMapper = new ObjectMapper();
     private final MeetingService meetingService;
     private static final List<Integer> DEFAULT_REMINDER_TIMES = List.of(15, 30);
     private final EventRepository eventRepository;
