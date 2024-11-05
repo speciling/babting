@@ -112,4 +112,13 @@ public class MeetingService {
     public List<MemberMeeting> findAllMemberMeeting(Meeting meeting){
         return memberMeetingRepository.findByMeeting(meeting);
     }
+
+    public List<Long> getMemberIdInMeetingId(Long meetingId) {
+        Meeting meeting = findMeeting(meetingId);
+        List<MemberMeeting> memberMeetings = findAllMemberMeeting(meeting);
+
+        return memberMeetings.stream()
+            .map(memberMeeting -> memberMeeting.getMember().getMemberId())
+            .toList();
+    }
 }
