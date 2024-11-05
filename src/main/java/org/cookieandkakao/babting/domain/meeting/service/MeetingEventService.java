@@ -71,7 +71,7 @@ public class MeetingEventService {
         MeetingEventCreateRequest meetingEventCreateRequest = createMeetingEventRequest(meeting,
             meetingTimeCreateRequest);
 
-        List<Long> memberIds = getMemberIdInMeetingId(meetingId);
+        List<Long> memberIds = meetingService.getMemberIdInMeetingId(meetingId);
 
         for (Long currentMemberId : memberIds) {
             addMeetingEvent(currentMemberId, meetingEventCreateRequest);
@@ -121,15 +121,6 @@ public class MeetingEventService {
             meetingEventCreateRequest.reminders(), null);
     }
 
-    private List<Long> getMemberIdInMeetingId(Long meetingId) {
-        Meeting meeting = meetingService.findMeeting(meetingId);
-        List<MemberMeeting> memberMeetings = meetingService.findAllMemberMeeting(meeting);
-
-        return memberMeetings.stream()
-            .map(memberMeeting -> memberMeeting.getMember().getMemberId())
-            .toList();
-    }
-
     /** 빈 시간대 조회 로직 설명
      *
      * 1. 모임의 모든 참여자들의 일정 중 Time을 allTimes에 추출
@@ -142,7 +133,7 @@ public class MeetingEventService {
      * 5. mergedTime에 있는 시간들을 순회하면서 i번째 끝 시간 ~ i+1번째 시작 시간으로 시간 생성
      */
     public TimeAvailableGetResponse findAvailableTime(Long meetingId) {
-        List<Long> joinedMemberIds = getMemberIdInMeetingId(meetingId);
+        List<Long> joinedMemberIds = meetingService.getMemberIdInMeetingId(meetingId);
         Meeting meeting = meetingService.findMeeting(meetingId);
         String from = meeting.getStartDate().toString();
         String to = meeting.getEndDate().toString();
