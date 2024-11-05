@@ -10,6 +10,7 @@ import org.cookieandkakao.babting.common.apiresponse.ApiResponseGenerator;
 import org.cookieandkakao.babting.domain.meeting.dto.request.ConfirmMeetingGetRequest;
 import org.cookieandkakao.babting.domain.meeting.dto.request.MeetingCreateRequest;
 import org.cookieandkakao.babting.domain.meeting.dto.request.MeetingJoinCreateRequest;
+import org.cookieandkakao.babting.domain.meeting.dto.request.MeetingUpdateRequest;
 import org.cookieandkakao.babting.domain.meeting.dto.response.MeetingConfirmedInfo;
 import org.cookieandkakao.babting.domain.meeting.dto.response.MeetingGetResponse;
 import org.cookieandkakao.babting.domain.meeting.dto.response.MeetingHostCheckResponse;
@@ -23,6 +24,7 @@ import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -49,6 +51,18 @@ public class MeetingController {
         @RequestBody MeetingCreateRequest meetingCreateRequest){
         meetingService.createMeeting(memberId, meetingCreateRequest);
         return ApiResponseGenerator.success(HttpStatus.CREATED, "모임 생성 성공");
+    }
+
+    // 모임 정보 수정
+    @PutMapping("/{meetingId}")
+    @Operation(summary = "모임 수정", description = "모임 정보를 수정합니다.")
+    @ApiResponse(responseCode = "200", description = "모임 수정 성공")
+    public ResponseEntity<SuccessBody<Void>> updateMeeting(
+        @LoginMemberId Long memberId,
+        @PathVariable("meetingId") Long meetingId,
+        @RequestBody MeetingUpdateRequest meetingUpdateRequest){
+        meetingService.updateMeeting(memberId, meetingId, meetingUpdateRequest);
+        return ApiResponseGenerator.success(HttpStatus.OK, "모임 수정 성공");
     }
 
     // 모임 참가(초대받은사람)
@@ -144,5 +158,4 @@ public class MeetingController {
         TimeAvailableGetResponse timeAvailableGetResponse = meetingEventService.findAvailableTime(meetingId);
         return ApiResponseGenerator.success(HttpStatus.OK, "모임 공통 시간표 조회 성공", timeAvailableGetResponse);
     }
-    // 모임 정보 수정
 }

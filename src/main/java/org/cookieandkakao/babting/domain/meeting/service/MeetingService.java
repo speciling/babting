@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.stream.Collectors;
 import org.cookieandkakao.babting.domain.meeting.dto.request.MeetingCreateRequest;
+import org.cookieandkakao.babting.domain.meeting.dto.request.MeetingUpdateRequest;
 import org.cookieandkakao.babting.domain.meeting.dto.response.MeetingConfirmedInfo;
 import org.cookieandkakao.babting.domain.meeting.dto.response.MeetingGetResponse;
 import org.cookieandkakao.babting.domain.meeting.dto.response.MeetingHostCheckResponse;
@@ -46,6 +47,27 @@ public class MeetingService {
         locationRepository.save(baseLocation);
         meetingRepository.save(meeting);
         memberMeetingRepository.save(new MemberMeeting(member, meeting, true));
+    }
+
+    // 모임 수정
+    public void updateMeeting(Long memberId, Long meetingId, MeetingUpdateRequest meetingUpdateRequest) {
+        Member member = memberService.findMember(memberId);
+        Meeting meeting = findMeeting(meetingId);
+        MemberMeeting memberMeeting = findMemberMeeting(member, meeting);
+
+        Location baseLocation = meetingUpdateRequest.baseLocation().toEntity();
+
+        if (!memberMeeting.isHost()){
+            throw new IllegalStateException("주최자만 모임을 수정할 수 있습니다.");
+        }
+        
+        meeting.updateBaseLocation(baseLocation);
+        meeting.updateTitle(meetingUpdateRequest.title());
+        meeting.updateStartDate(meetingUpdateRequest.startDate());
+        meeting.updateEndDate(meetingUpdateRequest.endDate());
+        meeting.updateDurationTime(meetingUpdateRequest.durationTime());
+        meeting.updateStartTime(meetingUpdateRequest.startTime());
+        meeting.updateEndTime(meetingUpdateRequest.endTime());
     }
 
     // 모임 참가(초대받은사람)
