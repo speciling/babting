@@ -7,6 +7,7 @@ public record TimeAvailableGetResponse(
     String startDate,
 
     String endDate,
+    Integer durationTime,
 
     List<TimeGetResponse> availableTime
 ) {

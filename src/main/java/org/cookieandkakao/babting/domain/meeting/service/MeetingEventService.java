@@ -183,7 +183,7 @@ public class MeetingEventService {
         // 빈 시간대 계산
         List<TimeGetResponse> availableTime = calculateAvailableTimes(mergedTimes, from, to);
 
-        return new TimeAvailableGetResponse(meeting.getStartDate().toString(), meeting.getEndDate().toString(), availableTime);
+        return new TimeAvailableGetResponse(meeting.getStartDate().toString(), meeting.getEndDate().toString(),meeting.getDurationTime(), availableTime);
     }
 
     // 겹치는 시간 병합
