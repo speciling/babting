@@ -120,19 +120,6 @@ public class MeetingEventService {
             meetingEventCreateRequest.reminders(), null);
     }
 
-    private String getKakaoAccessToken(Long memberId) {
-        KakaoToken kakaoToken = memberService.getKakaoToken(memberId);
-        return kakaoToken.getAccessToken();
-    }
-
-    private String convertToJSONString(MeetingEventCreateRequest eventCreateRequest) {
-        try {
-            return objectMapper.writeValueAsString(eventCreateRequest);
-        } catch (JsonProcessingException e) {
-            throw new JsonConversionException("JSON 변환 중 오류가 발생했습니다.");
-        }
-    }
-
     private List<Long> getMemberIdInMeetingId(Long meetingId) {
         Meeting meeting = meetingService.findMeeting(meetingId);
         List<MemberMeeting> memberMeetings = meetingService.findAllMemberMeeting(meeting);
