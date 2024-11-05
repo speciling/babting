@@ -7,35 +7,35 @@ import org.junit.jupiter.api.Test;
 class MeetingServiceTest {
 
     @Test
-    void createMeeting() {
+    void 모임_생성() {
         //given
         //when
         //then
     }
 
     @Test
-    void updateMeeting() {
+    void 모임_수정() {
         //given
         //when
         //then
     }
 
     @Test
-    void joinMeeting() {
+    void 모임_참가() {
         //given
         //when
         //then
     }
 
     @Test
-    void exitMeeting() {
+    void 모임_탈퇴() {
         //given
         //when
         //then
     }
 
     @Test
-    void checkHost() {
+    void 모임_주최자_확인() {
         //given
         //when
         //then
