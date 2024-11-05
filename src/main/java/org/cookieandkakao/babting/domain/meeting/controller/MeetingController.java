@@ -11,11 +11,11 @@ import org.cookieandkakao.babting.domain.food.service.MeetingFoodPreferenceUpdat
 import org.cookieandkakao.babting.domain.meeting.dto.request.ConfirmMeetingGetRequest;
 import org.cookieandkakao.babting.domain.meeting.dto.request.MeetingCreateRequest;
 import org.cookieandkakao.babting.domain.meeting.dto.request.MeetingJoinCreateRequest;
-import org.cookieandkakao.babting.domain.meeting.dto.request.MeetingTimeCreateRequest;
 import org.cookieandkakao.babting.domain.meeting.dto.response.MeetingGetResponse;
 import org.cookieandkakao.babting.domain.meeting.dto.response.MeetingHostCheckResponse;
 import org.cookieandkakao.babting.domain.meeting.dto.response.MeetingInfoGetResponse;
 import org.cookieandkakao.babting.domain.meeting.dto.response.TimeAvailableGetResponse;
+import org.cookieandkakao.babting.domain.meeting.service.MeetingEventCreateService;
 import org.cookieandkakao.babting.domain.meeting.service.MeetingEventService;
 import org.cookieandkakao.babting.domain.meeting.service.MeetingService;
 import org.springframework.http.HttpStatus;
@@ -36,13 +36,16 @@ public class MeetingController {
     private final MeetingService meetingService;
     private final MeetingEventService meetingEventService;
     private final MeetingFoodPreferenceUpdater meetingFoodPreferenceUpdater;
+    private final MeetingEventCreateService meetingEventCreateService;
 
     public MeetingController(MeetingService meetingService,
         MeetingEventService meetingEventService,
-        MeetingFoodPreferenceUpdater meetingFoodPreferenceUpdater) {
+        MeetingFoodPreferenceUpdater meetingFoodPreferenceUpdater,
+        MeetingEventCreateService meetingEventCreateService) {
         this.meetingService = meetingService;
         this.meetingEventService = meetingEventService;
         this.meetingFoodPreferenceUpdater = meetingFoodPreferenceUpdater;
+        this.meetingEventCreateService = meetingEventCreateService;
     }
 
     // 모임 생성(주최자)
@@ -66,7 +69,7 @@ public class MeetingController {
         @RequestBody MeetingJoinCreateRequest meetingJoinCreateRequest
     ) {
         meetingService.joinMeeting(memberId, meetingId);
-        meetingEventService.saveMeetingAvoidTime(memberId, meetingId,
+        meetingEventCreateService.saveMeetingAvoidTime(memberId, meetingId,
             meetingJoinCreateRequest.times());
         meetingFoodPreferenceUpdater.updatePreferences(meetingId, memberId,
             meetingJoinCreateRequest.preferences(), meetingJoinCreateRequest.nonPreferences());
