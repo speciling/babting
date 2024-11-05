@@ -33,9 +33,4 @@ public class FoodService {
             .map(food -> new FoodGetResponse(food.getFoodId(), category.getName(), food.getName()))
             .collect(Collectors.toList());
     }
-
-    public Food findByFoodId(Long foodId) {
-        return foodRepository.findById(foodId)
-            .orElseThrow(() -> new NoSuchElementException("해당 음식 ID가 존재하지 않습니다."));
-    }
 }
