@@ -137,18 +137,24 @@ public class TalkCalendarService {
         // 패턴과 카운트 설정
         ScanOptions scanOptions = ScanOptions.scanOptions().match(pattern).count(10).build();
         // 스캔 시작
-        Cursor<byte[]> cursor = redisTemplate.executeWithStickyConnection(
-            connection -> connection.scan(scanOptions));
+        try {
+            Cursor<byte[]> cursor = redisTemplate.executeWithStickyConnection(
+                connection -> connection.scan(scanOptions));
 
-        while (cursor != null && cursor.hasNext()) {
-            String key = new String(cursor.next());
-            redisTemplate.delete(key);
-        }
+            List<String> keysToDelete = new ArrayList<>();
+            while (cursor.hasNext()) {
+                keysToDelete.add(new String(cursor.next()));
+            }
 
-        if (cursor != null) {
+            if (!keysToDelete.isEmpty()) {
+                redisTemplate.delete(keysToDelete);
+            }
+
             // 리소스 해제
             // Cursor 사용 후 반드시 닫아주어야 함
             cursor.close();
+        } catch (Exception e) {
+            throw new RuntimeException();
         }
     }
 }
