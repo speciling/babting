@@ -17,6 +17,7 @@ import org.cookieandkakao.babting.domain.calendar.dto.response.EventGetResponse;
 import org.cookieandkakao.babting.domain.calendar.dto.response.TimeGetResponse;
 import org.cookieandkakao.babting.domain.calendar.entity.Event;
 import org.cookieandkakao.babting.domain.calendar.repository.EventRepository;
+import org.cookieandkakao.babting.domain.calendar.service.EventService;
 import org.cookieandkakao.babting.domain.calendar.service.TalkCalendarClientService;
 import org.cookieandkakao.babting.domain.calendar.service.TalkCalendarService;
 import org.cookieandkakao.babting.domain.meeting.dto.request.ConfirmMeetingGetRequest;
@@ -37,26 +38,23 @@ import org.springframework.stereotype.Service;
 public class MeetingEventService {
 
     private final MemberService memberService;
-    private final TalkCalendarClientService talkCalendarClientService;
     private final TalkCalendarService talkCalendarService;
     private final ObjectMapper objectMapper = new ObjectMapper();
     private final MeetingService meetingService;
     private static final String TIME_ZONE = "Asia/Seoul";
     private static final List<Integer> DEFAULT_REMINDER_TIMES = List.of(15, 30);
-    private final EventRepository eventRepository;
     private final MeetingEventRepository meetingEventRepository;
+    private final EventService eventService;
 
     public MeetingEventService(MemberService memberService,
-        TalkCalendarClientService talkCalendarClientService,
         TalkCalendarService talkCalendarService,
-        MeetingService meetingService, EventRepository eventRepository,
-        MeetingEventRepository meetingEventRepository) {
+        MeetingService meetingService,
+        MeetingEventRepository meetingEventRepository, EventService eventService) {
         this.memberService = memberService;
-        this.talkCalendarClientService = talkCalendarClientService;
         this.talkCalendarService = talkCalendarService;
         this.meetingService = meetingService;
-        this.eventRepository = eventRepository;
         this.meetingEventRepository = meetingEventRepository;
+        this.eventService = eventService;
     }
 
     // 모임 확정되면 일정 생성
@@ -145,16 +143,14 @@ public class MeetingEventService {
             .toList();
     }
 
-    /** 빈 시간대 조회 로직 설명
-     *
-     * 1. 모임의 모든 참여자들의 일정 중 Time을 allTimes에 추출
-     * 2. allTimes의 시간을 시작 시간을 기준으로 오름차순 정렬한 값들을 sortedTimes에 저장
-     * 3. sortedTimes에 겹치는 시간이 있다면 모든 시간들을 (2024-10-24T15:00 ~ 2024-10-24T16:00)
-     *  ex) 1. 2024-10-24T12:00 ~ 2024-10-24T15:00
-     *      2. 2024-10-24T14:00 ~ 2024-10-24T16:00
-     *      1의 시간을 1의 시작 시간 ~ 2의 끝 시간으로 병합 (2024-10-24T12:00 ~ 2024-10-24T16:00)
-     * 4. 이제 mergedTime에는 겹치지 않는 시간대만 존재
-     * 5. mergedTime에 있는 시간들을 순회하면서 i번째 끝 시간 ~ i+1번째 시작 시간으로 시간 생성
+    /**
+     * 빈 시간대 조회 로직 설명
+     * <p>
+     * 1. 모임의 모든 참여자들의 일정 중 Time을 allTimes에 추출 2. allTimes의 시간을 시작 시간을 기준으로 오름차순 정렬한 값들을
+     * sortedTimes에 저장 3. sortedTimes에 겹치는 시간이 있다면 모든 시간들을 (2024-10-24T15:00 ~ 2024-10-24T16:00) ex)
+     * 1. 2024-10-24T12:00 ~ 2024-10-24T15:00 2. 2024-10-24T14:00 ~ 2024-10-24T16:00 1의 시간을 1의 시작 시간
+     * ~ 2의 끝 시간으로 병합 (2024-10-24T12:00 ~ 2024-10-24T16:00) 4. 이제 mergedTime에는 겹치지 않는 시간대만 존재 5.
+     * mergedTime에 있는 시간들을 순회하면서 i번째 끝 시간 ~ i+1번째 시작 시간으로 시간 생성
      */
     public TimeAvailableGetResponse findAvailableTime(Long meetingId) {
         List<Long> joinedMemberIds = getMemberIdInMeetingId(meetingId);
@@ -183,7 +179,8 @@ public class MeetingEventService {
         // 빈 시간대 계산
         List<TimeGetResponse> availableTime = calculateAvailableTimes(mergedTimes, from, to);
 
-        return new TimeAvailableGetResponse(meeting.getStartDate().toString(), meeting.getEndDate().toString(), availableTime);
+        return new TimeAvailableGetResponse(meeting.getStartDate().toString(),
+            meeting.getEndDate().toString(), availableTime);
     }
 
     // 겹치는 시간 병합
@@ -278,6 +275,7 @@ public class MeetingEventService {
 
 
     // 모임별 개인적으로 피하고 싶은 시간 저장하기
+    @Transactional
     public void saveMeetingAvoidTime(Long memberId, Long meetingId,
         List<MeetingTimeCreateRequest> avoidTimeCreateRequests) {
 
@@ -296,14 +294,18 @@ public class MeetingEventService {
     }
 
     // 피하고 싶은 시간을 기반으로 MeetingEvent 생성 및 저장
-    private void createAndSaveMeetingEvent(MemberMeeting memberMeeting, MeetingTimeCreateRequest meetingTimeCreateRequest) {
+    private void createAndSaveMeetingEvent(MemberMeeting memberMeeting,
+        MeetingTimeCreateRequest meetingTimeCreateRequest) {
         // 시간 정보를 Event로 생성 후 저장
         TimeCreateRequest timeCreateRequest = meetingTimeCreateRequest.toTimeCreateRequest();
-        Event avoidEvent = new Event(timeCreateRequest.toEntity());
-        eventRepository.save(avoidEvent);
+        Event avoidEvent = eventService.saveAvoidTimeEvent(timeCreateRequest.toEntity());
 
         // MeetingEvent로 저장
         MeetingEvent meetingEvent = new MeetingEvent(memberMeeting, avoidEvent);
+        saveMeetingEvent(meetingEvent);
+    }
+
+    private void saveMeetingEvent(MeetingEvent meetingEvent) {
         meetingEventRepository.save(meetingEvent);
     }
 }
