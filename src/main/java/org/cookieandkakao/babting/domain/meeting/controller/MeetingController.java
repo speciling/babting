@@ -11,6 +11,7 @@ import org.cookieandkakao.babting.domain.meeting.dto.request.ConfirmMeetingGetRe
 import org.cookieandkakao.babting.domain.meeting.dto.request.MeetingCreateRequest;
 import org.cookieandkakao.babting.domain.meeting.dto.request.MeetingJoinCreateRequest;
 import org.cookieandkakao.babting.domain.meeting.dto.request.MeetingTimeCreateRequest;
+import org.cookieandkakao.babting.domain.meeting.dto.response.MeetingConfirmedInfo;
 import org.cookieandkakao.babting.domain.meeting.dto.response.MeetingGetResponse;
 import org.cookieandkakao.babting.domain.meeting.dto.response.MeetingHostCheckResponse;
 import org.cookieandkakao.babting.domain.meeting.dto.response.MeetingInfoGetResponse;
@@ -124,7 +125,16 @@ public class MeetingController {
         return ApiResponseGenerator.success(HttpStatus.OK, "주최자 여부 확인 성공", isHost);
     }
     // 모임 확정 날짜, 확정 음식 확인
-
+    @GetMapping("/{meetingId}/confirmed-info")
+    @Operation(summary = "모임 확정 날짜, 확정 음식 조회", description = "모임 확정 날짜와 확정 음식을 확인합니다.")
+    @ApiResponse(responseCode = "200", description = "모임 확정 날짜, 확정 음식 조회 성공")
+    public ResponseEntity<SuccessBody<MeetingConfirmedInfo>> getConfirmedInfo(
+        @PathVariable("meetingId") Long meetingId
+    ){
+        MeetingConfirmedInfo meetingConfirmedInfo = meetingService.getMeetingConfirmedInfo(
+            meetingId);
+        return ApiResponseGenerator.success(HttpStatus.OK, "모임 확정 날짜, 확정 음식 조회 성공", meetingConfirmedInfo);
+    }
     // 모임 공통 빈 시간 조회
     @GetMapping("/{meetingId}/calendar")
     @Operation(summary = "모임 공통 빈 시간 조회", description = "모임에 참여한 멤버들의 공통 시간표를 조회합니다. (모두가 비어있는 시간)")
