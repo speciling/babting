@@ -43,16 +43,18 @@ public class MeetingEventService {
     private static final List<Integer> DEFAULT_REMINDER_TIMES = List.of(15, 30);
     private final EventRepository eventRepository;
     private final MeetingEventRepository meetingEventRepository;
+    private final MeetingTimeCalculationService meetingTimeCalculationService;
 
-    public MeetingEventService(MemberService memberService,
-        TalkCalendarService talkCalendarService,
+    public MeetingEventService(MemberService memberService, TalkCalendarService talkCalendarService,
         MeetingService meetingService, EventRepository eventRepository,
-        MeetingEventRepository meetingEventRepository) {
+        MeetingEventRepository meetingEventRepository,
+        MeetingTimeCalculationService meetingTimeCalculationService) {
         this.memberService = memberService;
         this.talkCalendarService = talkCalendarService;
         this.meetingService = meetingService;
         this.eventRepository = eventRepository;
         this.meetingEventRepository = meetingEventRepository;
+        this.meetingTimeCalculationService = meetingTimeCalculationService;
     }
 
     // 모임 확정되면 일정 생성
@@ -161,10 +163,10 @@ public class MeetingEventService {
             .toList();
 
         // 겹치는 시간 병합
-        List<TimeGetResponse> mergedTimes = mergeOverlappingTimes(sortedTimes);
+        List<TimeGetResponse> mergedTimes = meetingTimeCalculationService.mergeOverlappingTimes(sortedTimes);
 
         // 빈 시간대 계산
-        List<TimeGetResponse> availableTime = calculateAvailableTimes(mergedTimes, from, to);
+        List<TimeGetResponse> availableTime = meetingTimeCalculationService.calculateAvailableTimes(mergedTimes, from, to);
 
         return new TimeAvailableGetResponse(meeting.getStartDate().toString(), meeting.getEndDate().toString(),meeting.getDurationTime(), availableTime);
     }
