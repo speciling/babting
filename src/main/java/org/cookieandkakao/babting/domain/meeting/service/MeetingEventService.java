@@ -168,7 +168,7 @@ public class MeetingEventService {
         // 빈 시간대 계산
         List<TimeGetResponse> availableTime = meetingTimeCalculationService.calculateAvailableTimes(mergedTimes, from, to);
 
-        return new TimeAvailableGetResponse(meeting.getStartDate().toString(), meeting.getEndDate().toString(),meeting.getDurationTime(), availableTime);
+        return TimeAvailableGetResponse.of(meeting, availableTime);
     }
 
     // 모임별 개인적으로 피하고 싶은 시간 저장하기
