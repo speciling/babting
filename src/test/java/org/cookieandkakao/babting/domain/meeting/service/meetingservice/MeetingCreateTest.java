@@ -14,7 +14,14 @@ class MeetingCreateTest {
 
     //모임 생성
     @Test
-    void 모임_생성() {
+    void 모임의_시작_시간은_현재_시간보다_빠를_수_없다() {
+        //given
+        //when
+        //then
+    }
+
+    @Test
+    void 모임의_모든_정보가_입력되어야한다(){
         //given
         //when
         //then
