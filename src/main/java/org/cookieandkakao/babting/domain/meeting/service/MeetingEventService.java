@@ -37,7 +37,6 @@ import org.springframework.stereotype.Service;
 public class MeetingEventService {
 
     private final MemberService memberService;
-    private final TalkCalendarClientService talkCalendarClientService;
     private final TalkCalendarService talkCalendarService;
     private final ObjectMapper objectMapper = new ObjectMapper();
     private final MeetingService meetingService;
@@ -47,12 +46,10 @@ public class MeetingEventService {
     private final MeetingEventRepository meetingEventRepository;
 
     public MeetingEventService(MemberService memberService,
-        TalkCalendarClientService talkCalendarClientService,
         TalkCalendarService talkCalendarService,
         MeetingService meetingService, EventRepository eventRepository,
         MeetingEventRepository meetingEventRepository) {
         this.memberService = memberService;
-        this.talkCalendarClientService = talkCalendarClientService;
         this.talkCalendarService = talkCalendarService;
         this.meetingService = meetingService;
         this.eventRepository = eventRepository;
