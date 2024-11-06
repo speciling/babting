@@ -3,6 +3,7 @@ package org.cookieandkakao.babting.domain.meeting.controller;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import java.util.List;
 import org.cookieandkakao.babting.common.annotaion.LoginMemberId;
 import org.cookieandkakao.babting.common.apiresponse.ApiResponseBody.SuccessBody;
@@ -48,7 +49,7 @@ public class MeetingController {
     @ApiResponse(responseCode = "201", description = "모임 생성 성공")
     public ResponseEntity<SuccessBody<Void>> createMeeting(
         @LoginMemberId Long memberId,
-        @RequestBody MeetingCreateRequest meetingCreateRequest){
+        @RequestBody @Valid MeetingCreateRequest meetingCreateRequest){
         meetingService.createMeeting(memberId, meetingCreateRequest);
         return ApiResponseGenerator.success(HttpStatus.CREATED, "모임 생성 성공");
     }
@@ -60,7 +61,7 @@ public class MeetingController {
     public ResponseEntity<SuccessBody<Void>> updateMeeting(
         @LoginMemberId Long memberId,
         @PathVariable("meetingId") Long meetingId,
-        @RequestBody MeetingUpdateRequest meetingUpdateRequest){
+        @RequestBody @Valid MeetingUpdateRequest meetingUpdateRequest){
         meetingService.updateMeeting(memberId, meetingId, meetingUpdateRequest);
         return ApiResponseGenerator.success(HttpStatus.OK, "모임 수정 성공");
     }
@@ -72,7 +73,7 @@ public class MeetingController {
     public ResponseEntity<SuccessBody<Void>> joinMeeting(
         @PathVariable("meetingId") Long meetingId,
         @LoginMemberId Long memberId,
-        @RequestBody MeetingJoinCreateRequest meetingJoinCreateRequest
+        @RequestBody @Valid MeetingJoinCreateRequest meetingJoinCreateRequest
     ){
         meetingService.joinMeeting(memberId, meetingId);
         meetingEventService.saveMeetingAvoidTime(memberId, meetingId, meetingJoinCreateRequest.times());
@@ -85,7 +86,7 @@ public class MeetingController {
     @ApiResponse(responseCode = "202", description = "모임 확정 성공")
     public ResponseEntity<SuccessBody<Void>> confirmMeeting(
         @PathVariable("meetingId") Long meetingId,
-        @RequestBody ConfirmMeetingGetRequest confirmMeetingGetRequest,
+        @RequestBody @Valid ConfirmMeetingGetRequest confirmMeetingGetRequest,
         @LoginMemberId Long memberId
     ) {
         meetingEventService.confirmMeeting(memberId, meetingId, confirmMeetingGetRequest);
