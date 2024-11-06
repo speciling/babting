@@ -35,8 +35,6 @@ class MeetingEventServiceTest {
     @Mock
     private MemberService memberService;
     @Mock
-    private TalkCalendarService talkCalendarService;
-    @Mock
     private MeetingService meetingService;
     @Mock
     private MeetingValidationService meetingValidationService;
@@ -49,9 +47,6 @@ class MeetingEventServiceTest {
 
     @InjectMocks
     private MeetingEventService meetingEventService;
-
-    @Captor
-    ArgumentCaptor<MeetingEvent> meetingEventArgumentCaptor;
 
     @BeforeEach
     void setUp() {
