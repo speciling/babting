@@ -22,6 +22,7 @@ import org.cookieandkakao.babting.domain.meeting.dto.request.MeetingTimeCreateRe
 import org.cookieandkakao.babting.domain.meeting.entity.Meeting;
 import org.cookieandkakao.babting.domain.meeting.entity.MeetingEvent;
 import org.cookieandkakao.babting.domain.meeting.entity.MemberMeeting;
+import org.cookieandkakao.babting.domain.meeting.repository.MeetingEventRepository;
 import org.cookieandkakao.babting.domain.member.entity.Member;
 import org.cookieandkakao.babting.domain.member.service.MemberService;
 import org.junit.jupiter.api.BeforeEach;
@@ -41,7 +42,7 @@ class MeetingEventCreateServiceTest {
     @Mock
     private MeetingService meetingService;
     @Mock
-    private MeetingEventService meetingEventService;
+    private MeetingEventRepository meetingEventRepository;
 
     @InjectMocks
     private MeetingEventCreateService meetingEventCreateService;
@@ -75,6 +76,7 @@ class MeetingEventCreateServiceTest {
         assertEquals(result.eventId(), expectedResponse.eventId());
         verify(talkCalendarService).createEvent(any(EventCreateRequest.class), eq(memberId));
     }
+
 
     @Test
     void saveMeetingAvoidTime_NoAvoidTime() {
@@ -114,7 +116,7 @@ class MeetingEventCreateServiceTest {
 
         // Then
         verify(eventService).saveAvoidTimeEvent(time);
-        verify(meetingEventService).saveMeetingEvent(any(MeetingEvent.class));
+        verify(meetingEventRepository).save(any(MeetingEvent.class));
     }
 
     @Test

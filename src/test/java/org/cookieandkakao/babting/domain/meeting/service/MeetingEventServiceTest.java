@@ -13,19 +13,14 @@ import static org.mockito.Mockito.verify;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import org.cookieandkakao.babting.domain.calendar.service.TalkCalendarService;
 import org.cookieandkakao.babting.domain.food.service.FoodRepositoryService;
 import org.cookieandkakao.babting.domain.meeting.dto.request.ConfirmMeetingGetRequest;
 import org.cookieandkakao.babting.domain.meeting.dto.request.MeetingEventCreateRequest;
 import org.cookieandkakao.babting.domain.meeting.entity.Meeting;
-import org.cookieandkakao.babting.domain.meeting.entity.MeetingEvent;
-import org.cookieandkakao.babting.domain.meeting.repository.MeetingEventRepository;
 import org.cookieandkakao.babting.domain.member.entity.Member;
 import org.cookieandkakao.babting.domain.member.service.MemberService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.ArgumentCaptor;
-import org.mockito.Captor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
@@ -41,8 +36,6 @@ class MeetingEventServiceTest {
     @Mock
     private MeetingEventCreateService meetingEventCreateService;
     @Mock
-    private MeetingEventRepository meetingEventRepository;
-    @Mock
     private FoodRepositoryService foodRepositoryService;
 
     @InjectMocks
@@ -51,36 +44,6 @@ class MeetingEventServiceTest {
     @BeforeEach
     void setUp() {
         MockitoAnnotations.openMocks(this);
-    }
-
-    @Test
-    void saveMeetingEventTest() {
-        // Given
-        MeetingEvent meetingEvent = mock(MeetingEvent.class);
-
-        // When
-        meetingEventService.saveMeetingEvent(meetingEvent);
-
-        // Then
-        verify(meetingEventRepository).save(meetingEvent);
-    }
-
-    @Test
-    void saveMeetingEventTest_InvalidMeetingEvent() {
-        // Given
-        MeetingEvent meetingEvent = mock(MeetingEvent.class);
-
-        // Mocking
-        given(meetingEventRepository.save(meetingEvent)).willThrow(new IllegalArgumentException("존재하지 않는 MeetingEvent입니다."));
-
-        // When
-        Exception e = assertThrows(IllegalArgumentException.class,
-            () -> meetingEventService.saveMeetingEvent(meetingEvent));
-
-        // Then
-        assertEquals(e.getClass(), IllegalArgumentException.class);
-        assertEquals(e.getMessage(), "존재하지 않는 MeetingEvent입니다.");
-        verify(meetingEventRepository).save(meetingEvent);
     }
 
     @Test
