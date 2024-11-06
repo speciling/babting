@@ -16,8 +16,6 @@ import org.cookieandkakao.babting.domain.meeting.dto.request.MeetingEventCreateR
 import org.cookieandkakao.babting.domain.meeting.dto.request.MeetingTimeCreateRequest;
 import org.cookieandkakao.babting.domain.meeting.dto.response.TimeAvailableGetResponse;
 import org.cookieandkakao.babting.domain.meeting.entity.Meeting;
-import org.cookieandkakao.babting.domain.meeting.entity.MeetingEvent;
-import org.cookieandkakao.babting.domain.meeting.repository.MeetingEventRepository;
 import org.cookieandkakao.babting.domain.member.entity.Member;
 import org.cookieandkakao.babting.domain.member.service.MemberService;
 import org.springframework.stereotype.Service;
@@ -31,7 +29,6 @@ public class MeetingEventService {
     private final MeetingService meetingService;
     private final MeetingValidationService meetingValidationService;
     private final MeetingEventCreateService meetingEventCreateService;
-    private final MeetingEventRepository meetingEventRepository;
     private final FoodRepositoryService foodRepositoryService;
 
     private static final String TIME_ZONE = "Asia/Seoul";
@@ -42,14 +39,12 @@ public class MeetingEventService {
         MeetingService meetingService,
         MeetingValidationService meetingValidationService,
         MeetingEventCreateService meetingEventCreateService,
-        MeetingEventRepository meetingEventRepository,
         FoodRepositoryService foodRepositoryService) {
         this.memberService = memberService;
         this.talkCalendarService = talkCalendarService;
         this.meetingService = meetingService;
         this.meetingValidationService = meetingValidationService;
         this.meetingEventCreateService = meetingEventCreateService;
-        this.meetingEventRepository = meetingEventRepository;
         this.foodRepositoryService = foodRepositoryService;
     }
 
@@ -219,9 +214,5 @@ public class MeetingEventService {
         }
 
         return availableTimes;
-    }
-
-    public void saveMeetingEvent(MeetingEvent meetingEvent) {
-        meetingEventRepository.save(meetingEvent);
     }
 }

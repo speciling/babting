@@ -13,6 +13,7 @@ import org.cookieandkakao.babting.domain.meeting.dto.request.MeetingTimeCreateRe
 import org.cookieandkakao.babting.domain.meeting.entity.Meeting;
 import org.cookieandkakao.babting.domain.meeting.entity.MeetingEvent;
 import org.cookieandkakao.babting.domain.meeting.entity.MemberMeeting;
+import org.cookieandkakao.babting.domain.meeting.repository.MeetingEventRepository;
 import org.cookieandkakao.babting.domain.member.entity.Member;
 import org.cookieandkakao.babting.domain.member.service.MemberService;
 import org.springframework.stereotype.Service;
@@ -25,17 +26,18 @@ public class MeetingEventCreateService {
     private final EventService eventService;
     private final MemberService memberService;
     private final MeetingService meetingService;
-    private final MeetingEventService meetingEventService;
+    private final MeetingEventRepository meetingEventRepository;
     private static final String TIME_ZONE = "Asia/Seoul";
 
     public MeetingEventCreateService(TalkCalendarService talkCalendarService,
         EventService eventService, MemberService memberService,
-        MeetingService meetingService, MeetingEventService meetingEventService) {
+        MeetingService meetingService,
+        MeetingEventRepository meetingEventRepository) {
         this.talkCalendarService = talkCalendarService;
         this.eventService = eventService;
         this.memberService = memberService;
         this.meetingService = meetingService;
-        this.meetingEventService = meetingEventService;
+        this.meetingEventRepository = meetingEventRepository;
     }
 
     // 일정 생성 후 캘린더에 일정 추가
@@ -82,7 +84,11 @@ public class MeetingEventCreateService {
 
         // MeetingEvent로 저장
         MeetingEvent meetingEvent = new MeetingEvent(memberMeeting, avoidEvent);
-        meetingEventService.saveMeetingEvent(meetingEvent);
+        saveMeetingEvent(meetingEvent);
+    }
+
+    private void saveMeetingEvent(MeetingEvent meetingEvent) {
+        meetingEventRepository.save(meetingEvent);
     }
 
 
