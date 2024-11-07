@@ -9,13 +9,18 @@ import java.util.Comparator;
 import java.util.List;
 import org.cookieandkakao.babting.domain.calendar.dto.response.EventGetResponse;
 import org.cookieandkakao.babting.domain.calendar.dto.response.TimeGetResponse;
+import org.cookieandkakao.babting.domain.calendar.entity.Time;
 import org.cookieandkakao.babting.domain.calendar.service.TalkCalendarService;
 import org.cookieandkakao.babting.domain.food.service.FoodRepositoryService;
 import org.cookieandkakao.babting.domain.meeting.dto.request.ConfirmMeetingGetRequest;
 import org.cookieandkakao.babting.domain.meeting.dto.request.MeetingEventCreateRequest;
 import org.cookieandkakao.babting.domain.meeting.dto.request.MeetingTimeCreateRequest;
+import org.cookieandkakao.babting.domain.meeting.dto.response.MeetingPersonalEventGetResponse;
 import org.cookieandkakao.babting.domain.meeting.dto.response.TimeAvailableGetResponse;
 import org.cookieandkakao.babting.domain.meeting.entity.Meeting;
+import org.cookieandkakao.babting.domain.meeting.entity.MeetingEvent;
+import org.cookieandkakao.babting.domain.meeting.entity.MemberMeeting;
+import org.cookieandkakao.babting.domain.meeting.repository.MeetingEventRepository;
 import org.cookieandkakao.babting.domain.member.entity.Member;
 import org.cookieandkakao.babting.domain.member.service.MemberService;
 import org.springframework.stereotype.Service;
@@ -33,19 +38,21 @@ public class MeetingEventService {
 
     private static final String TIME_ZONE = "Asia/Seoul";
     private static final List<Integer> DEFAULT_REMINDER_TIMES = List.of(15, 30);
+    private final MeetingEventRepository meetingEventRepository;
 
     public MeetingEventService(MemberService memberService,
         TalkCalendarService talkCalendarService,
         MeetingService meetingService,
         MeetingValidationService meetingValidationService,
         MeetingEventCreateService meetingEventCreateService,
-        FoodRepositoryService foodRepositoryService) {
+        FoodRepositoryService foodRepositoryService, MeetingEventRepository meetingEventRepository) {
         this.memberService = memberService;
         this.talkCalendarService = talkCalendarService;
         this.meetingService = meetingService;
         this.meetingValidationService = meetingValidationService;
         this.meetingEventCreateService = meetingEventCreateService;
         this.foodRepositoryService = foodRepositoryService;
+        this.meetingEventRepository = meetingEventRepository;
     }
 
     // 모임 확정
@@ -214,5 +221,20 @@ public class MeetingEventService {
         }
 
         return availableTimes;
+    }
+
+    // 모임별 개인 일정 조회
+    public MeetingPersonalEventGetResponse findMeetingPersonalEvent(Long meetingId, Long memberId) {
+        List<MeetingEvent> meetingEvents = findAllMeetingEvent(meetingId, memberId);
+        List<TimeGetResponse> meetingPersonalEventTimes = meetingEvents.stream()
+            .map(meetingEvent -> TimeGetResponse.from(meetingEvent.getEvent().getTime())).toList();
+        return new MeetingPersonalEventGetResponse(meetingPersonalEventTimes);
+    }
+
+    public List<MeetingEvent> findAllMeetingEvent(Long meetingId, Long memberId) {
+        Meeting meeting = meetingService.findMeeting(meetingId);
+        Member member = memberService.findMember(memberId);
+        MemberMeeting memberMeeting = meetingService.findMemberMeeting(member, meeting);
+        return meetingEventRepository.findByMemberMeeting(memberMeeting);
     }
 }
