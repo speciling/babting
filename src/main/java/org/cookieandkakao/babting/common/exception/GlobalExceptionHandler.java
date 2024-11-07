@@ -3,6 +3,7 @@ import org.cookieandkakao.babting.common.apiresponse.ApiResponseBody.FailureBody
 import org.cookieandkakao.babting.common.apiresponse.ApiResponseGenerator;
 import org.cookieandkakao.babting.common.exception.customexception.ApiException;
 import org.cookieandkakao.babting.common.exception.customexception.EventCreationException;
+import org.cookieandkakao.babting.common.exception.customexception.ExpiredTokenException;
 import org.cookieandkakao.babting.common.exception.customexception.InvalidFoodPreferenceTypeException;
 import org.cookieandkakao.babting.common.exception.customexception.JsonConversionException;
 import org.cookieandkakao.babting.common.exception.customexception.MemberNotFoundException;
@@ -55,6 +56,11 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(InvalidFoodPreferenceTypeException.class)
     public ResponseEntity<FailureBody> handleInvalidFoodPreferenceTypeException(InvalidFoodPreferenceTypeException ex) {
         return ApiResponseGenerator.fail(HttpStatus.NOT_FOUND, ex.getMessage());
+    }
+
+    @ExceptionHandler(ExpiredTokenException.class)
+    public ResponseEntity<FailureBody> handleExpiredTokenException(ExpiredTokenException ex) {
+        return ApiResponseGenerator.fail(HttpStatus.UNAUTHORIZED, ex.getMessage());
     }
 
     // 모든 Exception을 처리하는 핸들러
