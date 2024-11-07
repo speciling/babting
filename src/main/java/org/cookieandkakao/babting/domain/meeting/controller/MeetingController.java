@@ -1,6 +1,7 @@
 package org.cookieandkakao.babting.domain.meeting.controller;
 
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import java.util.List;
@@ -14,6 +15,7 @@ import org.cookieandkakao.babting.domain.meeting.dto.request.MeetingJoinCreateRe
 import org.cookieandkakao.babting.domain.meeting.dto.response.MeetingGetResponse;
 import org.cookieandkakao.babting.domain.meeting.dto.response.MeetingHostCheckResponse;
 import org.cookieandkakao.babting.domain.meeting.dto.response.MeetingInfoGetResponse;
+import org.cookieandkakao.babting.domain.meeting.dto.response.MeetingPersonalEventGetResponse;
 import org.cookieandkakao.babting.domain.meeting.dto.response.TimeAvailableGetResponse;
 import org.cookieandkakao.babting.domain.meeting.service.MeetingEventCreateService;
 import org.cookieandkakao.babting.domain.meeting.service.MeetingEventService;
@@ -150,4 +152,16 @@ public class MeetingController {
             timeAvailableGetResponse);
     }
     // 모임 정보 수정
+
+    // 모임별 개인 일정 조회
+    @GetMapping("/{meetingId}/personal-event")
+    @Operation(summary = "모임별 개인 일정 조회", description = "모임에 참가할 때 추가한 모임별 개인 일정을 조회합니다.")
+    @ApiResponse(responseCode = "200", description = "모임별 개인 일정 조회 성공")
+    public ResponseEntity<SuccessBody<MeetingPersonalEventGetResponse>> getPersonalEvent(
+        @Parameter(description = "모임별 개인 일정 조회를 위한 모임 ID", required = true) @PathVariable("meetingId") Long meetingId,
+        @LoginMemberId Long memberId
+    ) {
+        MeetingPersonalEventGetResponse meetingPersonalEventGetResponse = meetingEventService.findMeetingPersonalEvent(meetingId, memberId);
+        return ApiResponseGenerator.success(HttpStatus.OK, "모임별 개인 일정 조회 성공", meetingPersonalEventGetResponse);
+    }
 }
