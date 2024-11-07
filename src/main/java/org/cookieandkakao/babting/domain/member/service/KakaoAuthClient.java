@@ -71,7 +71,9 @@ public class KakaoAuthClient {
             })
             .onStatus(HttpStatusCode::is5xxServerError, (request, response) -> {
                 throw new ApiException("카카오 인증 서버 에러");
-            });
+            })
+            .toBodilessEntity();
+
     }
 
 }
