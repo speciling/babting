@@ -6,7 +6,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import org.cookieandkakao.babting.common.annotaion.LoginMemberId;
 import org.cookieandkakao.babting.common.apiresponse.ApiResponseBody;
 import org.cookieandkakao.babting.common.apiresponse.ApiResponseGenerator;
-import org.cookieandkakao.babting.common.exception.customexception.InvalidFoodPreferenceTypeException;
+import org.cookieandkakao.babting.domain.food.exception.InvalidFoodPreferenceTypeException;
 import org.cookieandkakao.babting.domain.food.dto.FoodPreferenceGetResponse;
 import org.cookieandkakao.babting.domain.food.dto.PersonalPreferenceUpdateRequest;
 import org.cookieandkakao.babting.domain.food.service.MeetingFoodPreferenceStrategy;

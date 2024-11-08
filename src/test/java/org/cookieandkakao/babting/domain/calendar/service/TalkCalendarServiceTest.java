@@ -15,7 +15,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import java.time.Duration;
 import java.util.ArrayList;
 import java.util.List;
-import org.cookieandkakao.babting.common.exception.customexception.EventCreationException;
+import org.cookieandkakao.babting.domain.calendar.exception.EventCreationException;
 import org.cookieandkakao.babting.domain.calendar.dto.request.EventCreateRequest;
 import org.cookieandkakao.babting.domain.calendar.dto.request.TimeCreateRequest;
 import org.cookieandkakao.babting.domain.calendar.dto.response.EventCreateResponse;

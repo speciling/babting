@@ -1,4 +1,4 @@
-package org.cookieandkakao.babting.common.exception.customexception;
+package org.cookieandkakao.babting.domain.member.exception;
 
 public class ExpiredTokenException extends RuntimeException {
 

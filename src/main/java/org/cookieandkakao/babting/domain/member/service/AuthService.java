@@ -1,6 +1,6 @@
 package org.cookieandkakao.babting.domain.member.service;
 
-import org.cookieandkakao.babting.common.exception.customexception.MemberNotFoundException;
+import org.cookieandkakao.babting.domain.member.exception.MemberNotFoundException;
 import org.cookieandkakao.babting.common.properties.KakaoClientProperties;
 import org.cookieandkakao.babting.common.properties.KakaoProviderProperties;
 import org.cookieandkakao.babting.domain.member.dto.KakaoMemberInfoGetResponse;

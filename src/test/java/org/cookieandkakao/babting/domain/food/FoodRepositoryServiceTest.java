@@ -1,6 +1,6 @@
 package org.cookieandkakao.babting.domain.food;
 
-import org.cookieandkakao.babting.common.exception.customexception.FoodNotFoundException;
+import org.cookieandkakao.babting.domain.food.exception.FoodNotFoundException;
 import org.cookieandkakao.babting.domain.food.entity.Food;
 import org.cookieandkakao.babting.domain.food.entity.FoodCategory;
 import org.cookieandkakao.babting.domain.food.repository.FoodRepository;

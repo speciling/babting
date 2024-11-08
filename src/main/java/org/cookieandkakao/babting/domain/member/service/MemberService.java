@@ -2,8 +2,8 @@ package org.cookieandkakao.babting.domain.member.service;
 
 import jakarta.transaction.Transactional;
 import java.time.LocalDateTime;
-import org.cookieandkakao.babting.common.exception.customexception.ExpiredTokenException;
-import org.cookieandkakao.babting.common.exception.customexception.MemberNotFoundException;
+import org.cookieandkakao.babting.domain.member.exception.ExpiredTokenException;
+import org.cookieandkakao.babting.domain.member.exception.MemberNotFoundException;
 import org.cookieandkakao.babting.domain.member.dto.KakaoMemberInfoGetResponse;
 import org.cookieandkakao.babting.domain.member.dto.KakaoTokenGetResponse;
 import org.cookieandkakao.babting.domain.member.dto.MemberProfileGetResponse;

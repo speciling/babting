@@ -1,9 +1,7 @@
 package org.cookieandkakao.babting.domain.food.service;
 
-import java.util.NoSuchElementException;
-import org.cookieandkakao.babting.common.exception.customexception.FoodNotFoundException;
+import org.cookieandkakao.babting.domain.food.exception.FoodNotFoundException;
 import org.cookieandkakao.babting.domain.food.dto.FoodGetResponse;
-import org.cookieandkakao.babting.domain.food.entity.Food;
 import org.cookieandkakao.babting.domain.food.entity.FoodCategory;
 import org.cookieandkakao.babting.domain.food.repository.FoodCategoryRepository;
 import org.cookieandkakao.babting.domain.food.repository.FoodRepository;

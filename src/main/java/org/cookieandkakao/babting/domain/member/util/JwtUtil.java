@@ -7,7 +7,7 @@ import io.jsonwebtoken.Jwts.SIG;
 import java.time.Instant;
 import java.util.Date;
 import javax.crypto.SecretKey;
-import org.cookieandkakao.babting.common.exception.customexception.ExpiredTokenException;
+import org.cookieandkakao.babting.domain.member.exception.ExpiredTokenException;
 import org.cookieandkakao.babting.domain.member.dto.TokenIssueResponse;
 import org.springframework.stereotype.Component;
 
