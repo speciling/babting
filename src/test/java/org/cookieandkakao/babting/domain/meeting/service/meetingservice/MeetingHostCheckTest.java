@@ -12,7 +12,7 @@ public class MeetingHostCheckTest {
     private MeetingService meetingService;
 
     @Test
-    void 테스트코드(){
+    void 모임_주최자_확인(){
         //given
         //when
         //then
