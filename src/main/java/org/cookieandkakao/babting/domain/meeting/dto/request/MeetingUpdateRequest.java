@@ -6,7 +6,7 @@ import java.time.LocalDate;
 import java.time.LocalTime;
 import org.cookieandkakao.babting.domain.meeting.entity.Meeting;
 
-public record MeetingCreateRequest(
+public record MeetingUpdateRequest(
     @NotNull
     LocationCreateRequest baseLocation,
 
@@ -30,8 +30,4 @@ public record MeetingCreateRequest(
     @NotNull
     LocalTime endTime
 ) {
-    public Meeting toEntity(){
-        return new Meeting(baseLocation.toEntity(), title, startDate, endDate, durationTime,
-            startTime, endTime);
-    }
 }
