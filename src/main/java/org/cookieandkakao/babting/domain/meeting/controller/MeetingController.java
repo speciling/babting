@@ -32,7 +32,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/api/meeting")
-@Tag(name = "모임 관련 api", description = "모임 관련한 api입니다.")
+@Tag(name = "모임", description = "모임 관련 api입니다.")
 public class MeetingController {
     private final MeetingService meetingService;
     private final MeetingEventService meetingEventService;
