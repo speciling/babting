@@ -2,6 +2,7 @@ package org.cookieandkakao.babting.common.exception;
 import org.cookieandkakao.babting.common.apiresponse.ApiResponseBody.FailureBody;
 import org.cookieandkakao.babting.common.apiresponse.ApiResponseGenerator;
 import org.cookieandkakao.babting.common.exception.customexception.ApiException;
+import org.cookieandkakao.babting.common.exception.customexception.CacheEvictionException;
 import org.cookieandkakao.babting.common.exception.customexception.EventCreationException;
 import org.cookieandkakao.babting.common.exception.customexception.ExpiredTokenException;
 import org.cookieandkakao.babting.common.exception.customexception.InvalidFoodPreferenceTypeException;
@@ -57,6 +58,10 @@ public class GlobalExceptionHandler {
     public ResponseEntity<FailureBody> handleInvalidFoodPreferenceTypeException(InvalidFoodPreferenceTypeException ex) {
         return ApiResponseGenerator.fail(HttpStatus.NOT_FOUND, ex.getMessage());
     }
+
+    @ExceptionHandler(CacheEvictionException.class)
+    public ResponseEntity<FailureBody> handleCacheEvictionException(CacheEvictionException ex) {
+        return ApiResponseGenerator.fail(HttpStatus.INTERNAL_SERVER_ERROR, ex.getMessage());
 
     @ExceptionHandler(ExpiredTokenException.class)
     public ResponseEntity<FailureBody> handleExpiredTokenException(ExpiredTokenException ex) {
