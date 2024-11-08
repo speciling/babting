@@ -2,6 +2,7 @@ package org.cookieandkakao.babting.common.exception;
 import org.cookieandkakao.babting.common.apiresponse.ApiResponseBody.FailureBody;
 import org.cookieandkakao.babting.common.apiresponse.ApiResponseGenerator;
 import org.cookieandkakao.babting.common.exception.customexception.ApiException;
+import org.cookieandkakao.babting.common.exception.customexception.CacheEvictionException;
 import org.cookieandkakao.babting.common.exception.customexception.EventCreationException;
 import org.cookieandkakao.babting.common.exception.customexception.InvalidFoodPreferenceTypeException;
 import org.cookieandkakao.babting.common.exception.customexception.JsonConversionException;
@@ -55,6 +56,11 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(InvalidFoodPreferenceTypeException.class)
     public ResponseEntity<FailureBody> handleInvalidFoodPreferenceTypeException(InvalidFoodPreferenceTypeException ex) {
         return ApiResponseGenerator.fail(HttpStatus.NOT_FOUND, ex.getMessage());
+    }
+
+    @ExceptionHandler(CacheEvictionException.class)
+    public ResponseEntity<FailureBody> handleCacheEvictionException(CacheEvictionException ex) {
+        return ApiResponseGenerator.fail(HttpStatus.INTERNAL_SERVER_ERROR, ex.getMessage());
     }
 
     // 모든 Exception을 처리하는 핸들러

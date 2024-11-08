@@ -31,4 +31,13 @@ public record TimeGetResponse(
         return zonedDateTime.toLocalDateTime();
     }
 
+    public static TimeGetResponse from(Time time) {
+        return new TimeGetResponse(
+            time.getStartAt().toString(),
+            time.getEndAt().toString(),
+            time.getTimeZone(),
+            time.isAllDay()
+        );
+    }
+
 }
