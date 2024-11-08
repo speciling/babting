@@ -1,4 +1,4 @@
-package org.cookieandkakao.babting.domain.meeting.exception;
+package org.cookieandkakao.babting.domain.meeting.exception.membermeeting;
 
 import java.util.NoSuchElementException;
 

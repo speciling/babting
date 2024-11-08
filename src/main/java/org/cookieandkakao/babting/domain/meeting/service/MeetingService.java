@@ -2,7 +2,6 @@ package org.cookieandkakao.babting.domain.meeting.service;
 
 import jakarta.transaction.Transactional;
 import java.util.List;
-import java.util.NoSuchElementException;
 import java.util.stream.Collectors;
 import org.cookieandkakao.babting.domain.meeting.dto.request.MeetingCreateRequest;
 import org.cookieandkakao.babting.domain.meeting.dto.request.MeetingUpdateRequest;
@@ -13,8 +12,8 @@ import org.cookieandkakao.babting.domain.meeting.dto.response.MeetingInfoGetResp
 import org.cookieandkakao.babting.domain.meeting.entity.Location;
 import org.cookieandkakao.babting.domain.meeting.entity.Meeting;
 import org.cookieandkakao.babting.domain.meeting.entity.MemberMeeting;
-import org.cookieandkakao.babting.domain.meeting.exception.MeetingNotFoundException;
-import org.cookieandkakao.babting.domain.meeting.exception.MemberMeetingNotFoundException;
+import org.cookieandkakao.babting.domain.meeting.exception.meeting.MeetingNotFoundException;
+import org.cookieandkakao.babting.domain.meeting.exception.membermeeting.MemberMeetingNotFoundException;
 import org.cookieandkakao.babting.domain.meeting.repository.LocationRepository;
 import org.cookieandkakao.babting.domain.meeting.repository.MeetingRepository;
 import org.cookieandkakao.babting.domain.meeting.repository.MemberMeetingRepository;
