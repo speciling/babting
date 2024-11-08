@@ -1,14 +1,17 @@
 package org.cookieandkakao.babting.domain.meeting.service;
 
 import jakarta.transaction.Transactional;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import org.cookieandkakao.babting.domain.calendar.dto.response.EventGetResponse;
 import org.cookieandkakao.babting.domain.calendar.dto.response.TimeGetResponse;
+import org.cookieandkakao.babting.domain.calendar.entity.Time;
 import org.cookieandkakao.babting.domain.calendar.service.TalkCalendarService;
 import org.cookieandkakao.babting.domain.meeting.dto.response.TimeAvailableGetResponse;
+import org.cookieandkakao.babting.domain.meeting.dto.response.TimeSlot;
 import org.cookieandkakao.babting.domain.meeting.entity.Meeting;
 import org.cookieandkakao.babting.domain.meeting.entity.TimeZone;
 import org.springframework.stereotype.Service;
@@ -39,14 +42,14 @@ public class MeetingTimeCalculationService {
     public TimeAvailableGetResponse findAvailableTime(Long meetingId) {
         List<Long> joinedMemberIds = meetingService.getMemberIdInMeetingId(meetingId);
         Meeting meeting = meetingService.findMeeting(meetingId);
-        String from = meeting.getStartDate().toString();
-        String to = meeting.getEndDate().toString();
+        LocalDateTime from = meeting.getStartDate().atTime(meeting.getStartTime());
+        LocalDateTime to = meeting.getEndDate().atTime(meeting.getEndTime());
 
         // 참여자별 일정에서 필요한 시간 정보만 추출하여 리스트로 수집
         List<TimeGetResponse> allTimes = joinedMemberIds.stream()
             .flatMap(memberId ->
                 talkCalendarService
-                    .getUpdatedEventList(from, to, memberId)
+                    .getUpdatedEventList(from.toString(), to.toString(), memberId)
                     .stream()
                     .map(EventGetResponse::time)
             )
@@ -60,32 +63,33 @@ public class MeetingTimeCalculationService {
             .toList();
 
         // 겹치는 시간 병합
-        List<TimeGetResponse> mergedTimes = mergeOverlappingTimes(sortedTimes);
+        List<TimeSlot> mergedTimes = mergeOverlappingTimes(sortedTimes);
 
         // 빈 시간대 계산
-        List<TimeGetResponse> availableTime = calculateAvailableTimes(mergedTimes, from, to);
+        List<TimeSlot> availableTime = calculateAvailableTimes(mergedTimes, from, to);
 
         return TimeAvailableGetResponse.of(meeting, availableTime);
     }
 
     // 겹치는 시간 병합
-    public List<TimeGetResponse> mergeOverlappingTimes(List<TimeGetResponse> times) {
-        List<TimeGetResponse> mergedTimes = new ArrayList<>();
+    public List<TimeSlot> mergeOverlappingTimes(List<TimeGetResponse> times) {
+        List<TimeSlot> mergedTimes = new ArrayList<>();
 
         if (times.isEmpty()) {
             return mergedTimes;
         }
 
-        TimeGetResponse currentTime = times.getFirst();
+        TimeSlot currentTime = TimeSlot.toTimeSlot(times.getFirst());
+
 
         for (int i = 1; i < times.size(); i++) {
-            TimeGetResponse next = times.get(i);
-            LocalDateTime currentEnd = LocalDateTime.parse(currentTime.endAt());
-            LocalDateTime nextStart = LocalDateTime.parse(next.startAt());
+            TimeSlot next = TimeSlot.toTimeSlot(times.get(i));
+            LocalDateTime currentEnd = currentTime.endAt();
+            LocalDateTime nextStart = next.startAt();
 
             // 겹치는 시간대라면 병합
             if (!nextStart.isAfter(currentEnd)) {
-                currentTime = new TimeGetResponse(
+                currentTime = new TimeSlot(
                     currentTime.startAt(),
                     maxEndTime(currentTime.endAt(), next.endAt()),
                     currentTime.timeZone(),
@@ -102,26 +106,22 @@ public class MeetingTimeCalculationService {
     }
 
     // 두 시간대 중 더 늦은 종료 시간을 반환
-    public String maxEndTime(String end1, String end2) {
-        LocalDateTime e1 = LocalDateTime.parse(end1);
-        LocalDateTime e2 = LocalDateTime.parse(end2);
-        if (e1.isAfter(e2)) {
+    public LocalDateTime maxEndTime(LocalDateTime end1, LocalDateTime end2) {
+        if (end1.isAfter(end2)) {
             return end1;
         }
         return end2;
     }
 
     // 빈 시간대
-    public List<TimeGetResponse> calculateAvailableTimes(List<TimeGetResponse> mergedTimes,
-        String from, String to) {
-        List<TimeGetResponse> availableTimes = new ArrayList<>();
-        LocalDateTime searchStart = LocalDateTime.parse(from);
-        LocalDateTime searchEnd = LocalDateTime.parse(to);
+    public List<TimeSlot> calculateAvailableTimes(List<TimeSlot> mergedTimes,
+        LocalDateTime from, LocalDateTime to) {
+        List<TimeSlot> availableTimes = new ArrayList<>();
 
         // 첫 번째 시간대 이전의 빈 시간 확인
         // => 검색 시작일 ~ mergedTime 첫번째 일정의 시작시간까지 빈 시간
-        if (searchStart.isBefore(LocalDateTime.parse(mergedTimes.getFirst().startAt()))) {
-            availableTimes.add(new TimeGetResponse(
+        if (from.isBefore(mergedTimes.getFirst().startAt())) {
+            availableTimes.add(new TimeSlot(
                 from,
                 mergedTimes.getFirst().startAt(),
                 TimeZone.SEOUL.getArea(),
@@ -131,12 +131,12 @@ public class MeetingTimeCalculationService {
 
         // 두 시간대 사이의 빈 시간 계산
         for (int i = 0; i < mergedTimes.size() - 1; i++) {
-            LocalDateTime endOfCurrent = LocalDateTime.parse(mergedTimes.get(i).endAt());
-            LocalDateTime startOfNext = LocalDateTime.parse(mergedTimes.get(i + 1).startAt());
+            LocalDateTime endOfCurrent = mergedTimes.get(i).endAt();
+            LocalDateTime startOfNext = mergedTimes.get(i + 1).startAt();
 
             // 첫 번째 time의 끝 시간 ~ 두 번째 time의 시작시간 => 빈 시간대
             if (endOfCurrent.isBefore(startOfNext)) {
-                availableTimes.add(new TimeGetResponse(
+                availableTimes.add(new TimeSlot(
                     mergedTimes.get(i).endAt(),
                     mergedTimes.get(i + 1).startAt(),
                     TimeZone.SEOUL.getArea(),
@@ -146,8 +146,8 @@ public class MeetingTimeCalculationService {
         }
 
         // 마지막 시간대 이후의 빈 시간 확인
-        if (searchEnd.isAfter(LocalDateTime.parse(mergedTimes.getLast().endAt()))) {
-            availableTimes.add(new TimeGetResponse(
+        if (to.isAfter(mergedTimes.getLast().endAt())) {
+            availableTimes.add(new TimeSlot(
                 mergedTimes.getLast().endAt(),
                 to,
                 TimeZone.SEOUL.getArea(),
