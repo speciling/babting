@@ -5,7 +5,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 import org.cookieandkakao.babting.domain.meeting.dto.request.MeetingCreateRequest;
 import org.cookieandkakao.babting.domain.meeting.dto.request.MeetingUpdateRequest;
-import org.cookieandkakao.babting.domain.meeting.dto.response.MeetingConfirmedInfo;
+import org.cookieandkakao.babting.domain.meeting.dto.response.MeetingConfirmedInfoResponse;
 import org.cookieandkakao.babting.domain.meeting.dto.response.MeetingGetResponse;
 import org.cookieandkakao.babting.domain.meeting.dto.response.MeetingHostCheckResponse;
 import org.cookieandkakao.babting.domain.meeting.dto.response.MeetingInfoGetResponse;
@@ -119,9 +119,9 @@ public class MeetingService {
     }
 
     // 모임 확정 날짜, 확정 음식 확인
-    public MeetingConfirmedInfo getMeetingConfirmedInfo(Long meetingId){
+    public MeetingConfirmedInfoResponse getMeetingConfirmedInfo(Long meetingId){
         Meeting meeting = findMeeting(meetingId);
-        return MeetingConfirmedInfo.of(meeting);
+        return MeetingConfirmedInfoResponse.of(meeting);
     }
 
     // 주최자 확인

@@ -12,7 +12,7 @@ import org.cookieandkakao.babting.domain.meeting.dto.request.ConfirmMeetingGetRe
 import org.cookieandkakao.babting.domain.meeting.dto.request.MeetingCreateRequest;
 import org.cookieandkakao.babting.domain.meeting.dto.request.MeetingJoinCreateRequest;
 import org.cookieandkakao.babting.domain.meeting.dto.request.MeetingUpdateRequest;
-import org.cookieandkakao.babting.domain.meeting.dto.response.MeetingConfirmedInfo;
+import org.cookieandkakao.babting.domain.meeting.dto.response.MeetingConfirmedInfoResponse;
 import org.cookieandkakao.babting.domain.meeting.dto.response.MeetingGetResponse;
 import org.cookieandkakao.babting.domain.meeting.dto.response.MeetingHostCheckResponse;
 import org.cookieandkakao.babting.domain.meeting.dto.response.MeetingInfoGetResponse;
@@ -142,12 +142,13 @@ public class MeetingController {
     @GetMapping("/{meetingId}/confirmed-info")
     @Operation(summary = "모임 확정 날짜, 확정 음식 조회", description = "모임 확정 날짜와 확정 음식을 확인합니다.")
     @ApiResponse(responseCode = "200", description = "모임 확정 날짜, 확정 음식 조회 성공")
-    public ResponseEntity<SuccessBody<MeetingConfirmedInfo>> getConfirmedInfo(
+    public ResponseEntity<SuccessBody<MeetingConfirmedInfoResponse>> getConfirmedInfo(
         @PathVariable("meetingId") Long meetingId
     ){
-        MeetingConfirmedInfo meetingConfirmedInfo = meetingService.getMeetingConfirmedInfo(
+        MeetingConfirmedInfoResponse meetingConfirmedInfoResponse = meetingService.getMeetingConfirmedInfo(
             meetingId);
-        return ApiResponseGenerator.success(HttpStatus.OK, "모임 확정 날짜, 확정 음식 조회 성공", meetingConfirmedInfo);
+        return ApiResponseGenerator.success(HttpStatus.OK, "모임 확정 날짜, 확정 음식 조회 성공",
+            meetingConfirmedInfoResponse);
     }
     // 모임 공통 빈 시간 조회
     @GetMapping("/{meetingId}/calendar")
