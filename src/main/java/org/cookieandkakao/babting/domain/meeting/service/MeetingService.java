@@ -12,6 +12,7 @@ import org.cookieandkakao.babting.domain.meeting.dto.response.MeetingInfoGetResp
 import org.cookieandkakao.babting.domain.meeting.entity.Location;
 import org.cookieandkakao.babting.domain.meeting.entity.Meeting;
 import org.cookieandkakao.babting.domain.meeting.entity.MemberMeeting;
+import org.cookieandkakao.babting.domain.meeting.exception.meeting.MeetingAlreadyJoinException;
 import org.cookieandkakao.babting.domain.meeting.exception.meeting.MeetingNotFoundException;
 import org.cookieandkakao.babting.domain.meeting.exception.membermeeting.MemberMeetingNotFoundException;
 import org.cookieandkakao.babting.domain.meeting.repository.LocationRepository;
@@ -78,7 +79,7 @@ public class MeetingService {
 
         boolean isJoinMeeting = memberMeetingRepository.existsByMemberAndMeeting(member, meeting);
         if (isJoinMeeting){
-            throw new IllegalStateException("이미 모임에 참가한 상태입니다.");
+            throw new MeetingAlreadyJoinException("이미 모임에 참가한 상태입니다.");
         }
 
         memberMeetingRepository.save(new MemberMeeting(member, meeting, false));
