@@ -13,6 +13,7 @@ import org.cookieandkakao.babting.domain.meeting.dto.response.MeetingInfoGetResp
 import org.cookieandkakao.babting.domain.meeting.entity.Location;
 import org.cookieandkakao.babting.domain.meeting.entity.Meeting;
 import org.cookieandkakao.babting.domain.meeting.entity.MemberMeeting;
+import org.cookieandkakao.babting.domain.meeting.exception.MeetingNotFoundException;
 import org.cookieandkakao.babting.domain.meeting.repository.LocationRepository;
 import org.cookieandkakao.babting.domain.meeting.repository.MeetingRepository;
 import org.cookieandkakao.babting.domain.meeting.repository.MemberMeetingRepository;
@@ -130,7 +131,7 @@ public class MeetingService {
     }
     public Meeting findMeeting(Long meetingId){
         return meetingRepository.findById(meetingId)
-            .orElseThrow(() -> new NoSuchElementException("해당 모임이 존재하지 않습니다."));
+            .orElseThrow(() -> new MeetingNotFoundException("해당 모임이 존재하지 않습니다."));
     }
 
     public MemberMeeting findMemberMeeting(Member member, Meeting meeting){
