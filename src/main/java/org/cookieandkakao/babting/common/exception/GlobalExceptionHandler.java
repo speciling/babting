@@ -62,6 +62,7 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(CacheEvictionException.class)
     public ResponseEntity<FailureBody> handleCacheEvictionException(CacheEvictionException ex) {
         return ApiResponseGenerator.fail(HttpStatus.INTERNAL_SERVER_ERROR, ex.getMessage());
+    }
 
     @ExceptionHandler(ExpiredTokenException.class)
     public ResponseEntity<FailureBody> handleExpiredTokenException(ExpiredTokenException ex) {
