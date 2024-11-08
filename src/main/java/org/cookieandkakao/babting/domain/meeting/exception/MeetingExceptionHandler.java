@@ -2,6 +2,7 @@ package org.cookieandkakao.babting.domain.meeting.exception;
 
 import org.cookieandkakao.babting.common.apiresponse.ApiResponseBody.FailureBody;
 import org.cookieandkakao.babting.common.apiresponse.ApiResponseGenerator;
+import org.cookieandkakao.babting.domain.meeting.exception.meeting.MeetingAlreadyConfirmedException;
 import org.cookieandkakao.babting.domain.meeting.exception.meeting.MeetingAlreadyJoinException;
 import org.cookieandkakao.babting.domain.meeting.exception.meeting.MeetingHostUnauthorizedException;
 import org.cookieandkakao.babting.domain.meeting.exception.meeting.MeetingNotFoundException;
@@ -30,6 +31,11 @@ public class MeetingExceptionHandler {
 
     @ExceptionHandler(MeetingHostUnauthorizedException.class)
     public ResponseEntity<FailureBody> handleMeetingHostUnauthorizedException(MeetingHostUnauthorizedException ex) {
+        return ApiResponseGenerator.fail(HttpStatus.NOT_ACCEPTABLE, ex.getMessage());
+    }
+
+    @ExceptionHandler(MeetingAlreadyConfirmedException.class)
+    public ResponseEntity<FailureBody> handleMeetingAlreadyConfirmedException(MeetingAlreadyConfirmedException ex) {
         return ApiResponseGenerator.fail(HttpStatus.NOT_ACCEPTABLE, ex.getMessage());
     }
 }
