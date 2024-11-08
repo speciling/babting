@@ -31,7 +31,7 @@ public class MeetingExceptionHandler {
 
     @ExceptionHandler(MeetingHostUnauthorizedException.class)
     public ResponseEntity<FailureBody> handleMeetingHostUnauthorizedException(MeetingHostUnauthorizedException ex) {
-        return ApiResponseGenerator.fail(HttpStatus.NOT_ACCEPTABLE, ex.getMessage());
+        return ApiResponseGenerator.fail(HttpStatus.UNAUTHORIZED, ex.getMessage());
     }
 
     @ExceptionHandler(MeetingAlreadyConfirmedException.class)
