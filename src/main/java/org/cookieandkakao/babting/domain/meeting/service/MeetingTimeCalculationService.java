@@ -52,6 +52,8 @@ public class MeetingTimeCalculationService {
             )
             .toList();
 
+        // Todo 모임만의 일정도 추가
+
         // 시간대 정렬 (시작 시간을 기준으로 오름차순 정렬)
         List<TimeGetResponse> sortedTimes = allTimes.stream()
             .sorted(Comparator.comparing(time -> LocalDateTime.parse(time.startAt())))
