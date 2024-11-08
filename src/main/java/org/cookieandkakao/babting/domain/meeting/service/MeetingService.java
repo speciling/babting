@@ -13,6 +13,7 @@ import org.cookieandkakao.babting.domain.meeting.entity.Location;
 import org.cookieandkakao.babting.domain.meeting.entity.Meeting;
 import org.cookieandkakao.babting.domain.meeting.entity.MemberMeeting;
 import org.cookieandkakao.babting.domain.meeting.exception.meeting.MeetingAlreadyJoinException;
+import org.cookieandkakao.babting.domain.meeting.exception.meeting.MeetingHostUnauthorizedException;
 import org.cookieandkakao.babting.domain.meeting.exception.meeting.MeetingNotFoundException;
 import org.cookieandkakao.babting.domain.meeting.exception.membermeeting.MemberMeetingNotFoundException;
 import org.cookieandkakao.babting.domain.meeting.repository.LocationRepository;
@@ -60,7 +61,7 @@ public class MeetingService {
         Location baseLocation = meetingUpdateRequest.baseLocation().toEntity();
 
         if (!memberMeeting.isHost()){
-            throw new IllegalStateException("주최자만 모임을 수정할 수 있습니다.");
+            throw new MeetingHostUnauthorizedException("주최자만 모임을 수정할 수 있습니다.");
         }
         
         meeting.updateBaseLocation(baseLocation);
