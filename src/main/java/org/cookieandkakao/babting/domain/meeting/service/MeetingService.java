@@ -4,6 +4,7 @@ import jakarta.transaction.Transactional;
 import java.util.List;
 import java.util.stream.Collectors;
 import org.cookieandkakao.babting.domain.meeting.dto.request.MeetingCreateRequest;
+import org.cookieandkakao.babting.domain.meeting.dto.request.MeetingJoinCreateRequest;
 import org.cookieandkakao.babting.domain.meeting.dto.request.MeetingUpdateRequest;
 import org.cookieandkakao.babting.domain.meeting.dto.response.MeetingConfirmedInfoResponse;
 import org.cookieandkakao.babting.domain.meeting.dto.response.MeetingGetResponse;
@@ -30,16 +31,18 @@ public class MeetingService {
     private final MemberMeetingRepository memberMeetingRepository;
     private final LocationRepository locationRepository;
     private final MemberService memberService;
+    private final MeetingEventCreateService meetingEventCreateService;
 
 
     public MeetingService(MeetingRepository meetingRepository,
         MemberMeetingRepository memberMeetingRepository,
         LocationRepository locationRepository,
-        MemberService memberService) {
+        MemberService memberService, MeetingEventCreateService meetingEventCreateService) {
         this.meetingRepository = meetingRepository;
         this.memberMeetingRepository = memberMeetingRepository;
         this.locationRepository = locationRepository;
         this.memberService = memberService;
+        this.meetingEventCreateService = meetingEventCreateService;
     }
 
     // 모임 생성(주최자)
@@ -74,7 +77,7 @@ public class MeetingService {
     }
 
     // 모임 참가(초대받은사람)
-    public void joinMeeting(Long memberId, Long meetingId){
+    public void joinMeeting(Long memberId, Long meetingId, MeetingJoinCreateRequest meetingJoinCreateRequest){
         Member member = memberService.findMember(memberId);
         Meeting meeting = findMeeting(meetingId);
 
@@ -83,7 +86,10 @@ public class MeetingService {
             throw new MeetingAlreadyJoinException("이미 모임에 참가한 상태입니다.");
         }
 
-        memberMeetingRepository.save(new MemberMeeting(member, meeting, false));
+        MemberMeeting memberMeeting = memberMeetingRepository.save(new MemberMeeting(member, meeting, false));
+        meetingEventCreateService.saveMeetingAvoidTime(memberMeeting, meetingJoinCreateRequest.times());
+
+
     }
 
     // 모임 탈퇴(주최자, 초대받은 사람)

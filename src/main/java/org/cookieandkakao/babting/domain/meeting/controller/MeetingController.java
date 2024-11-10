@@ -86,11 +86,8 @@ public class MeetingController {
         @LoginMemberId Long memberId,
         @RequestBody @Valid MeetingJoinCreateRequest meetingJoinCreateRequest
     ){
-        meetingService.joinMeeting(memberId, meetingId);
-        meetingEventCreateService.saveMeetingAvoidTime(memberId, meetingId,
-            meetingJoinCreateRequest.times());
-        meetingFoodPreferenceUpdater.updatePreferences(meetingId, memberId,
-            meetingJoinCreateRequest.preferences(), meetingJoinCreateRequest.nonPreferences());
+        meetingService.joinMeeting(memberId, meetingId, meetingJoinCreateRequest);
+        meetingFoodPreferenceUpdater.updatePreferences(meetingId, memberId, meetingJoinCreateRequest.preferences(), meetingJoinCreateRequest.nonPreferences());
         return ApiResponseGenerator.success(HttpStatus.OK, "모임 참가 성공");
     }
 
