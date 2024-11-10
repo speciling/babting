@@ -1,6 +1,5 @@
 package org.cookieandkakao.babting.domain.calendar.exception;
 
-import javax.security.auth.login.AccountNotFoundException;
 import org.cookieandkakao.babting.common.apiresponse.ApiResponseBody.FailureBody;
 import org.cookieandkakao.babting.common.apiresponse.ApiResponseGenerator;
 import org.springframework.http.HttpStatus;
