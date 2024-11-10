@@ -1,15 +1,9 @@
 package org.cookieandkakao.babting.common.exception;
+
 import org.cookieandkakao.babting.common.apiresponse.ApiResponseBody.FailureBody;
 import org.cookieandkakao.babting.common.apiresponse.ApiResponseGenerator;
 import org.cookieandkakao.babting.common.exception.customexception.ApiException;
 import org.cookieandkakao.babting.common.exception.customexception.CacheEvictionException;
-import org.cookieandkakao.babting.domain.calendar.exception.EventCreationException;
-import org.cookieandkakao.babting.domain.member.exception.ExpiredTokenException;
-import org.cookieandkakao.babting.domain.food.exception.InvalidFoodPreferenceTypeException;
-import org.cookieandkakao.babting.domain.calendar.exception.JsonConversionException;
-import org.cookieandkakao.babting.domain.member.exception.MemberNotFoundException;
-import org.cookieandkakao.babting.domain.food.exception.FoodNotFoundException;
-import org.cookieandkakao.babting.domain.food.exception.PreferenceConflictException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
