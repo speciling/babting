@@ -57,23 +57,21 @@ public class MeetingEventCreateService {
         Meeting meeting = meetingService.findMeeting(meetingId);
         MemberMeeting memberMeeting = meetingService.findMemberMeeting(member, meeting);
 
-        for (MeetingTimeCreateRequest avoidTimeCreateRequest : avoidTimeCreateRequests) {
-            createAndSaveMeetingEvent(memberMeeting, avoidTimeCreateRequest);
-        }
+        List<MeetingEvent> meetingEvents = avoidTimeCreateRequests.stream()
+            .map(avoidTimeCreateRequest -> createMeetingEvent(memberMeeting, avoidTimeCreateRequest))
+            .toList();
+
+        meetingEventRepository.saveAll(meetingEvents);
     }
 
-    private void createAndSaveMeetingEvent(MemberMeeting memberMeeting,
+
+    private MeetingEvent createMeetingEvent(MemberMeeting memberMeeting,
         MeetingTimeCreateRequest meetingTimeCreateRequest) {
 
         TimeCreateRequest timeCreateRequest = meetingTimeCreateRequest.toTimeCreateRequest();
         Event avoidEvent = eventService.saveAvoidTimeEvent(timeCreateRequest.toEntity());
 
-        MeetingEvent meetingEvent = new MeetingEvent(memberMeeting, avoidEvent);
-        saveMeetingEvent(meetingEvent);
-    }
-
-    private void saveMeetingEvent(MeetingEvent meetingEvent) {
-        meetingEventRepository.save(meetingEvent);
+        return new MeetingEvent(memberMeeting, avoidEvent);
     }
 
 }
