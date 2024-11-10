@@ -57,9 +57,6 @@ class MeetingEventCreateServiceTest {
     }
 
     private static final Long VALID_MEMBER_ID = 1L;
-    private static final Long VALID_MEETING_ID = 2L;
-    private static final Long INVALID_MEMBER_ID = -1L;
-    private static final Long INVALID_MEETING_ID = -2L;
 
     @Nested
     class 캘린더에_일정_추가_테스트 {
@@ -119,10 +116,11 @@ class MeetingEventCreateServiceTest {
         @Test
         void 성공_피하고_싶은_시간_없는_경우() {
             // Given
+            MemberMeeting memberMeeting = mock(MemberMeeting.class);
             List<MeetingTimeCreateRequest> emptyAvoidTimeRequests = List.of();
 
             // When & Then
-            assertDoesNotThrow(() -> meetingEventCreateService.saveMeetingAvoidTime(VALID_MEMBER_ID, VALID_MEETING_ID, emptyAvoidTimeRequests));
+            assertDoesNotThrow(() -> meetingEventCreateService.saveMeetingAvoidTime(memberMeeting, emptyAvoidTimeRequests));
         }
 
         @Test
@@ -133,20 +131,15 @@ class MeetingEventCreateServiceTest {
             Time time = mock(Time.class);
             Event avoidEvent = mock(Event.class);
             List<MeetingTimeCreateRequest> avoidTimeCreateRequests = List.of(avoidTimeCreateRequest);
-            Member member = mock(Member.class);
-            Meeting meeting = mock(Meeting.class);
             MemberMeeting memberMeeting = mock(MemberMeeting.class);
 
             // Mocking
-            given(memberService.findMember(VALID_MEMBER_ID)).willReturn(member);
-            given(meetingService.findMeeting(VALID_MEETING_ID)).willReturn(meeting);
-            given(meetingService.findMemberMeeting(member, meeting)).willReturn(memberMeeting);
             given(avoidTimeCreateRequest.toTimeCreateRequest()).willReturn(timeCreateRequest);
             given(timeCreateRequest.toEntity()).willReturn(time);
             given(eventService.saveAvoidTimeEvent(time)).willReturn(avoidEvent);
 
             // When
-            assertDoesNotThrow(() -> meetingEventCreateService.saveMeetingAvoidTime(VALID_MEMBER_ID, VALID_MEETING_ID, avoidTimeCreateRequests));
+            assertDoesNotThrow(() -> meetingEventCreateService.saveMeetingAvoidTime(memberMeeting, avoidTimeCreateRequests));
 
             // Then
             verify(eventService).saveAvoidTimeEvent(time);
@@ -154,42 +147,26 @@ class MeetingEventCreateServiceTest {
         }
 
         @Test
-        void 실패_잘못된_멤버ID인_경우() {
+        void 실패_일정_생성_중_예외() {
             // Given
-            List<MeetingTimeCreateRequest> avoidTimeCreateRequests = List.of(mock(MeetingTimeCreateRequest.class));
+            MemberMeeting memberMeeting = mock(MemberMeeting.class);
+            MeetingTimeCreateRequest avoidTimeCreateRequest = mock(MeetingTimeCreateRequest.class);
+            TimeCreateRequest timeCreateRequest = mock(TimeCreateRequest.class);
+            Time time = mock(Time.class);
+            List<MeetingTimeCreateRequest> avoidTimeCreateRequests = List.of(avoidTimeCreateRequest);
 
             // Mocking
-            given(memberService.findMember(INVALID_MEMBER_ID)).willThrow(new MemberNotFoundException("해당 사용자가 존재하지 않습니다."));
+            given(avoidTimeCreateRequest.toTimeCreateRequest()).willReturn(timeCreateRequest);
+            given(timeCreateRequest.toEntity()).willReturn(time);
+            given(eventService.saveAvoidTimeEvent(time)).willThrow(new IllegalArgumentException("MeetingEvent 생성 중 오류 발생"));
 
             // When
-            Exception e = assertThrows(MemberNotFoundException.class,
-                () -> meetingEventCreateService.saveMeetingAvoidTime(INVALID_MEMBER_ID, VALID_MEETING_ID, avoidTimeCreateRequests));
+            Exception e = assertThrows(IllegalArgumentException.class,
+                () -> meetingEventCreateService.saveMeetingAvoidTime(memberMeeting, avoidTimeCreateRequests));
 
             // Then
-            assertEquals(e.getClass(), MemberNotFoundException.class);
-            assertEquals(e.getMessage(),"해당 사용자가 존재하지 않습니다.");
-            verify(memberService).findMember(INVALID_MEMBER_ID);
-        }
-
-        @Test
-        void 실패_잘못된_모임ID인_경우() {
-            // Given
-            List<MeetingTimeCreateRequest> avoidTimeCreateRequests = List.of(mock(MeetingTimeCreateRequest.class));
-            Member member = mock(Member.class);
-
-            // Mocking
-            given(memberService.findMember(VALID_MEMBER_ID)).willReturn(member);
-            given(meetingService.findMeeting(INVALID_MEETING_ID)).willThrow(new MeetingNotFoundException("해당 모임이 존재하지 않습니다."));
-
-            // When
-            Exception e = assertThrows(MeetingNotFoundException.class,
-                () -> meetingEventCreateService.saveMeetingAvoidTime(VALID_MEMBER_ID, INVALID_MEETING_ID, avoidTimeCreateRequests));
-
-            // Then
-            assertEquals(e.getClass(), MeetingNotFoundException.class);
-            assertEquals(e.getMessage(),"해당 모임이 존재하지 않습니다.");
-            verify(memberService).findMember(VALID_MEMBER_ID);
-            verify(meetingService).findMeeting(INVALID_MEETING_ID);
+            assertEquals(e.getClass(), IllegalArgumentException.class);
+            assertEquals(e.getMessage(), "MeetingEvent 생성 중 오류 발생");
         }
     }
 }
