@@ -64,13 +64,11 @@ public class TalkCalendarController {
     }
 
     @GetMapping("/events/{event_id}")
-    @Operation(summary = "캘린더 일정 상세 조회", description = "특정 캘린더 일정의 세부 정보를 조회합니다.", security = { @SecurityRequirement(name = "BearerAuth")})
+    @Operation(summary = "캘린더 일정 상세 조회", description = "특정 캘린더 일정의 세부 정보를 조회합니다.", security = {
+        @SecurityRequirement(name = "BearerAuth")})
     @ApiResponses(value = {
         @ApiResponse(responseCode = "200", description = "일정을 조회했습니다.",
-            content = @Content(schema = @Schema(implementation = EventDetailGetResponse.class))),
-        @ApiResponse(responseCode = "200", description = "조회된 일정이 없습니다.",
-            content = @Content(schema = @Schema(implementation = EventDetailGetResponse.class)))
-    })
+            content = @Content(schema = @Schema(implementation = EventDetailGetResponse.class)))})
     public ResponseEntity<SuccessBody<EventDetailGetResponse>> getEvent(
         @Parameter(description = "조회할 일정 ID", required = true) @PathVariable("event_id") String eventId,
         @LoginMemberId Long memberId
