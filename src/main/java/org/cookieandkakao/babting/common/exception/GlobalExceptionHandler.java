@@ -26,7 +26,7 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(ApiException.class)
     public ResponseEntity<FailureBody> handleApiException(ApiException ex) {
-        return ApiResponseGenerator.fail(HttpStatus.BAD_REQUEST, ex.getMessage());
+        return ApiResponseGenerator.fail(HttpStatus.INTERNAL_SERVER_ERROR, ex.getMessage());
     }
 
     @ExceptionHandler(CacheEvictionException.class)
