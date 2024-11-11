@@ -13,7 +13,6 @@ import org.junit.jupiter.api.Test;
 
 class MeetingCreateTest extends MeetingServiceTest{
 
-    //모임 생성
     @Test
     void 모임_생성_성공() {
         //given
