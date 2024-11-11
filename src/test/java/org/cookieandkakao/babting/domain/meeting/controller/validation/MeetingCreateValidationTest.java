@@ -1,6 +1,5 @@
 package org.cookieandkakao.babting.domain.meeting.controller.validation;
 
-import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import jakarta.validation.ConstraintViolation;
@@ -17,8 +16,6 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
-import org.junit.jupiter.params.provider.NullAndEmptySource;
-import org.junit.jupiter.params.provider.NullSource;
 
 class MeetingCreateValidationTest {
 
@@ -58,7 +55,8 @@ class MeetingCreateValidationTest {
             meetingCreateRequest);
         //then
         assertTrue(
-            validate.stream().anyMatch(v -> v.getPropertyPath().toString().equals("startDate")), "startDate" + " 유효성 검사 실패");
+            validate.stream().anyMatch(v -> v.getPropertyPath().toString().equals("startDate")),
+            "startDate" + " 유효성 검사 실패");
     }
 
     @Test
@@ -73,7 +71,8 @@ class MeetingCreateValidationTest {
             meetingCreateRequest);
         //then
         assertTrue(
-            validate.stream().anyMatch(v -> v.getPropertyPath().toString().equals("endDate")), "endDate" + " 유효성 검사 실패");
+            validate.stream().anyMatch(v -> v.getPropertyPath().toString().equals("endDate")),
+            "endDate" + " 유효성 검사 실패");
     }
 
     @ParameterizedTest
@@ -83,7 +82,8 @@ class MeetingCreateValidationTest {
         Set<ConstraintViolation<MeetingCreateRequest>> violations = validator.validate(request);
 
         // then
-        assertTrue(violations.stream().anyMatch(v -> v.getPropertyPath().toString().equals(fieldName)),
+        assertTrue(
+            violations.stream().anyMatch(v -> v.getPropertyPath().toString().equals(fieldName)),
             fieldName + " 유효성 검사 실패");
     }
 
