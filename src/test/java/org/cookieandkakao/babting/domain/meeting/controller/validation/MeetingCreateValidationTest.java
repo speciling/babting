@@ -43,9 +43,7 @@ class MeetingCreateValidationTest {
     @Test
     void 모임의_시작_시간은_현재_시간보다_빠를_수_없다() {
         //given
-        // 모임의 시작 시간보다 빠른 시간
         startDate = now.minusDays(1);
-        endDate = now.plusDays(1);
 
         MeetingCreateRequest meetingCreateRequest = new MeetingCreateRequest(baseLocation, title,
             startDate, endDate, durationTime, startTime, endTime);
@@ -61,9 +59,6 @@ class MeetingCreateValidationTest {
     @Test
     void 모임의_끝_시간은_현재_시간보다_빠를_수_없다() {
         //given
-        now = LocalDate.now();
-        startDate = now.plusDays(1);
-        // 모임의 시작 시간보다 빠른시간
         endDate = now.minusDays(1);
 
         MeetingCreateRequest meetingCreateRequest = new MeetingCreateRequest(baseLocation, title,
