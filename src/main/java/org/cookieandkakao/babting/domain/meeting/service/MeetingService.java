@@ -121,7 +121,7 @@ public class MeetingService {
     // 모임 확정 날짜, 확정 음식 확인
     public MeetingConfirmedInfoResponse getMeetingConfirmedInfo(Long meetingId){
         Meeting meeting = findMeeting(meetingId);
-        return MeetingConfirmedInfoResponse.of(meeting);
+        return MeetingConfirmedInfoResponse.from(meeting);
     }
 
     // 주최자 확인
