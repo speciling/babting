@@ -73,9 +73,8 @@ class MeetingCreateValidationTest {
         Set<ConstraintViolation<MeetingCreateRequest>> validate = validator.validate(
             meetingCreateRequest);
         //then
-        assertFalse(validate.isEmpty(), "유효성 검사 실패.");
         assertTrue(
-            validate.stream().anyMatch(v -> v.getPropertyPath().toString().equals("endDate")));
+            validate.stream().anyMatch(v -> v.getPropertyPath().toString().equals("endDate")), "endDate" + " 유효성 검사 실패");
     }
 
     @ParameterizedTest
