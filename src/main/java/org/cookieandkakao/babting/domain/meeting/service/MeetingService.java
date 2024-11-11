@@ -109,7 +109,7 @@ public class MeetingService {
         List<Meeting> meetingList = memberMeetingRepository.findMeetingsByMember(member);
         return meetingList.stream()
             .map(MeetingGetResponse::from)
-            .collect(Collectors.toList());
+            .toList();
     }
 
     // 모임 이름 조회, 시작과 끝 날짜 조회
