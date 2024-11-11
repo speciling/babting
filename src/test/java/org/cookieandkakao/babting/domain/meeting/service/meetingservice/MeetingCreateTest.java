@@ -9,11 +9,8 @@ import org.cookieandkakao.babting.domain.meeting.dto.request.LocationCreateReque
 import org.cookieandkakao.babting.domain.meeting.dto.request.MeetingCreateRequest;
 import org.cookieandkakao.babting.domain.meeting.entity.Meeting;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.junit.jupiter.MockitoExtension;
 
 
-@ExtendWith(MockitoExtension.class)
 class MeetingCreateTest extends MeetingServiceTest{
 
     //모임 생성
