@@ -1,4 +1,4 @@
-package org.cookieandkakao.babting.domain.meeting.controller;
+package org.cookieandkakao.babting.domain.meeting.controller.validation;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -14,7 +14,7 @@ import org.cookieandkakao.babting.domain.meeting.dto.request.MeetingCreateReques
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-class MeetingControllerTest {
+class MeetingCreateValidationTest {
 
     private Validator validator;
 
