@@ -17,56 +17,68 @@ import org.junit.jupiter.api.Test;
 class MeetingCreateValidationTest {
 
     private Validator validator;
+    private LocationCreateRequest baseLocation;
+    private LocalDate now;
+    private String title;
+    private LocalDate startDate;
+    private LocalDate endDate;
+    private Integer durationTime;
+    private LocalTime startTime;
+    private LocalTime endTime;
 
     @BeforeEach
     void setUp() {
         validator = Validation.buildDefaultValidatorFactory().getValidator();
+
+        baseLocation = new LocationCreateRequest("전대", "11", 1.1, 1.1);
+        now = LocalDate.now();
+        title = "밥팅";
+        startDate = now.plusDays(1);
+        endDate = now.plusDays(2);
+        durationTime = 3;
+        startTime = LocalTime.of(14, 0);
+        endTime = LocalTime.of(17, 0);
     }
 
     @Test
     void 모임의_시작_시간은_현재_시간보다_빠를_수_없다() {
         //given
-        LocalDate now = LocalDate.now();
         // 모임의 시작 시간보다 빠른 시간
-        LocalDate startDate = now.minusDays(1);
-        LocalDate endDate = now.plusDays(1);
+        startDate = now.minusDays(1);
+        endDate = now.plusDays(1);
 
-        LocationCreateRequest locationCreateRequest = new LocationCreateRequest("전대", "11", 1.1,
-            1.1);
-        MeetingCreateRequest meetingCreateRequest = new MeetingCreateRequest(locationCreateRequest,
-            "밥팅",
-            startDate, endDate, 3, LocalTime.of(14, 0), LocalTime.of(17, 0));
+        MeetingCreateRequest meetingCreateRequest = new MeetingCreateRequest(baseLocation, title,
+            startDate, endDate, durationTime, startTime, endTime);
         //when
         Set<ConstraintViolation<MeetingCreateRequest>> validate = validator.validate(
             meetingCreateRequest);
         //then
         assertFalse(validate.isEmpty(), "유효성 검사 실패.");
-        assertTrue(validate.stream().anyMatch(v -> v.getPropertyPath().toString().equals("startDate")));
+        assertTrue(
+            validate.stream().anyMatch(v -> v.getPropertyPath().toString().equals("startDate")));
     }
 
     @Test
     void 모임의_끝_시간은_현재_시간보다_빠를_수_없다() {
         //given
-        LocalDate now = LocalDate.now();
-        LocalDate startDate = now.plusDays(1);
+        now = LocalDate.now();
+        startDate = now.plusDays(1);
         // 모임의 시작 시간보다 빠른시간
-        LocalDate endDate = now.minusDays(1);
+        endDate = now.minusDays(1);
 
-        LocationCreateRequest locationCreateRequest = new LocationCreateRequest("전대", "11", 1.1,
-            1.1);
-        MeetingCreateRequest meetingCreateRequest = new MeetingCreateRequest(locationCreateRequest,
-            "밥팅",
-            startDate, endDate, 3, LocalTime.of(14, 0), LocalTime.of(17, 0));
+        MeetingCreateRequest meetingCreateRequest = new MeetingCreateRequest(baseLocation, title,
+            startDate, endDate, durationTime, startTime, endTime);
         //when
         Set<ConstraintViolation<MeetingCreateRequest>> validate = validator.validate(
             meetingCreateRequest);
         //then
         assertFalse(validate.isEmpty(), "유효성 검사 실패.");
-        assertTrue(validate.stream().anyMatch(v -> v.getPropertyPath().toString().equals("endDate")));
+        assertTrue(
+            validate.stream().anyMatch(v -> v.getPropertyPath().toString().equals("endDate")));
     }
 
     @Test
-    void 모임의_모든_정보가_입력되어야한다(){
+    void 모임의_모든_정보가_입력되어야한다() {
         //given
         //when
         //then
