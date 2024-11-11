@@ -8,31 +8,13 @@ import java.time.LocalTime;
 import org.cookieandkakao.babting.domain.meeting.dto.request.LocationCreateRequest;
 import org.cookieandkakao.babting.domain.meeting.dto.request.MeetingCreateRequest;
 import org.cookieandkakao.babting.domain.meeting.entity.Meeting;
-import org.cookieandkakao.babting.domain.meeting.repository.LocationRepository;
-import org.cookieandkakao.babting.domain.meeting.repository.MeetingRepository;
-import org.cookieandkakao.babting.domain.meeting.repository.MemberMeetingRepository;
-import org.cookieandkakao.babting.domain.meeting.service.MeetingService;
-import org.cookieandkakao.babting.domain.member.service.MemberService;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 
 @ExtendWith(MockitoExtension.class)
-class MeetingCreateTest {
-
-    @Mock
-    private MeetingRepository meetingRepository;
-    @Mock
-    private MemberMeetingRepository memberMeetingRepository;
-    @Mock
-    private LocationRepository locationRepository;
-    @Mock
-    private MemberService memberService;
-    @InjectMocks
-    private MeetingService meetingService;
+class MeetingCreateTest extends MeetingServiceTest{
 
     //모임 생성
     @Test
