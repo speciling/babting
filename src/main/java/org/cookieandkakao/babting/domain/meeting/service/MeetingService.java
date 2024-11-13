@@ -45,7 +45,6 @@ public class MeetingService {
         this.meetingEventCreateService = meetingEventCreateService;
     }
 
-    // 모임 생성(주최자)
     public void createMeeting(Long memberId, MeetingCreateRequest meetingCreateRequest){
         Member member = memberService.findMember(memberId);
         Meeting meeting = meetingCreateRequest.toEntity();
@@ -55,7 +54,6 @@ public class MeetingService {
         memberMeetingRepository.save(new MemberMeeting(member, meeting, true));
     }
 
-    // 모임 수정
     public void updateMeeting(Long memberId, Long meetingId, MeetingUpdateRequest meetingUpdateRequest) {
         Member member = memberService.findMember(memberId);
         Meeting meeting = findMeeting(meetingId);
@@ -92,7 +90,6 @@ public class MeetingService {
 
     }
 
-    // 모임 탈퇴(주최자, 초대받은 사람)
     public void exitMeeting(Long memberId, Long meetingId){
         Member member = memberService.findMember(memberId);
         Meeting meeting = findMeeting(meetingId);
@@ -109,28 +106,24 @@ public class MeetingService {
         }
     }
 
-    // 내가 참여한 모임 목록 조회
     public List<MeetingGetResponse> getAllMeetings(Long memberId){
         Member member = memberService.findMember(memberId);
         List<Meeting> meetingList = memberMeetingRepository.findMeetingsByMember(member);
         return meetingList.stream()
             .map(MeetingGetResponse::from)
-            .collect(Collectors.toList());
+            .toList();
     }
 
-    // 모임 이름 조회, 시작과 끝 날짜 조회
     public MeetingInfoGetResponse getMeetingInfo(Long meetingId){
         Meeting meeting = findMeeting(meetingId);
         return MeetingInfoGetResponse.from(meeting);
     }
 
-    // 모임 확정 날짜, 확정 음식 확인
     public MeetingConfirmedInfoResponse getMeetingConfirmedInfo(Long meetingId){
         Meeting meeting = findMeeting(meetingId);
-        return MeetingConfirmedInfoResponse.of(meeting);
+        return MeetingConfirmedInfoResponse.from(meeting);
     }
 
-    // 주최자 확인
     public MeetingHostCheckResponse checkHost(Long memberId, Long meetingId){
         Member member = memberService.findMember(memberId);
         Meeting meeting = findMeeting(meetingId);
