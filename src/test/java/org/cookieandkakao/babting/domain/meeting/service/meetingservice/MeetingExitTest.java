@@ -70,5 +70,4 @@ class MeetingExitTest extends MeetingServiceTest {
         verify(meetingRepository, never()).delete(meeting);
         verify(memberMeetingRepository, never()).delete(joinerMemberMeeting);
     }
-    // 없는 모임 탈퇴 불가
 }
