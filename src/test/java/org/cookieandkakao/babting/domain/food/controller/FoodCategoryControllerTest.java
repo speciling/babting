@@ -34,7 +34,7 @@ public class FoodCategoryControllerTest {
     private MemberRepository memberRepository;
 
     @MockBean
-    private JwtUtil jwtUtil; // 추가된 부분
+    private JwtUtil jwtUtil;
 
     @BeforeEach
     public void setup() {
