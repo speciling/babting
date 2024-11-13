@@ -76,7 +76,8 @@ class MeetingEventServiceTest {
 
             Member member = mock(Member.class);
             Meeting meeting = mock(Meeting.class);
-            ConfirmMeetingGetRequest confirmMeetingGetRequest = mock(ConfirmMeetingGetRequest.class);
+            ConfirmMeetingGetRequest confirmMeetingGetRequest = mock(
+                ConfirmMeetingGetRequest.class);
 
             LocalDateTime confirmDateTime = LocalDateTime.now();
 
@@ -93,10 +94,12 @@ class MeetingEventServiceTest {
             doNothing().when(meetingValidationService).validateMeetingConfirmation(meeting);
 
             // When & Then
-            assertDoesNotThrow(() -> meetingEventService.confirmMeeting(memberId, meetingId, confirmMeetingGetRequest));
+            assertDoesNotThrow(() -> meetingEventService.confirmMeeting(memberId, meetingId,
+                confirmMeetingGetRequest));
             verify(meeting).confirmDateTime(confirmDateTime);
             verify(meeting).confirmFood(any());
-            verify(meetingEventCreateService).addMeetingEvent(eq(memberId), any(MeetingEventCreateRequest.class));
+            verify(meetingEventCreateService).addMeetingEvent(eq(memberId),
+                any(MeetingEventCreateRequest.class));
         }
 
         @Test
@@ -107,16 +110,19 @@ class MeetingEventServiceTest {
 
             Member member = mock(Member.class);
             Meeting meeting = mock(Meeting.class);
-            ConfirmMeetingGetRequest confirmMeetingGetRequest = mock(ConfirmMeetingGetRequest.class);
+            ConfirmMeetingGetRequest confirmMeetingGetRequest = mock(
+                ConfirmMeetingGetRequest.class);
 
             // Mocking
             given(memberService.findMember(memberId)).willReturn(member);
             given(meetingService.findMeeting(meetingId)).willReturn(meeting);
-            doThrow(new MeetingHostUnauthorizedException("권한이 없습니다.")).when(meetingValidationService).validateHostPermission(member, meeting);
+            doThrow(new MeetingHostUnauthorizedException("권한이 없습니다.")).when(
+                meetingValidationService).validateHostPermission(member, meeting);
 
             // When
             Exception e = assertThrows(MeetingHostUnauthorizedException.class,
-                () -> meetingEventService.confirmMeeting(memberId, meetingId, confirmMeetingGetRequest));
+                () -> meetingEventService.confirmMeeting(memberId, meetingId,
+                    confirmMeetingGetRequest));
 
             // Then
             assertEquals(e.getClass(), MeetingHostUnauthorizedException.class);
@@ -132,16 +138,19 @@ class MeetingEventServiceTest {
 
             Member member = mock(Member.class);
             Meeting meeting = mock(Meeting.class);
-            ConfirmMeetingGetRequest confirmMeetingGetRequest = mock(ConfirmMeetingGetRequest.class);
+            ConfirmMeetingGetRequest confirmMeetingGetRequest = mock(
+                ConfirmMeetingGetRequest.class);
 
             // Mocking
             given(memberService.findMember(memberId)).willReturn(member);
             given(meetingService.findMeeting(meetingId)).willReturn(meeting);
-            doThrow(new MeetingAlreadyConfirmedException("이미 모임 시간이 확정되었습니다.")).when(meetingValidationService).validateMeetingConfirmation(meeting);
+            doThrow(new MeetingAlreadyConfirmedException("이미 모임 시간이 확정되었습니다.")).when(
+                meetingValidationService).validateMeetingConfirmation(meeting);
 
             // When
             Exception e = assertThrows(MeetingAlreadyConfirmedException.class,
-                () -> meetingEventService.confirmMeeting(memberId, meetingId, confirmMeetingGetRequest));
+                () -> meetingEventService.confirmMeeting(memberId, meetingId,
+                    confirmMeetingGetRequest));
 
             // Then
             assertEquals(e.getClass(), MeetingAlreadyConfirmedException.class);
@@ -159,17 +168,20 @@ class MeetingEventServiceTest {
 
             Member member = mock(Member.class);
             Meeting meeting = mock(Meeting.class);
-            ConfirmMeetingGetRequest confirmMeetingGetRequest = mock(ConfirmMeetingGetRequest.class);
+            ConfirmMeetingGetRequest confirmMeetingGetRequest = mock(
+                ConfirmMeetingGetRequest.class);
 
             // Mocking
             given(memberService.findMember(memberId)).willReturn(member);
             given(meetingService.findMeeting(meetingId)).willReturn(meeting);
             given(confirmMeetingGetRequest.confirmFoodId()).willReturn(foodId);
-            given(foodRepositoryService.findFoodById(foodId)).willThrow(new FoodNotFoundException("음식을 찾을 수 없습니다."));
+            given(foodRepositoryService.findFoodById(foodId)).willThrow(
+                new FoodNotFoundException("음식을 찾을 수 없습니다."));
 
             // When
             Exception e = assertThrows(FoodNotFoundException.class,
-                () -> meetingEventService.confirmMeeting(memberId, meetingId, confirmMeetingGetRequest));
+                () -> meetingEventService.confirmMeeting(memberId, meetingId,
+                    confirmMeetingGetRequest));
 
             // Then
             assertEquals(e.getClass(), FoodNotFoundException.class);
@@ -192,22 +204,26 @@ class MeetingEventServiceTest {
             Meeting meeting = mock(Meeting.class);
             Member member = mock(Member.class);
             MemberMeeting memberMeeting = mock(MemberMeeting.class);
-            Time time = new Time(LocalDateTime.now(), LocalDateTime.now().plusHours(1),"Asia/Seoul", false );
+            Time time = new Time(LocalDateTime.now(), LocalDateTime.now().plusHours(1),
+                "Asia/Seoul", false);
             Event event = new Event(time);
             MeetingEvent meetingEvent = new MeetingEvent(memberMeeting, event);
 
             List<MeetingEvent> meetingEvents = List.of(meetingEvent);
             List<TimeGetResponse> expectedTimes = List.of(TimeGetResponse.from(time));
-            MeetingPersonalEventGetResponse expectedResponse = new MeetingPersonalEventGetResponse(expectedTimes);
+            MeetingPersonalEventGetResponse expectedResponse = new MeetingPersonalEventGetResponse(
+                expectedTimes);
 
             // Mocking
             given(meetingService.findMeeting(meetingId)).willReturn(meeting);
             given(memberService.findMember(memberId)).willReturn(member);
             given(meetingService.findMemberMeeting(member, meeting)).willReturn(memberMeeting);
-            given(meetingEventRepository.findByMemberMeeting(memberMeeting)).willReturn(meetingEvents);
+            given(meetingEventRepository.findByMemberMeeting(memberMeeting)).willReturn(
+                meetingEvents);
 
             // When
-            MeetingPersonalEventGetResponse actualResponse = meetingEventService.findMeetingPersonalEvent(meetingId, memberId);
+            MeetingPersonalEventGetResponse actualResponse = meetingEventService.findMeetingPersonalEvent(
+                meetingId, memberId);
 
             // Then
             assertEquals(expectedResponse, actualResponse);
@@ -233,7 +249,8 @@ class MeetingEventServiceTest {
             given(meetingEventRepository.findByMemberMeeting(memberMeeting)).willReturn(List.of());
 
             // When
-            MeetingPersonalEventGetResponse response = meetingEventService.findMeetingPersonalEvent(meetingId, memberId);
+            MeetingPersonalEventGetResponse response = meetingEventService.findMeetingPersonalEvent(
+                meetingId, memberId);
 
             // Then
             assertNotNull(response);
@@ -247,7 +264,8 @@ class MeetingEventServiceTest {
             Long memberId = 2L;
 
             // Mocking
-            given(meetingService.findMeeting(meetingId)).willThrow(new MeetingNotFoundException("해당 모임이 존재하지 않습니다."));
+            given(meetingService.findMeeting(meetingId)).willThrow(
+                new MeetingNotFoundException("해당 모임이 존재하지 않습니다."));
 
             // When
             Exception e = assertThrows(MeetingNotFoundException.class,
@@ -268,7 +286,8 @@ class MeetingEventServiceTest {
 
             // Mocking
             given(meetingService.findMeeting(meetingId)).willReturn(meeting);
-            given(memberService.findMember(memberId)).willThrow(new MemberNotFoundException("해당 사용자가 존재하지 않습니다."));
+            given(memberService.findMember(memberId)).willThrow(
+                new MemberNotFoundException("해당 사용자가 존재하지 않습니다."));
 
             // When
             Exception e = assertThrows(MemberNotFoundException.class,
@@ -292,7 +311,8 @@ class MeetingEventServiceTest {
             // Mocking
             given(meetingService.findMeeting(meetingId)).willReturn(meeting);
             given(memberService.findMember(memberId)).willReturn(member);
-            given(meetingService.findMemberMeeting(member, meeting)).willThrow(new MemberMeetingNotFoundException("해당 모임에 회원이 존재하지 않습니다."));
+            given(meetingService.findMemberMeeting(member, meeting)).willThrow(
+                new MemberMeetingNotFoundException("해당 모임에 회원이 존재하지 않습니다."));
 
             // When
             Exception e = assertThrows(MemberMeetingNotFoundException.class,

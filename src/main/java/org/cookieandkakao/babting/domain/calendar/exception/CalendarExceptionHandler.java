@@ -21,7 +21,8 @@ public class CalendarExceptionHandler {
     }
 
     @ExceptionHandler(InvalidTimeRangeException.class)
-    public ResponseEntity<FailureBody> handleInvalidTimeRangeException(InvalidTimeRangeException ex) {
+    public ResponseEntity<FailureBody> handleInvalidTimeRangeException(
+        InvalidTimeRangeException ex) {
         return ApiResponseGenerator.fail(HttpStatus.BAD_REQUEST, ex.getMessage());
     }
 
@@ -31,7 +32,8 @@ public class CalendarExceptionHandler {
     }
 
     @ExceptionHandler(EventDetailNotFoundException.class)
-    public ResponseEntity<FailureBody> handleEventDetailNotFoundException(EventDetailNotFoundException ex) {
+    public ResponseEntity<FailureBody> handleEventDetailNotFoundException(
+        EventDetailNotFoundException ex) {
         return ApiResponseGenerator.fail(HttpStatus.BAD_REQUEST, ex.getMessage());
     }
 }

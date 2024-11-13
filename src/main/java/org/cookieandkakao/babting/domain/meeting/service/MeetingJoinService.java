@@ -17,8 +17,10 @@ public class MeetingJoinService {
         this.meetingFoodPreferenceUpdater = meetingFoodPreferenceUpdater;
     }
 
-    public void joinMeeting(Long memberId, Long meetingId, MeetingJoinCreateRequest meetingJoinCreateRequest) {
+    public void joinMeeting(Long memberId, Long meetingId,
+        MeetingJoinCreateRequest meetingJoinCreateRequest) {
         meetingService.joinMeeting(memberId, meetingId, meetingJoinCreateRequest);
-        meetingFoodPreferenceUpdater.updatePreferences(meetingId, memberId, meetingJoinCreateRequest.preferences(), meetingJoinCreateRequest.nonPreferences());
+        meetingFoodPreferenceUpdater.updatePreferences(meetingId, memberId,
+            meetingJoinCreateRequest.preferences(), meetingJoinCreateRequest.nonPreferences());
     }
 }

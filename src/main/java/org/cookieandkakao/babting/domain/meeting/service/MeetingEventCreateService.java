@@ -46,7 +46,8 @@ public class MeetingEventCreateService {
         }
 
         List<MeetingEvent> meetingEvents = avoidTimeCreateRequests.stream()
-            .map(avoidTimeCreateRequest -> createMeetingEvent(memberMeeting, avoidTimeCreateRequest))
+            .map(
+                avoidTimeCreateRequest -> createMeetingEvent(memberMeeting, avoidTimeCreateRequest))
             .toList();
 
         meetingEventRepository.saveAll(meetingEvents);

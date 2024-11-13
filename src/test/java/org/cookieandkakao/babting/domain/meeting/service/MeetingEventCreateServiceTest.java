@@ -21,12 +21,8 @@ import org.cookieandkakao.babting.domain.calendar.service.EventService;
 import org.cookieandkakao.babting.domain.calendar.service.TalkCalendarService;
 import org.cookieandkakao.babting.domain.meeting.dto.request.MeetingEventCreateRequest;
 import org.cookieandkakao.babting.domain.meeting.dto.request.MeetingTimeCreateRequest;
-import org.cookieandkakao.babting.domain.meeting.entity.Meeting;
 import org.cookieandkakao.babting.domain.meeting.entity.MemberMeeting;
-import org.cookieandkakao.babting.domain.meeting.exception.meeting.MeetingNotFoundException;
 import org.cookieandkakao.babting.domain.meeting.repository.MeetingEventRepository;
-import org.cookieandkakao.babting.domain.member.entity.Member;
-import org.cookieandkakao.babting.domain.member.exception.MemberNotFoundException;
 import org.cookieandkakao.babting.domain.member.service.MemberService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
@@ -64,8 +60,10 @@ class MeetingEventCreateServiceTest {
         @Test
         void 성공() {
             // Given
-            MeetingEventCreateRequest meetingEventCreateRequest = mock(MeetingEventCreateRequest.class);
-            MeetingTimeCreateRequest meetingTimeCreateRequest = mock(MeetingTimeCreateRequest.class);
+            MeetingEventCreateRequest meetingEventCreateRequest = mock(
+                MeetingEventCreateRequest.class);
+            MeetingTimeCreateRequest meetingTimeCreateRequest = mock(
+                MeetingTimeCreateRequest.class);
             TimeCreateRequest timeCreateRequest = mock(TimeCreateRequest.class);
             EventCreateResponse expectedResponse = mock(EventCreateResponse.class);
 
@@ -73,40 +71,48 @@ class MeetingEventCreateServiceTest {
             given(meetingEventCreateRequest.title()).willReturn("Meeting Title");
             given(meetingEventCreateRequest.time()).willReturn(meetingTimeCreateRequest);
             given(meetingTimeCreateRequest.toTimeCreateRequest()).willReturn(timeCreateRequest);
-            given(talkCalendarService.createEvent(any(EventCreateRequest.class), eq(VALID_MEMBER_ID)))
+            given(
+                talkCalendarService.createEvent(any(EventCreateRequest.class), eq(VALID_MEMBER_ID)))
                 .willReturn(expectedResponse);
 
             // When
-            EventCreateResponse result = meetingEventCreateService.addMeetingEvent(VALID_MEMBER_ID, meetingEventCreateRequest);
+            EventCreateResponse result = meetingEventCreateService.addMeetingEvent(VALID_MEMBER_ID,
+                meetingEventCreateRequest);
 
             // Then
             assertEquals(expectedResponse, result);
             assertEquals(result.eventId(), expectedResponse.eventId());
-            verify(talkCalendarService).createEvent(any(EventCreateRequest.class), eq(VALID_MEMBER_ID));
+            verify(talkCalendarService).createEvent(any(EventCreateRequest.class),
+                eq(VALID_MEMBER_ID));
         }
 
         @Test
         void 실패_EventCreationException예외() {
             // Given
-            MeetingEventCreateRequest meetingEventCreateRequest = mock(MeetingEventCreateRequest.class);
-            MeetingTimeCreateRequest meetingTimeCreateRequest = mock(MeetingTimeCreateRequest.class);
+            MeetingEventCreateRequest meetingEventCreateRequest = mock(
+                MeetingEventCreateRequest.class);
+            MeetingTimeCreateRequest meetingTimeCreateRequest = mock(
+                MeetingTimeCreateRequest.class);
             TimeCreateRequest timeCreateRequest = mock(TimeCreateRequest.class);
 
             // Mocking
             given(meetingEventCreateRequest.title()).willReturn("Meeting Title");
             given(meetingEventCreateRequest.time()).willReturn(meetingTimeCreateRequest);
             given(meetingTimeCreateRequest.toTimeCreateRequest()).willReturn(timeCreateRequest);
-            given(talkCalendarService.createEvent(any(EventCreateRequest.class), eq(VALID_MEMBER_ID)))
+            given(
+                talkCalendarService.createEvent(any(EventCreateRequest.class), eq(VALID_MEMBER_ID)))
                 .willThrow(new EventCreationException("Event 생성 중 오류 발생"));
 
             // When
             Exception e = assertThrows(EventCreationException.class,
-                () -> meetingEventCreateService.addMeetingEvent(VALID_MEMBER_ID, meetingEventCreateRequest));
+                () -> meetingEventCreateService.addMeetingEvent(VALID_MEMBER_ID,
+                    meetingEventCreateRequest));
 
             // Then
             assertEquals(e.getClass(), EventCreationException.class);
-            assertEquals(e.getMessage(),"Event 생성 중 오류 발생");
-            verify(talkCalendarService).createEvent(any(EventCreateRequest.class), eq(VALID_MEMBER_ID));
+            assertEquals(e.getMessage(), "Event 생성 중 오류 발생");
+            verify(talkCalendarService).createEvent(any(EventCreateRequest.class),
+                eq(VALID_MEMBER_ID));
         }
     }
 
@@ -120,7 +126,8 @@ class MeetingEventCreateServiceTest {
             List<MeetingTimeCreateRequest> emptyAvoidTimeRequests = List.of();
 
             // When & Then
-            assertDoesNotThrow(() -> meetingEventCreateService.saveMeetingAvoidTime(memberMeeting, emptyAvoidTimeRequests));
+            assertDoesNotThrow(() -> meetingEventCreateService.saveMeetingAvoidTime(memberMeeting,
+                emptyAvoidTimeRequests));
         }
 
         @Test
@@ -130,7 +137,8 @@ class MeetingEventCreateServiceTest {
             TimeCreateRequest timeCreateRequest = mock(TimeCreateRequest.class);
             Time time = mock(Time.class);
             Event avoidEvent = mock(Event.class);
-            List<MeetingTimeCreateRequest> avoidTimeCreateRequests = List.of(avoidTimeCreateRequest);
+            List<MeetingTimeCreateRequest> avoidTimeCreateRequests = List.of(
+                avoidTimeCreateRequest);
             MemberMeeting memberMeeting = mock(MemberMeeting.class);
 
             // Mocking
@@ -139,7 +147,8 @@ class MeetingEventCreateServiceTest {
             given(eventService.saveAvoidTimeEvent(time)).willReturn(avoidEvent);
 
             // When
-            assertDoesNotThrow(() -> meetingEventCreateService.saveMeetingAvoidTime(memberMeeting, avoidTimeCreateRequests));
+            assertDoesNotThrow(() -> meetingEventCreateService.saveMeetingAvoidTime(memberMeeting,
+                avoidTimeCreateRequests));
 
             // Then
             verify(eventService).saveAvoidTimeEvent(time);
@@ -153,16 +162,19 @@ class MeetingEventCreateServiceTest {
             MeetingTimeCreateRequest avoidTimeCreateRequest = mock(MeetingTimeCreateRequest.class);
             TimeCreateRequest timeCreateRequest = mock(TimeCreateRequest.class);
             Time time = mock(Time.class);
-            List<MeetingTimeCreateRequest> avoidTimeCreateRequests = List.of(avoidTimeCreateRequest);
+            List<MeetingTimeCreateRequest> avoidTimeCreateRequests = List.of(
+                avoidTimeCreateRequest);
 
             // Mocking
             given(avoidTimeCreateRequest.toTimeCreateRequest()).willReturn(timeCreateRequest);
             given(timeCreateRequest.toEntity()).willReturn(time);
-            given(eventService.saveAvoidTimeEvent(time)).willThrow(new IllegalArgumentException("MeetingEvent 생성 중 오류 발생"));
+            given(eventService.saveAvoidTimeEvent(time)).willThrow(
+                new IllegalArgumentException("MeetingEvent 생성 중 오류 발생"));
 
             // When
             Exception e = assertThrows(IllegalArgumentException.class,
-                () -> meetingEventCreateService.saveMeetingAvoidTime(memberMeeting, avoidTimeCreateRequests));
+                () -> meetingEventCreateService.saveMeetingAvoidTime(memberMeeting,
+                    avoidTimeCreateRequests));
 
             // Then
             assertEquals(e.getClass(), IllegalArgumentException.class);

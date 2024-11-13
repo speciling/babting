@@ -157,7 +157,8 @@ class TalkCalendarControllerTest {
             String eventId = "testId";
 
             // Mocking
-            given(talkCalendarService.getEvent(MEMBER_ID, eventId)).willThrow(new EventDetailNotFoundException("요청한 일정ID에 해당하는 일정을 찾을 수 없습니다."));
+            given(talkCalendarService.getEvent(MEMBER_ID, eventId)).willThrow(
+                new EventDetailNotFoundException("요청한 일정ID에 해당하는 일정을 찾을 수 없습니다."));
 
             // When
             Exception e = assertThrows(EventDetailNotFoundException.class,

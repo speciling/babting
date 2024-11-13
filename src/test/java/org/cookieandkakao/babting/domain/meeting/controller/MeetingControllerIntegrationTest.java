@@ -167,15 +167,18 @@ class MeetingControllerIntegrationTest {
                 List.of(timeGetResponse));
 
             // Mocking
-            given(meetingEventService.findMeetingPersonalEvent(MEETING_ID, MEMBER_ID)).willReturn(response);
+            given(meetingEventService.findMeetingPersonalEvent(MEETING_ID, MEMBER_ID)).willReturn(
+                response);
 
             // When & Then
             mockMvc.perform(get("/api/meeting/{meetingId}/personal-event", MEETING_ID)
                     .header("Authorization", accessToken)
                     .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.data.meetingPersonalTimes[0].start_at").value("2024-01-01T10:00:00"))
-                .andExpect(jsonPath("$.data.meetingPersonalTimes[0].end_at").value("2024-01-01T12:00:00"))
+                .andExpect(jsonPath("$.data.meetingPersonalTimes[0].start_at").value(
+                    "2024-01-01T10:00:00"))
+                .andExpect(
+                    jsonPath("$.data.meetingPersonalTimes[0].end_at").value("2024-01-01T12:00:00"))
                 .andExpect(jsonPath("$.message").value("모임별 개인 일정 조회 성공"));
 
         }
@@ -194,7 +197,7 @@ class MeetingControllerIntegrationTest {
         }
 
         @Test
-        void 실패_일정_조회_오류() throws Exception{
+        void 실패_일정_조회_오류() throws Exception {
             // Mocking
             given(meetingEventService.findMeetingPersonalEvent(MEETING_ID, MEMBER_ID))
                 .willThrow(new ApiException("개인 일정 조회 중 오류가 발생했습니다."));

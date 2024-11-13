@@ -69,6 +69,7 @@ class TalkCalendarClientServiceTest {
 
     @Nested
     class 일정_목록_조회_단위_테스트 {
+
         @Test
         void 성공() {
             // Given
@@ -105,7 +106,8 @@ class TalkCalendarClientServiceTest {
             assertEquals(result, eventListGetResponse);
             verify(restClient).get();
             verify(requestHeadersUriSpec).uri(any(Function.class));
-            verify(requestHeadersUriSpec).header(HttpHeaders.AUTHORIZATION, "Bearer " + ACCESS_TOKEN);
+            verify(requestHeadersUriSpec).header(HttpHeaders.AUTHORIZATION,
+                "Bearer " + ACCESS_TOKEN);
             verify(requestBodyUriSpec).retrieve();
             verify(responseSpec).toEntity(EventListGetResponse.class);
         }
@@ -143,7 +145,8 @@ class TalkCalendarClientServiceTest {
             verify(kakaoProviderProperties).calendarEventListUri();
             verify(restClient).get();
             verify(requestHeadersUriSpec).uri(any(Function.class));
-            verify(requestHeadersUriSpec).header(HttpHeaders.AUTHORIZATION, "Bearer " + ACCESS_TOKEN);
+            verify(requestHeadersUriSpec).header(HttpHeaders.AUTHORIZATION,
+                "Bearer " + ACCESS_TOKEN);
             verify(requestBodyUriSpec).retrieve();
             verify(responseSpec).toEntity(EventListGetResponse.class);
         }
@@ -198,7 +201,8 @@ class TalkCalendarClientServiceTest {
             given(responseSpec.toEntity(EventDetailGetResponse.class)).willReturn(responseEntity);
 
             // When
-            EventDetailGetResponse result = talkCalendarClientService.getEvent(ACCESS_TOKEN, EVENT_ID);
+            EventDetailGetResponse result = talkCalendarClientService.getEvent(ACCESS_TOKEN,
+                EVENT_ID);
 
             // Then
             assertNotNull(result);
@@ -206,7 +210,8 @@ class TalkCalendarClientServiceTest {
             assertEquals(result.event().id(), "testId");
             verify(restClient).get();
             verify(requestHeadersUriSpec).uri(any(Function.class));
-            verify(requestHeadersUriSpec).header(HttpHeaders.AUTHORIZATION, "Bearer " + ACCESS_TOKEN);
+            verify(requestHeadersUriSpec).header(HttpHeaders.AUTHORIZATION,
+                "Bearer " + ACCESS_TOKEN);
             verify(requestBodyUriSpec).retrieve();
             verify(responseSpec).toEntity(EventDetailGetResponse.class);
         }
@@ -288,7 +293,8 @@ class TalkCalendarClientServiceTest {
             given(responseSpec.toEntity(EventCreateResponse.class)).willReturn(responseEntity);
 
             // When
-            EventCreateResponse result = talkCalendarClientService.createEvent(ACCESS_TOKEN, formData);
+            EventCreateResponse result = talkCalendarClientService.createEvent(ACCESS_TOKEN,
+                formData);
 
             // Then
             assertNotNull(result);
@@ -323,7 +329,8 @@ class TalkCalendarClientServiceTest {
 
             // When
             Exception e = assertThrows(
-                ApiException.class, () -> talkCalendarClientService.createEvent(ACCESS_TOKEN, formData)
+                ApiException.class,
+                () -> talkCalendarClientService.createEvent(ACCESS_TOKEN, formData)
             );
 
             // Then

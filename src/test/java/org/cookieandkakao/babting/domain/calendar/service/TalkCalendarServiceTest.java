@@ -88,11 +88,13 @@ class TalkCalendarServiceTest {
             given(memberService.getKakaoAccessToken(memberId)).willReturn(accessToken);
             given(talkCalendarClientService.getEventList(accessToken, from, to)).willReturn(
                 eventListGetResponse);
-            given(talkCalendarClientService.getEvent(accessToken, eventGetResponse.id())).willReturn(
+            given(
+                talkCalendarClientService.getEvent(accessToken, eventGetResponse.id())).willReturn(
                 eventDetailGetResponseMock);
 
             // When
-            List<EventGetResponse> result = talkCalendarService.getUpdatedEventList(from, to, memberId);
+            List<EventGetResponse> result = talkCalendarService.getUpdatedEventList(from, to,
+                memberId);
 
             // Then
             verify(memberService).getKakaoAccessToken(memberId);
@@ -206,6 +208,7 @@ class TalkCalendarServiceTest {
             verify(talkCalendarClientService).getEvent(accessToken, eventGetResponse.id());
         }
     }
+
     @Nested
     class 일정_상세_얻기_테스트 {
 
@@ -279,6 +282,7 @@ class TalkCalendarServiceTest {
             verify(talkCalendarClientService).getEvent(accessToken, eventId);
         }
     }
+
     @Nested
     class 일정_생성_테스트 {
 
@@ -306,7 +310,8 @@ class TalkCalendarServiceTest {
             given(mockCursor.hasNext()).willReturn(false);
 
             // When
-            EventCreateResponse result = talkCalendarService.createEvent(eventCreateRequest, memberId);
+            EventCreateResponse result = talkCalendarService.createEvent(eventCreateRequest,
+                memberId);
 
             // Then
             verify(memberService).getKakaoAccessToken(any(Long.class));

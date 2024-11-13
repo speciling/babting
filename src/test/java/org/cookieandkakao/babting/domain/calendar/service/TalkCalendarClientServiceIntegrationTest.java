@@ -81,7 +81,8 @@ class TalkCalendarClientServiceIntegrationTest {
                     MediaType.APPLICATION_JSON));
 
             // When
-            EventListGetResponse response = talkCalendarClientService.getEventList(ACCESS_TOKEN, from,
+            EventListGetResponse response = talkCalendarClientService.getEventList(ACCESS_TOKEN,
+                from,
                 to);
 
             // Then

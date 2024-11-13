@@ -123,10 +123,12 @@ class MeetingControllerTest {
                 LocalDateTime.of(2024, 1, 1, 10, 0), 1L);
 
             // When
-            ResponseEntity<SuccessBody<Void>> result = meetingController.confirmMeeting(MEETING_ID, confirmMeetingGetRequest, MEMBER_ID);
+            ResponseEntity<SuccessBody<Void>> result = meetingController.confirmMeeting(MEETING_ID,
+                confirmMeetingGetRequest, MEMBER_ID);
 
             // Then
-            verify(meetingEventService).confirmMeeting(MEMBER_ID, MEETING_ID, confirmMeetingGetRequest);
+            verify(meetingEventService).confirmMeeting(MEMBER_ID, MEETING_ID,
+                confirmMeetingGetRequest);
             assertThat(result.getStatusCode()).isEqualTo(HttpStatus.ACCEPTED);
             assertThat(result.getBody().getMessage()).isEqualTo("모임 확정 성공");
         }
@@ -143,7 +145,9 @@ class MeetingControllerTest {
                 .confirmMeeting(eq(MEMBER_ID), eq(MEETING_ID), any(ConfirmMeetingGetRequest.class));
 
             // When
-            Exception e = assertThrows(ApiException.class, () -> meetingController.confirmMeeting(MEETING_ID, confirmMeetingGetRequest, MEMBER_ID));
+            Exception e = assertThrows(ApiException.class,
+                () -> meetingController.confirmMeeting(MEETING_ID, confirmMeetingGetRequest,
+                    MEMBER_ID));
 
             // Then
             assertThat(e.getClass()).isEqualTo(ApiException.class);
@@ -163,15 +167,19 @@ class MeetingControllerTest {
                 List.of(timeGetResponse));
 
             // Mocking
-            given(meetingEventService.findMeetingPersonalEvent(MEETING_ID, MEMBER_ID)).willReturn(response);
+            given(meetingEventService.findMeetingPersonalEvent(MEETING_ID, MEMBER_ID)).willReturn(
+                response);
 
             // When
-            ResponseEntity<SuccessBody<MeetingPersonalEventGetResponse>> result = meetingController.getPersonalEvent(MEETING_ID, MEMBER_ID);
+            ResponseEntity<SuccessBody<MeetingPersonalEventGetResponse>> result = meetingController.getPersonalEvent(
+                MEETING_ID, MEMBER_ID);
 
             // Then
             verify(meetingEventService).findMeetingPersonalEvent(MEETING_ID, MEMBER_ID);
             assertThat(result.getStatusCode()).isEqualTo(HttpStatus.OK);
-            assertThat(result.getBody().getData().meetingPersonalTimes().get(0).startAt()).isEqualTo("2024-01-01T10:00:00");
+            assertThat(
+                result.getBody().getData().meetingPersonalTimes().get(0).startAt()).isEqualTo(
+                "2024-01-01T10:00:00");
             assertThat(result.getBody().getMessage()).isEqualTo("모임별 개인 일정 조회 성공");
         }
 
@@ -182,7 +190,8 @@ class MeetingControllerTest {
                 .willThrow(new ApiException("개인 일정 조회 중 오류가 발생했습니다."));
 
             // When
-            Exception e = assertThrows(ApiException.class, () -> meetingController.getPersonalEvent(MEETING_ID, MEMBER_ID));
+            Exception e = assertThrows(ApiException.class,
+                () -> meetingController.getPersonalEvent(MEETING_ID, MEMBER_ID));
 
             // Then
             verify(meetingEventService).findMeetingPersonalEvent(MEETING_ID, MEMBER_ID);

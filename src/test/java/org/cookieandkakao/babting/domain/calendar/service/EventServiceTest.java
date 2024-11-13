@@ -64,7 +64,8 @@ class EventServiceTest {
         Event avoidTimeEvent = new Event(avoidTime);
 
         // Mocking
-        given(eventRepository.save(any(Event.class))).willThrow(new IllegalArgumentException("일정 저장 실패"));
+        given(eventRepository.save(any(Event.class))).willThrow(
+            new IllegalArgumentException("일정 저장 실패"));
 
         // When
         Exception e = assertThrows(IllegalArgumentException.class,

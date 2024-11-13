@@ -48,10 +48,12 @@ class MeetingValidationServiceTest {
             MemberMeeting nonHostMemberMeeting = new MemberMeeting(member, meeting, true);
 
             // Mocking
-            given(meetingService.findMemberMeeting(member, meeting)).willReturn(nonHostMemberMeeting);
+            given(meetingService.findMemberMeeting(member, meeting)).willReturn(
+                nonHostMemberMeeting);
 
             // When & Then
-            assertDoesNotThrow(() -> meetingValidationService.validateHostPermission(member, meeting));
+            assertDoesNotThrow(
+                () -> meetingValidationService.validateHostPermission(member, meeting));
         }
 
         @Test
@@ -65,7 +67,8 @@ class MeetingValidationServiceTest {
             MemberMeeting nonHostMemberMeeting = new MemberMeeting(member, meeting, false);
 
             // Mocking
-            given(meetingService.findMemberMeeting(member, meeting)).willReturn(nonHostMemberMeeting);
+            given(meetingService.findMemberMeeting(member, meeting)).willReturn(
+                nonHostMemberMeeting);
 
             // When
             Exception e = assertThrows(MeetingHostUnauthorizedException.class,
@@ -119,7 +122,7 @@ class MeetingValidationServiceTest {
         @Test
         void 실패_모임에_확정_시간_있는_경우() {
             // Given
-            LocalDateTime testTime = LocalDateTime.of(2024,11,6,12,30,35);
+            LocalDateTime testTime = LocalDateTime.of(2024, 11, 6, 12, 30, 35);
             Meeting meeting = mock(Meeting.class);
 
             // Mocking

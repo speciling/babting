@@ -14,7 +14,8 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 public class GlobalExceptionHandler {
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
-    public ResponseEntity<FailureBody> handleValidationException(MethodArgumentNotValidException ex) {
+    public ResponseEntity<FailureBody> handleValidationException(
+        MethodArgumentNotValidException ex) {
         return ApiResponseGenerator.fail(HttpStatus.BAD_REQUEST, "유효성 검사 오류");
     }
 
