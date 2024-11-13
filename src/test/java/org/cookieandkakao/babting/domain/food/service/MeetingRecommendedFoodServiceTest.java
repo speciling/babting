@@ -51,46 +51,34 @@ class MeetingRecommendedFoodServiceTest {
 
     @Test
     void 추천음식_계산하기_테스트() {
-        Long memberId = 1L;
+        // given
         Long meetingId = 1L;
+        Long memberId = 1L;
         Member member = new Member(memberId);
 
         Location location = new Location("카페", "광주 용봉동", 37.5, 127.0);
-        String title = "저녁 모임";
-        LocalDate startDate = LocalDate.of(2024, 11, 1);
-        LocalDate endDate = LocalDate.of(2024, 11, 2);
-        int durationTime = 2;
-        LocalTime startTime = LocalTime.of(18, 0);
-        LocalTime endTime = LocalTime.of(20, 0);
-
-        Meeting meeting = new Meeting(location, title, startDate, endDate, durationTime, startTime, endTime);
+        Meeting meeting = new Meeting(location, "저녁 모임", LocalDate.of(2024, 11, 1), LocalDate.of(2024, 11, 2), 2, LocalTime.of(18, 0), LocalTime.of(20, 0));
         MemberMeeting memberMeeting = new MemberMeeting(member, meeting, false);
 
-        when(memberMeetingRepository.findMemberMeetingsByMeetingId(meetingId))
-                .thenReturn(List.of(memberMeeting));
+        when(memberMeetingRepository.findMemberMeetingsByMeetingId(meetingId)).thenReturn(List.of(memberMeeting));
 
         FoodCategory foodCategory1 = new FoodCategory("한식");
         FoodCategory foodCategory2 = new FoodCategory("양식");
-
         Food food1 = new Food(1L, foodCategory1, "김치찌개");
         Food food2 = new Food(2L, foodCategory2, "스파게티");
-
         MeetingPreferenceFood preferenceFood = new MeetingPreferenceFood(food1, memberMeeting);
         MeetingNonPreferenceFood nonPreferenceFood = new MeetingNonPreferenceFood(food2, memberMeeting);
+        NonPreferenceFood personalNonPreferenceFood = new NonPreferenceFood(food2, member);
 
-        when(meetingPreferenceFoodRepository.findAllByMemberMeeting(memberMeeting))
-                .thenReturn(List.of(preferenceFood));
-        when(meetingNonPreferenceFoodRepository.findAllByMemberMeeting(memberMeeting))
-                .thenReturn(List.of(nonPreferenceFood));
-
-        NonPreferenceFood personalNonPreferenceFood = new NonPreferenceFood(food2, memberMeeting.getMember());
+        when(meetingPreferenceFoodRepository.findAllByMemberMeeting(memberMeeting)).thenReturn(List.of(preferenceFood));
+        when(meetingNonPreferenceFoodRepository.findAllByMemberMeeting(memberMeeting)).thenReturn(List.of(nonPreferenceFood));
         when(nonPreferenceFoodRepository.findAllByMember(any())).thenReturn(List.of(personalNonPreferenceFood));
+        when(foodRepositoryService.findFoodsByIds(Set.of(1L))).thenReturn(List.of(food1));
 
-        when(foodRepositoryService.findFoodsByIds(Set.of(1L)))
-                .thenReturn(List.of(food1));
-
+        // when
         List<FoodPreferenceGetResponse> responses = recommendedFoodService.getRecommendedFoodDetailsForMeeting(meetingId);
 
+        // then
         assertEquals(1, responses.size());
         assertEquals("김치찌개", responses.get(0).name());
         assertEquals("한식", responses.get(0).category());

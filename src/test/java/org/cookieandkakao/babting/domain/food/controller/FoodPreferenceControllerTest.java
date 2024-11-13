@@ -48,11 +48,12 @@ public class FoodPreferenceControllerTest {
 
     @Test
     public void 비호음식_가져오기_테스트() throws Exception {
-        when(preferenceFoodService.getAllPreferencesByMember(anyLong()))
-                .thenReturn(Collections.emptyList());
+        // given
+        when(preferenceFoodService.getAllPreferencesByMember(anyLong())).thenReturn(Collections.emptyList());
 
-        mockMvc.perform(get("/api/preferences")
-                        .header("memberId", 1L))
+        // when
+        mockMvc.perform(get("/api/preferences").header("memberId", 1L))
+                // then
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.message").value("조회된 음식이 없습니다"))
                 .andExpect(jsonPath("$.data").isEmpty());
@@ -60,37 +61,43 @@ public class FoodPreferenceControllerTest {
 
     @Test
     public void 비선호음식_가져오기_테스트() throws Exception {
-        when(nonPreferenceFoodService.getAllPreferencesByMember(anyLong()))
-                .thenReturn(Collections.emptyList());
+        // given
+        when(nonPreferenceFoodService.getAllPreferencesByMember(anyLong())).thenReturn(Collections.emptyList());
 
-        mockMvc.perform(get("/api/non-preferences")
-                        .header("memberId", 1L))
+        // when
+        mockMvc.perform(get("/api/non-preferences").header("memberId", 1L))
+                // then
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.message").value("조회된 음식이 없습니다"))
                 .andExpect(jsonPath("$.data").isEmpty());
     }
 
-
     @Test
     public void 선호음식_삭제하기_테스트() throws Exception {
+        // given
         doNothing().when(preferenceFoodService).deletePreference(anyLong(), anyLong());
 
+        // when
         mockMvc.perform(delete("/api/preferences")
                         .header("memberId", 1L)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("{\"foodId\":1}"))
+                // then
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.message").value("음식 삭제 성공"));
     }
 
     @Test
     public void 비선호음식_삭제하기_테스트() throws Exception {
+        // given
         doNothing().when(nonPreferenceFoodService).deletePreference(anyLong(), anyLong());
 
+        // when
         mockMvc.perform(delete("/api/non-preferences")
                         .header("memberId", 1L)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("{\"foodId\":2}"))
+                // then
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.message").value("음식 삭제 성공"));
     }

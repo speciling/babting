@@ -45,21 +45,14 @@ public class MeetingPreferenceFoodServiceTest {
 
     @Test
     public void Meeting으로_모임별선호음식_가져오기_테스트() {
+        // given
         Long meetingId = 1L;
         Long memberId = 1L;
         Member member = new Member(memberId);
 
         Location location = new Location("카페", "광주 용봉동", 37.5, 127.0);
-        String title = "저녁 모임";
-        LocalDate startDate = LocalDate.of(2024, 11, 1);
-        LocalDate endDate = LocalDate.of(2024, 11, 2);
-        int durationTime = 2;
-        LocalTime startTime = LocalTime.of(18, 0);
-        LocalTime endTime = LocalTime.of(20, 0);
-
-        Meeting meeting = new Meeting(location, title, startDate, endDate, durationTime, startTime, endTime);
+        Meeting meeting = new Meeting(location, "저녁 모임", LocalDate.of(2024, 11, 1), LocalDate.of(2024, 11, 2), 2, LocalTime.of(18, 0), LocalTime.of(20, 0));
         MemberMeeting memberMeeting = new MemberMeeting(member, meeting, false);
-
         FoodCategory foodCategory = new FoodCategory("양식");
         Food food = new Food(1L, foodCategory, "피자");
         MeetingPreferenceFood meetingPreferenceFood = new MeetingPreferenceFood(food, memberMeeting);
@@ -70,8 +63,10 @@ public class MeetingPreferenceFoodServiceTest {
         when(meetingPreferenceFoodRepository.findAllByMemberMeeting(memberMeeting))
                 .thenReturn(Collections.singletonList(meetingPreferenceFood));
 
+        // when
         List<FoodPreferenceGetResponse> preferences = meetingPreferenceFoodService.getAllPreferencesByMeeting(meetingId, memberId);
 
+        // then
         assertNotNull(preferences);
         assertEquals(1, preferences.size());
         assertEquals("피자", preferences.get(0).name());

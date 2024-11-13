@@ -2,15 +2,13 @@ package org.cookieandkakao.babting.domain.food.service;
 
 import org.cookieandkakao.babting.domain.food.entity.Food;
 import org.cookieandkakao.babting.domain.food.entity.FoodCategory;
-import org.cookieandkakao.babting.domain.food.entity.MeetingNonPreferenceFood;
-import org.cookieandkakao.babting.domain.food.entity.MeetingPreferenceFood;
 import org.cookieandkakao.babting.domain.food.repository.MeetingNonPreferenceFoodRepository;
 import org.cookieandkakao.babting.domain.food.repository.MeetingPreferenceFoodRepository;
 import org.cookieandkakao.babting.domain.meeting.entity.Location;
 import org.cookieandkakao.babting.domain.meeting.entity.Meeting;
 import org.cookieandkakao.babting.domain.meeting.entity.MemberMeeting;
-import org.cookieandkakao.babting.domain.member.entity.Member;
 import org.cookieandkakao.babting.domain.meeting.service.MeetingService;
+import org.cookieandkakao.babting.domain.member.entity.Member;
 import org.cookieandkakao.babting.domain.member.service.MemberService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -21,11 +19,9 @@ import org.mockito.MockitoAnnotations;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.*;
 
 class MeetingFoodPreferenceUpdaterTest {
@@ -51,6 +47,7 @@ class MeetingFoodPreferenceUpdaterTest {
 
     @Test
     void 모임별선호비선호음식_수정하기_테스트() {
+        // given
         Long memberId = 1L;
         Long meetingId = 1L;
         List<Long> preferences = List.of(1L, 2L);
@@ -69,6 +66,7 @@ class MeetingFoodPreferenceUpdaterTest {
         Meeting meeting = new Meeting(location, title, startDate, endDate, durationTime, startTime, endTime);
         MemberMeeting memberMeeting = new MemberMeeting(member, meeting, false);
 
+        // mocking
         when(memberService.findMember(memberId)).thenReturn(member);
         when(meetingService.findMeeting(meetingId)).thenReturn(meeting);
         when(meetingService.findMemberMeeting(member, meeting)).thenReturn(memberMeeting);
@@ -84,12 +82,15 @@ class MeetingFoodPreferenceUpdaterTest {
         when(foodRepositoryService.findFoodsByIds(any(Set.class)))
                 .thenReturn(List.of(food1, food2, food3));
 
+        // when
         updater.updatePreferences(meetingId, memberId, preferences, nonPreferences);
 
+        // then
         verify(meetingPreferenceFoodRepository, times(1)).deleteAllByMemberMeeting(memberMeeting);
         verify(meetingNonPreferenceFoodRepository, times(1)).deleteAllByMemberMeeting(memberMeeting);
 
         verify(meetingPreferenceFoodRepository, times(1)).saveAll(any(List.class));
         verify(meetingNonPreferenceFoodRepository, times(1)).saveAll(any(List.class));
     }
+
 }

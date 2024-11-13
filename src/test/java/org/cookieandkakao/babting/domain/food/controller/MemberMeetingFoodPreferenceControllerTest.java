@@ -55,11 +55,14 @@ public class MemberMeetingFoodPreferenceControllerTest {
 
     @Test
     public void 모임별추천음식_가져오기() throws Exception {
+        // given
         FoodPreferenceGetResponse response = new FoodPreferenceGetResponse(1L, "양식", "피자");
         when(meetingRecommendedFoodService.getRecommendedFoodDetailsForMeeting(anyLong()))
                 .thenReturn(Collections.singletonList(response));
 
+        // when
         mockMvc.perform(get("/api/meeting/1/recommend"))
+                // then
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.message").value("모임 추천 음식 조회 성공"))
                 .andExpect(jsonPath("$.data[0].foodId").value(1L))
