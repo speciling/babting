@@ -1,6 +1,7 @@
 package org.cookieandkakao.babting.domain.meeting.service.meetingservice;
 
 
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
@@ -9,6 +10,7 @@ import static org.mockito.Mockito.when;
 import java.util.Optional;
 import org.cookieandkakao.babting.domain.meeting.entity.Meeting;
 import org.cookieandkakao.babting.domain.meeting.entity.MemberMeeting;
+import org.cookieandkakao.babting.domain.meeting.exception.membermeeting.MemberMeetingNotFoundException;
 import org.cookieandkakao.babting.domain.member.entity.Member;
 import org.junit.jupiter.api.Test;
 
@@ -50,6 +52,23 @@ class MeetingExitTest extends MeetingServiceTest {
         verify(meetingRepository, never()).delete(meeting);
         verify(memberMeetingRepository).delete(joinerMemberMeeting);
     }
-    // 가입하지 않은 모임 탈퇴 불가
+    @Test
+    void 가입하지_않은_모임_탈퇴_불가(){
+        // given
+        Member joiner = mock(Member.class);
+        Meeting meeting = mock(Meeting.class);
+        MemberMeeting joinerMemberMeeting = new MemberMeeting(joiner, meeting, false);
+
+        when(memberService.findMember(1L)).thenReturn(joiner);
+        when(meetingRepository.findById(1L)).thenReturn(Optional.of(meeting));
+        // when
+        when(memberMeetingRepository.findByMemberAndMeeting(joiner, meeting)).thenReturn(Optional.empty());
+        assertThrows(MemberMeetingNotFoundException.class, () -> meetingService.exitMeeting(1L, 1L));
+
+        // then
+        verify(memberMeetingRepository, never()).deleteAllByMeeting(meeting);
+        verify(meetingRepository, never()).delete(meeting);
+        verify(memberMeetingRepository, never()).delete(joinerMemberMeeting);
+    }
     // 없는 모임 탈퇴 불가
 }
