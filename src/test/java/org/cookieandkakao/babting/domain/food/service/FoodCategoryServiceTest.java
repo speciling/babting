@@ -26,7 +26,7 @@ public class FoodCategoryServiceTest {
     }
 
     @Test
-    public void testGetFoodCategories() {
+    public void 음식카테고리_가져오기_테스트() {
         List<FoodCategory> categories = Arrays.asList(new FoodCategory("한식"), new FoodCategory("양식"));
         when(foodCategoryRepository.findAll()).thenReturn(categories);
 

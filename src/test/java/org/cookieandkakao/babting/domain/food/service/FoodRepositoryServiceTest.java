@@ -29,7 +29,7 @@ public class FoodRepositoryServiceTest {
     }
 
     @Test
-    public void testFindFoodById() {
+    public void FindFoodById_테스트() {
         FoodCategory foodCategory = new FoodCategory("양식");
         Food food = new Food(1L, foodCategory, "피자");
         when(foodRepository.findById(1L)).thenReturn(Optional.of(food));
@@ -41,7 +41,7 @@ public class FoodRepositoryServiceTest {
     }
 
     @Test
-    public void testFindFoodByIdNotFound() {
+    public void Food가_존재하지_않을때_FindFoodById_테스트() {
         when(foodRepository.findById(2L)).thenReturn(Optional.empty());
 
         assertThrows(FoodNotFoundException.class, () -> foodRepositoryService.findFoodById(2L));

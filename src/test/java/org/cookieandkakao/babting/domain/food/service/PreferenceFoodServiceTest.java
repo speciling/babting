@@ -43,7 +43,7 @@ public class PreferenceFoodServiceTest {
     }
 
     @Test
-    public void testAddPreference() {
+    public void 선호음식_추가하기_테스트() {
         FoodPreferenceCreateRequest request = new FoodPreferenceCreateRequest(1L);
         FoodCategory foodCategory = new FoodCategory("양식");
         Food food = new Food(1L, foodCategory, "피자");
@@ -62,7 +62,7 @@ public class PreferenceFoodServiceTest {
     }
 
     @Test
-    public void testDeletePreference_선호음식없을때() {
+    public void 선호음식없을때_선호음식_삭제하기_테스트() {
         Food food = new Food(1L, new FoodCategory("양식"), "피자");
         Member member = new Member(1L);
 
@@ -77,7 +77,7 @@ public class PreferenceFoodServiceTest {
     }
 
     @Test
-    public void testGetAllPreferencesByMember() {
+    public void Member로_모든_선호음식_가져오기_테스트() {
         Member member = new Member(1L);
         FoodCategory foodCategory = new FoodCategory("양식");
         Food food = new Food(1L, foodCategory, "피자");
@@ -91,23 +91,5 @@ public class PreferenceFoodServiceTest {
         assertNotNull(preferences);
         assertEquals(1, preferences.size());
         assertEquals("피자", preferences.get(0).name());
-    }
-
-    @Test
-    public void testAddPreference_Success() {
-        FoodPreferenceCreateRequest request = new FoodPreferenceCreateRequest(1L);
-        FoodCategory foodCategory = new FoodCategory("양식");
-        Food food = new Food(1L, foodCategory, "피자");
-        Member member = new Member(1L);
-        PreferenceFood preferenceFood = new PreferenceFood(food, member);
-
-        when(foodRepositoryService.findFoodById(1L)).thenReturn(food);
-        when(memberService.findMember(1L)).thenReturn(member);
-        when(preferenceFoodRepository.save(any(PreferenceFood.class))).thenReturn(preferenceFood);
-
-        FoodPreferenceGetResponse result = preferenceFoodService.addPreference(request, 1L);
-
-        assertNotNull(result);
-        assertEquals("피자", result.name());
     }
 }

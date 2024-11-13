@@ -43,7 +43,7 @@ public class FoodCategoryControllerTest {
     }
 
     @Test
-    public void testGetFoodCategories() throws Exception {
+    public void 음식카테고리_조회_테스트() throws Exception {
         List<String> categories = Arrays.asList("양식", "한식", "일식");
         when(foodCategoryService.getFoodCategories()).thenReturn(categories);
 

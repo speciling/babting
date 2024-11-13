@@ -44,7 +44,7 @@ public class MeetingPreferenceFoodServiceTest {
     }
 
     @Test
-    public void testGetAllPreferencesByMeeting() {
+    public void Meeting으로_모임별선호음식_가져오기_테스트() {
         Long meetingId = 1L;
         Long memberId = 1L;
         Member member = new Member(memberId);
