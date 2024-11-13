@@ -3,13 +3,11 @@ package org.cookieandkakao.babting.domain.meeting.service.meetingservice;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.Optional;
-import org.cookieandkakao.babting.domain.meeting.dto.request.LocationCreateRequest;
 import org.cookieandkakao.babting.domain.meeting.dto.request.MeetingUpdateRequest;
 import org.cookieandkakao.babting.domain.meeting.entity.Location;
 import org.cookieandkakao.babting.domain.meeting.entity.Meeting;
@@ -23,13 +21,12 @@ class MeetingUpdateTest extends MeetingServiceTest {
     void 모임_수정_성공() {
         // given
         Member member = mock(Member.class);
-        Location baseLocation = mock(Location.class);
-        LocationCreateRequest locationCreateRequest = mock(LocationCreateRequest.class);
+        Location location = mock(Location.class);
 
-        MeetingUpdateRequest meetingUpdateRequest = new MeetingUpdateRequest(locationCreateRequest, "북대", LocalDate.now().plusDays(1),
+        MeetingUpdateRequest meetingUpdateRequest = new MeetingUpdateRequest(baseLocation, "북대", LocalDate.now().plusDays(1),
             LocalDate.now().plusDays(2), 3, LocalTime.of(14, 0), LocalTime.of(17, 0));
 
-        Meeting meeting = new Meeting(baseLocation, "전대", LocalDate.now().plusDays(1),
+        Meeting meeting = new Meeting(location, "전대", LocalDate.now().plusDays(1),
             LocalDate.now().plusDays(2), 3, LocalTime.of(14, 0), LocalTime.of(17, 0));
 
         MemberMeeting memberMeeting = new MemberMeeting(member, meeting, true);
