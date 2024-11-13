@@ -1,8 +1,6 @@
 package org.cookieandkakao.babting.domain.food.controller;
 
 import org.cookieandkakao.babting.common.resolver.LoginMemberIdArgumentResolver;
-import org.cookieandkakao.babting.domain.food.dto.FoodPreferenceCreateRequest;
-import org.cookieandkakao.babting.domain.food.dto.FoodPreferenceGetResponse;
 import org.cookieandkakao.babting.domain.food.service.NonPreferenceFoodService;
 import org.cookieandkakao.babting.domain.food.service.PreferenceFoodService;
 import org.cookieandkakao.babting.domain.member.repository.MemberRepository;
@@ -14,15 +12,14 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
 import java.util.Collections;
 
-import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.when;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 

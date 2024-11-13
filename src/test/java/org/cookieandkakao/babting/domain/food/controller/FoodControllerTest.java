@@ -36,17 +36,14 @@ public class FoodControllerTest {
 
     @Test
     public void 카테고리로_음식_가져오기_테스트() throws Exception {
-        // Arrange
         String category = "한식";
         FoodGetResponse food = new FoodGetResponse(1L, category, "김치찌개");
         List<FoodGetResponse> foodList = Collections.singletonList(food);
         when(foodService.getFoodsByCategory(category)).thenReturn(foodList);
 
-        // Act
         ResultActions resultActions = mockMvc.perform(get("/api/foods")
                 .param("category", category));
 
-        // Assert
         resultActions.andExpect(status().isOk())
                 .andExpect(jsonPath("$.message").value("카테고리별 음식 조회 성공"))
                 .andExpect(jsonPath("$.data[0].name").value("김치찌개"));
