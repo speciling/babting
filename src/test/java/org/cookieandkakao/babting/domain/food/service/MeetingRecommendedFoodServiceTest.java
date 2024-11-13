@@ -50,7 +50,7 @@ class MeetingRecommendedFoodServiceTest {
     }
 
     @Test
-    void testGetRecommendedFoodDetailsForMeeting() {
+    void 추천음식_계산하기_테스트() {
         Long memberId = 1L;
         Long meetingId = 1L;
         Member member = new Member(memberId);
