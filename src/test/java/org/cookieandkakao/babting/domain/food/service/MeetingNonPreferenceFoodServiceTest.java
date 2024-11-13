@@ -1,11 +1,10 @@
-package org.cookieandkakao.babting.domain.food;
+package org.cookieandkakao.babting.domain.food.service;
 
 import org.cookieandkakao.babting.domain.food.dto.FoodPreferenceGetResponse;
 import org.cookieandkakao.babting.domain.food.entity.Food;
 import org.cookieandkakao.babting.domain.food.entity.FoodCategory;
-import org.cookieandkakao.babting.domain.food.entity.MeetingPreferenceFood;
-import org.cookieandkakao.babting.domain.food.repository.MeetingPreferenceFoodRepository;
-import org.cookieandkakao.babting.domain.food.service.MeetingPreferenceFoodService;
+import org.cookieandkakao.babting.domain.food.entity.MeetingNonPreferenceFood;
+import org.cookieandkakao.babting.domain.food.repository.MeetingNonPreferenceFoodRepository;
 import org.cookieandkakao.babting.domain.meeting.entity.Location;
 import org.cookieandkakao.babting.domain.meeting.entity.Meeting;
 import org.cookieandkakao.babting.domain.meeting.entity.MemberMeeting;
@@ -26,10 +25,10 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.Mockito.when;
 
-public class MeetingPreferenceFoodServiceTest {
+public class MeetingNonPreferenceFoodServiceTest {
 
     @Mock
-    private MeetingPreferenceFoodRepository meetingPreferenceFoodRepository;
+    private MeetingNonPreferenceFoodRepository meetingNonPreferenceFoodRepository;
 
     @Mock
     private MeetingService meetingService;
@@ -38,9 +37,9 @@ public class MeetingPreferenceFoodServiceTest {
     private MemberService memberService;
 
     @InjectMocks
-    private MeetingPreferenceFoodService meetingPreferenceFoodService;
+    private MeetingNonPreferenceFoodService meetingNonPreferenceFoodService;
 
-    public MeetingPreferenceFoodServiceTest() {
+    public MeetingNonPreferenceFoodServiceTest() {
         MockitoAnnotations.openMocks(this);
     }
 
@@ -63,15 +62,15 @@ public class MeetingPreferenceFoodServiceTest {
 
         FoodCategory foodCategory = new FoodCategory("양식");
         Food food = new Food(1L, foodCategory, "피자");
-        MeetingPreferenceFood meetingPreferenceFood = new MeetingPreferenceFood(food, memberMeeting);
+        MeetingNonPreferenceFood meetingNonPreferenceFood = new MeetingNonPreferenceFood(food, memberMeeting);
 
         when(memberService.findMember(memberId)).thenReturn(member);
         when(meetingService.findMeeting(meetingId)).thenReturn(meeting);
         when(meetingService.findMemberMeeting(member, meeting)).thenReturn(memberMeeting);
-        when(meetingPreferenceFoodRepository.findAllByMemberMeeting(memberMeeting))
-                .thenReturn(Collections.singletonList(meetingPreferenceFood));
+        when(meetingNonPreferenceFoodRepository.findAllByMemberMeeting(memberMeeting))
+                .thenReturn(Collections.singletonList(meetingNonPreferenceFood));
 
-        List<FoodPreferenceGetResponse> preferences = meetingPreferenceFoodService.getAllPreferencesByMeeting(meetingId, memberId);
+        List<FoodPreferenceGetResponse> preferences = meetingNonPreferenceFoodService.getAllPreferencesByMeeting(meetingId, memberId);
 
         assertNotNull(preferences);
         assertEquals(1, preferences.size());

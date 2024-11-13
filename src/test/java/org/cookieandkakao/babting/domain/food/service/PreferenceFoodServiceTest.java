@@ -1,4 +1,4 @@
-package org.cookieandkakao.babting.domain.food;
+package org.cookieandkakao.babting.domain.food.service;
 
 import org.cookieandkakao.babting.domain.food.exception.FoodNotFoundException;
 import org.cookieandkakao.babting.domain.food.dto.FoodPreferenceCreateRequest;
@@ -7,8 +7,6 @@ import org.cookieandkakao.babting.domain.food.entity.Food;
 import org.cookieandkakao.babting.domain.food.entity.FoodCategory;
 import org.cookieandkakao.babting.domain.food.entity.PreferenceFood;
 import org.cookieandkakao.babting.domain.food.repository.PreferenceFoodRepository;
-import org.cookieandkakao.babting.domain.food.service.FoodRepositoryService;
-import org.cookieandkakao.babting.domain.food.service.PreferenceFoodService;
 import org.cookieandkakao.babting.domain.member.entity.Member;
 import org.cookieandkakao.babting.domain.member.service.MemberService;
 import org.junit.jupiter.api.Test;

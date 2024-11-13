@@ -1,8 +1,7 @@
-package org.cookieandkakao.babting.domain.food;
+package org.cookieandkakao.babting.domain.food.service;
 
 import org.cookieandkakao.babting.domain.food.entity.FoodCategory;
 import org.cookieandkakao.babting.domain.food.repository.FoodCategoryRepository;
-import org.cookieandkakao.babting.domain.food.service.FoodCategoryService;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
