@@ -61,11 +61,10 @@ class MeetingExitTest extends MeetingServiceTest {
 
         when(memberService.findMember(1L)).thenReturn(joiner);
         when(meetingRepository.findById(1L)).thenReturn(Optional.of(meeting));
-        // when
+        // when then
         when(memberMeetingRepository.findByMemberAndMeeting(joiner, meeting)).thenReturn(Optional.empty());
         assertThrows(MemberMeetingNotFoundException.class, () -> meetingService.exitMeeting(1L, 1L));
 
-        // then
         verify(memberMeetingRepository, never()).deleteAllByMeeting(meeting);
         verify(meetingRepository, never()).delete(meeting);
         verify(memberMeetingRepository, never()).delete(joinerMemberMeeting);
