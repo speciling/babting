@@ -2,6 +2,7 @@ package org.cookieandkakao.babting.domain.meeting.service.meetingservice;
 
 
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -31,7 +32,24 @@ class MeetingExitTest extends MeetingServiceTest {
         verify(memberMeetingRepository).deleteAllByMeeting(meeting);
         verify(meetingRepository).delete(meeting);
     }
-    // 모임 참여자가 탈퇴할 경우 모임만 탈퇴
+    @Test
+    void 모임_참여자_탈퇴_성공(){
+        // given
+        Member joiner = mock(Member.class);
+        Meeting meeting = mock(Meeting.class);
+        MemberMeeting joinerMemberMeeting = new MemberMeeting(joiner, meeting, false);
+
+        when(memberService.findMember(1L)).thenReturn(joiner);
+        when(meetingRepository.findById(1L)).thenReturn(Optional.of(meeting));
+        when(memberMeetingRepository.findByMemberAndMeeting(joiner, meeting)).thenReturn(Optional.of(joinerMemberMeeting));
+        // when
+        meetingService.exitMeeting(1L, 1L);
+
+        // then
+        verify(memberMeetingRepository, never()).deleteAllByMeeting(meeting);
+        verify(meetingRepository, never()).delete(meeting);
+        verify(memberMeetingRepository).delete(joinerMemberMeeting);
+    }
     // 가입하지 않은 모임 탈퇴 불가
     // 없는 모임 탈퇴 불가
 }
